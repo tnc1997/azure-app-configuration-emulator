@@ -1,0 +1,20 @@
+﻿Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AzureAppConfigurationEmulator", "src\AzureAppConfigurationEmulator\AzureAppConfigurationEmulator.csproj", "{AA269720-3A03-4E1D-B0AD-CF94EA82DDD6}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{71AF9625-E82F-4219-9E10-30B0F437298E}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{AA269720-3A03-4E1D-B0AD-CF94EA82DDD6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AA269720-3A03-4E1D-B0AD-CF94EA82DDD6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AA269720-3A03-4E1D-B0AD-CF94EA82DDD6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AA269720-3A03-4E1D-B0AD-CF94EA82DDD6}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{AA269720-3A03-4E1D-B0AD-CF94EA82DDD6} = {71AF9625-E82F-4219-9E10-30B0F437298E}
+	EndGlobalSection
+EndGlobal

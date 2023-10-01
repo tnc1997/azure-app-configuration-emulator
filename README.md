@@ -1,0 +1,1 @@
+Azure App Configuration Emulator
