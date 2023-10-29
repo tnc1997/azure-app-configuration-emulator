@@ -32,4 +32,28 @@ public class LockHandler
 
         return new KeyValueResult(setting);
     }
+
+    public static async Task<Results<KeyValueResult, NotFound>> Unlock(
+        [FromServices] ApplicationDbContext context,
+        [FromRoute] string key,
+        CancellationToken cancellationToken,
+        [FromQuery] string label = LabelFilter.Null)
+    {
+        var setting = await context.ConfigurationSettings.SingleOrDefaultAsync(
+            setting => setting.Key == key && setting.Label == label,
+            cancellationToken);
+
+        if (setting == null)
+        {
+            return TypedResults.NotFound();
+        }
+
+        setting.IsReadOnly = false;
+
+        context.ConfigurationSettings.Update(setting);
+
+        await context.SaveChangesAsync(cancellationToken);
+
+        return new KeyValueResult(setting);
+    }
 }

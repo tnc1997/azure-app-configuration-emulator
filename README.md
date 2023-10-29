@@ -49,10 +49,12 @@ docker run -p 8080:8080 azure-app-configuration-emulator
 
 ### Locks
 
-| Operation |    |
-|-----------|----|
-| Lock      | ✔️ |
-| Unlock    | ❌  |
+| Operation              |    |
+|------------------------|----|
+| Lock                   | ✔️ |
+| Lock (Conditionally)   | ❌  |
+| Unlock                 | ✔️ |
+| Unlock (Conditionally) | ❌  |
 
 ### Revisions
 
