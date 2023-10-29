@@ -1,6 +1,6 @@
 namespace AzureAppConfigurationEmulator.Results;
 
-public class LabelSetResult(IEnumerable<string> labels) :
+public class LabelSetResult(IEnumerable<string?> labels) :
     IResult,
     IContentTypeHttpResult,
     IStatusCodeHttpResult,
@@ -31,4 +31,4 @@ public class LabelSetResult(IEnumerable<string> labels) :
 
 public record LabelSet(IEnumerable<Label> Items);
 
-public record Label(string Name);
+public record Label(string? Name);

@@ -31,7 +31,7 @@ public class LabelHandler
 
         var labels = await context.ConfigurationSettings
             .Where(label: name)
-            .Select(setting => setting.Label)
+            .Select(setting => setting.Label.NormalizeNull())
             .Distinct()
             .ToListAsync(cancellationToken);
 
