@@ -64,7 +64,7 @@ public class KeyValueHandler
         return new KeyValueSetResult(settings);
     }
 
-    public static async Task<KeyValueResult> Set(
+    public static async Task<Results<KeyValueResult, ReadOnlyResult>> Set(
         [FromServices] ApplicationDbContext context,
         [FromBody] SetInput input,
         [FromRoute] string key,
@@ -86,6 +86,10 @@ public class KeyValueHandler
                 false);
 
             context.ConfigurationSettings.Add(setting);
+        }
+        else if (setting.IsReadOnly)
+        {
+            return new ReadOnlyResult(key);
         }
         else
         {
