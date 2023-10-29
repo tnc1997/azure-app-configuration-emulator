@@ -18,6 +18,7 @@ builder.Services.ConfigureHttpJsonOptions(options =>
 
 var app = builder.Build();
 
+app.MapGet("/kv/{key}", KeyValueHandler.Get);
 app.MapGet("/kv", KeyValueHandler.List);
 app.MapPut("/kv/{key}", KeyValueHandler.Set);
 
