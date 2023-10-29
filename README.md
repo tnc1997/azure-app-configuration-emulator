@@ -24,7 +24,7 @@ docker run -p 8080:8080 azure-app-configuration-emulator
 | List (Time-Based Access) | ❌   |
 | Set                      | ✔️  |
 | Set (Conditionally)      | ❌   |
-| Delete                   | ❌   |
+| Delete                   | ✔️  |
 | Delete (Conditionally)   | ❌   |
 
 ### Keys
