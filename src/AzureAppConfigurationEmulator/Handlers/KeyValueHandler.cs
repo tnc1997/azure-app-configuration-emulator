@@ -12,6 +12,19 @@ namespace AzureAppConfigurationEmulator.Handlers;
 
 public class KeyValueHandler
 {
+    public static async Task<Results<KeyValueResult, NotFound>> Get(
+        [FromServices] ApplicationDbContext context,
+        [FromRoute] string key,
+        CancellationToken cancellationToken,
+        [FromQuery] string label = LabelFilter.Null)
+    {
+        var setting = await context.ConfigurationSettings.SingleOrDefaultAsync(
+            setting => setting.Key == key && setting.Label == label,
+            cancellationToken);
+
+        return setting != null ? new KeyValueResult(setting) : TypedResults.NotFound();
+    }
+
     public static async Task<Results<KeyValueSetResult, InvalidCharacterResult, TooManyValuesResult>> List(
         [FromServices] ApplicationDbContext context,
         CancellationToken cancellationToken,

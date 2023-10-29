@@ -15,7 +15,7 @@ docker run -p 8080:8080 azure-app-configuration-emulator
 
 | Operation                |     |
 |--------------------------|-----|
-| Get                      | ❌   |
+| Get                      | ✔️  |
 | Get (Conditionally)      | ❌   |
 | List                     | ✔️  |
 | List (Pagination)        | ❌   |
