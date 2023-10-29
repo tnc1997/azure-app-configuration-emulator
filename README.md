@@ -39,13 +39,13 @@ docker run -p 8080:8080 azure-app-configuration-emulator
 
 ### Labels
 
-| Operation                |   |
-|--------------------------|---|
-| List                     | ❌ |
-| List (Pagination)        | ❌ |
-| List (Filtering)         | ❌ |
-| List (Select Fields)     | ❌ |
-| List (Time-Based Access) | ❌ |
+| Operation                |    |
+|--------------------------|----|
+| List                     | ✔️ |
+| List (Pagination)        | ❌  |
+| List (Filtering)         | ✔️ |
+| List (Select Fields)     | ❌  |
+| List (Time-Based Access) | ❌  |
 
 ### Locks
 

@@ -23,6 +23,7 @@ app.MapGet("/kv", KeyValueHandler.List);
 app.MapPut("/kv/{key}", KeyValueHandler.Set);
 app.MapDelete("/kv/{key}", KeyValueHandler.Delete);
 app.MapGet("/keys", KeyHandler.List);
+app.MapGet("/labels", LabelHandler.List);
 app.MapPut("/locks/{key}", LockHandler.Lock);
 app.MapDelete("/locks/{key}", LockHandler.Unlock);
 
