@@ -29,13 +29,13 @@ docker run -p 8080:8080 azure-app-configuration-emulator
 
 ### Keys
 
-| Operation                |   |
-|--------------------------|---|
-| List                     | ❌ |
-| List (Pagination)        | ❌ |
-| List (Filtering)         | ❌ |
-| List (Select Fields)     | ❌ |
-| List (Time-Based Access) | ❌ |
+| Operation                |    |
+|--------------------------|----|
+| List                     | ✔️ |
+| List (Pagination)        | ❌  |
+| List (Filtering)         | ✔️ |
+| List (Select Fields)     | ❌  |
+| List (Time-Based Access) | ❌  |
 
 ### Labels
 
