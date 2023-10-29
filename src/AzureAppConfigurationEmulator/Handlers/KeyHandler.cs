@@ -32,6 +32,7 @@ public class KeyHandler
         var keys = await context.ConfigurationSettings
             .Where(key: name)
             .Select(setting => setting.Key)
+            .Distinct()
             .ToListAsync(cancellationToken);
 
         return new KeySetResult(keys);
