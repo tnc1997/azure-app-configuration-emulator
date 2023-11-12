@@ -16,6 +16,8 @@ builder.Services.ConfigureHttpJsonOptions(options =>
     options.SerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.SnakeCaseLower;
 });
 
+builder.WebHost.ConfigureKestrel();
+
 var app = builder.Build();
 
 app.MapGet("/kv/{key}", KeyValueHandler.Get);
