@@ -1,10 +1,15 @@
 using System.Text.Json;
+using AzureAppConfigurationEmulator.Authentication;
 using AzureAppConfigurationEmulator.Contexts;
 using AzureAppConfigurationEmulator.Extensions;
 using AzureAppConfigurationEmulator.Handlers;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.AddAuthentication().AddHmac();
+
+builder.Services.AddAuthorization();
 
 builder.Services.AddDbContext<ApplicationDbContext>(builder =>
 {
@@ -20,14 +25,17 @@ builder.WebHost.ConfigureKestrel();
 
 var app = builder.Build();
 
-app.MapGet("/kv/{key}", KeyValueHandler.Get);
-app.MapGet("/kv", KeyValueHandler.List);
-app.MapPut("/kv/{key}", KeyValueHandler.Set);
-app.MapDelete("/kv/{key}", KeyValueHandler.Delete);
-app.MapGet("/keys", KeyHandler.List);
-app.MapGet("/labels", LabelHandler.List);
-app.MapPut("/locks/{key}", LockHandler.Lock);
-app.MapDelete("/locks/{key}", LockHandler.Unlock);
+app.UseAuthentication();
+app.UseAuthorization();
+
+app.MapGet("/kv/{key}", KeyValueHandler.Get).RequireAuthorization();
+app.MapGet("/kv", KeyValueHandler.List).RequireAuthorization();
+app.MapPut("/kv/{key}", KeyValueHandler.Set).RequireAuthorization();
+app.MapDelete("/kv/{key}", KeyValueHandler.Delete).RequireAuthorization();
+app.MapGet("/keys", KeyHandler.List).RequireAuthorization();
+app.MapGet("/labels", LabelHandler.List).RequireAuthorization();
+app.MapPut("/locks/{key}", LockHandler.Lock).RequireAuthorization();
+app.MapDelete("/locks/{key}", LockHandler.Unlock).RequireAuthorization();
 
 app.InitializeDatabase();
 

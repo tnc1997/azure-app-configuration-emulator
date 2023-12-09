@@ -4,15 +4,49 @@
       <settings>
         <option name="containerName" value="" />
         <option name="contextFolderPath" value="." />
+        <option name="envVars">
+          <list>
+            <DockerEnvVarImpl>
+              <option name="name" value="ASPNETCORE_HTTP_PORTS" />
+              <option name="value" value="8080" />
+            </DockerEnvVarImpl>
+            <DockerEnvVarImpl>
+              <option name="name" value="ASPNETCORE_HTTPS_PORTS" />
+              <option name="value" value="8081" />
+            </DockerEnvVarImpl>
+          </list>
+        </option>
         <option name="portBindings">
           <list>
             <DockerPortBindingImpl>
               <option name="containerPort" value="8080" />
               <option name="hostPort" value="8080" />
             </DockerPortBindingImpl>
+            <DockerPortBindingImpl>
+              <option name="containerPort" value="8081" />
+              <option name="hostPort" value="8081" />
+            </DockerPortBindingImpl>
           </list>
         </option>
         <option name="sourceFilePath" value="src/AzureAppConfigurationEmulator/Dockerfile" />
+        <option name="volumeBindings">
+          <list>
+            <DockerVolumeBindingImpl>
+              <option name="containerPath" value="/usr/local/share/azureappconfigurationemulator/emulator.crt" />
+              <option name="hostPath" value="C:\src\azure-app-configuration-emulator\emulator.crt" />
+              <option name="readOnly" value="true" />
+            </DockerVolumeBindingImpl>
+            <DockerVolumeBindingImpl>
+              <option name="containerPath" value="/usr/local/share/azureappconfigurationemulator/emulator.key" />
+              <option name="hostPath" value="C:\src\azure-app-configuration-emulator\emulator.key" />
+              <option name="readOnly" value="true" />
+            </DockerVolumeBindingImpl>
+            <DockerVolumeBindingImpl>
+              <option name="containerPath" value="/root/.aspnet/DataProtection-Keys" />
+              <option name="hostPath" value="azure-app-configuration-emulator-data-potection-keys" />
+            </DockerVolumeBindingImpl>
+          </list>
+        </option>
       </settings>
     </deployment>
     <EXTENSION ID="com.jetbrains.rider.docker.debug" isFastModeEnabled="true" isSslEnabled="false" />
