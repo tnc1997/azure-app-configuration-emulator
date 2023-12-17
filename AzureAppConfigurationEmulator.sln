@@ -3,6 +3,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AzureAppConfigurationEmulat
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{71AF9625-E82F-4219-9E10-30B0F437298E}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{718C10CB-FCE6-4F27-8B11-B2DE9F155112}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AzureAppConfigurationEmulator.Tests", "tests\AzureAppConfigurationEmulator.Tests\AzureAppConfigurationEmulator.Tests.csproj", "{8F0B0780-F336-4F12-89E4-7C7B3ED95563}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -13,8 +17,13 @@ Global
 		{AA269720-3A03-4E1D-B0AD-CF94EA82DDD6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{AA269720-3A03-4E1D-B0AD-CF94EA82DDD6}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{AA269720-3A03-4E1D-B0AD-CF94EA82DDD6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8F0B0780-F336-4F12-89E4-7C7B3ED95563}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8F0B0780-F336-4F12-89E4-7C7B3ED95563}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8F0B0780-F336-4F12-89E4-7C7B3ED95563}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8F0B0780-F336-4F12-89E4-7C7B3ED95563}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{AA269720-3A03-4E1D-B0AD-CF94EA82DDD6} = {71AF9625-E82F-4219-9E10-30B0F437298E}
+		{8F0B0780-F336-4F12-89E4-7C7B3ED95563} = {718C10CB-FCE6-4F27-8B11-B2DE9F155112}
 	EndGlobalSection
 EndGlobal

@@ -1,3 +1,5 @@
+using System.Security.Cryptography;
+using System.Text;
 using System.Text.RegularExpressions;
 using AzureAppConfigurationEmulator.Constants;
 using AzureAppConfigurationEmulator.Entities;
@@ -10,17 +12,47 @@ namespace AzureAppConfigurationEmulator.Handlers;
 
 public class KeyValueHandler
 {
-    public static async Task<Results<KeyValueResult, NoContent>> Delete(
+    public static async Task<Results<KeyValueResult, NoContent, PreconditionFailedResult, ReadOnlyResult>> Delete(
         [FromServices] IConfigurationSettingRepository repository,
         [FromRoute] string key,
         [FromQuery] string label = LabelFilter.Null,
+        [FromHeader(Name = "If-Match")] string? ifMatch = default,
+        [FromHeader(Name = "If-None-Match")] string? ifNoneMatch = default,
         CancellationToken cancellationToken = default)
     {
+        ifMatch = ifMatch?.TrimStart('"').TrimEnd('"');
+        ifNoneMatch = ifNoneMatch?.TrimStart('"').TrimEnd('"');
+
         var setting = await repository.Get(key, label).SingleOrDefaultAsync(cancellationToken);
 
         if (setting == null)
         {
+            if (ifMatch != null && ifMatch == "*")
+            {
+                return new PreconditionFailedResult();
+            }
+
+            if (ifNoneMatch != null && ifNoneMatch != "*")
+            {
+                return new PreconditionFailedResult();
+            }
+
             return TypedResults.NoContent();
+        }
+
+        if (setting.IsReadOnly)
+        {
+            return new ReadOnlyResult(key);
+        }
+
+        if (ifMatch != null && (ifMatch != setting.ETag && ifMatch != "*"))
+        {
+            return new PreconditionFailedResult();
+        }
+
+        if (ifNoneMatch != null && (ifNoneMatch == setting.ETag || ifNoneMatch == "*"))
+        {
+            return new PreconditionFailedResult();
         }
 
         await repository.RemoveAsync(setting, cancellationToken);
@@ -28,15 +60,35 @@ public class KeyValueHandler
         return new KeyValueResult(setting);
     }
 
-    public static async Task<Results<KeyValueResult, NotFound>> Get(
+    public static async Task<Results<KeyValueResult, NotFound, NotModifiedResult, PreconditionFailedResult>> Get(
         [FromServices] IConfigurationSettingRepository repository,
         [FromRoute] string key,
         [FromQuery] string label = LabelFilter.Null,
+        [FromHeader(Name = "If-Match")] string? ifMatch = default,
+        [FromHeader(Name = "If-None-Match")] string? ifNoneMatch = default,
         CancellationToken cancellationToken = default)
     {
+        ifMatch = ifMatch?.TrimStart('"').TrimEnd('"');
+        ifNoneMatch = ifNoneMatch?.TrimStart('"').TrimEnd('"');
+
         var setting = await repository.Get(key, label).SingleOrDefaultAsync(cancellationToken);
 
-        return setting != null ? new KeyValueResult(setting) : TypedResults.NotFound();
+        if (setting == null)
+        {
+            return TypedResults.NotFound();
+        }
+
+        if (ifMatch != null && (ifMatch != setting.ETag && ifMatch != "*"))
+        {
+            return new PreconditionFailedResult();
+        }
+
+        if (ifNoneMatch != null && (ifNoneMatch == setting.ETag || ifNoneMatch == "*"))
+        {
+            return new NotModifiedResult();
+        }
+
+        return new KeyValueResult(setting);
     }
 
     public static async Task<Results<KeyValueSetResult, InvalidCharacterResult, TooManyValuesResult>> List(
@@ -76,23 +128,41 @@ public class KeyValueHandler
         return new KeyValueSetResult(settings);
     }
 
-    public static async Task<Results<KeyValueResult, ReadOnlyResult>> Set(
+    public static async Task<Results<KeyValueResult, PreconditionFailedResult, ReadOnlyResult>> Set(
         [FromServices] IConfigurationSettingRepository repository,
         [FromBody] SetInput input,
         [FromRoute] string key,
         [FromQuery] string label = LabelFilter.Null,
+        [FromHeader(Name = "If-Match")] string? ifMatch = default,
+        [FromHeader(Name = "If-None-Match")] string? ifNoneMatch = default,
         CancellationToken cancellationToken = default)
     {
+        ifMatch = ifMatch?.TrimStart('"').TrimEnd('"');
+        ifNoneMatch = ifNoneMatch?.TrimStart('"').TrimEnd('"');
+
         var setting = await repository.Get(key, label).SingleOrDefaultAsync(cancellationToken);
 
         if (setting == null)
         {
+            if (ifMatch != null && ifMatch == "*")
+            {
+                return new PreconditionFailedResult();
+            }
+
+            if (ifNoneMatch != null && ifNoneMatch != "*")
+            {
+                return new PreconditionFailedResult();
+            }
+
+            var date = DateTimeOffset.UtcNow;
+
             setting = new ConfigurationSetting(
+                Encoding.UTF8.GetString(SHA256.HashData(Encoding.UTF8.GetBytes(date.ToString("O")))),
                 key,
                 label,
                 input.ContentType,
                 input.Value,
-                DateTimeOffset.UtcNow,
+                date,
                 false);
 
             await repository.AddAsync(setting, cancellationToken);
@@ -103,6 +173,16 @@ public class KeyValueHandler
         if (setting.IsReadOnly)
         {
             return new ReadOnlyResult(key);
+        }
+
+        if (ifMatch != null && (ifMatch != setting.ETag && ifMatch != "*"))
+        {
+            return new PreconditionFailedResult();
+        }
+
+        if (ifNoneMatch != null && (ifNoneMatch == setting.ETag || ifNoneMatch == "*"))
+        {
+            return new PreconditionFailedResult();
         }
 
         setting.Value = input.Value;

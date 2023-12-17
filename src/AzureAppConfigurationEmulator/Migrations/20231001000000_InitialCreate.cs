@@ -17,6 +17,7 @@ namespace AzureAppConfigurationEmulator.Migrations
                 {
                     Key = table.Column<string>(type: "TEXT", nullable: false),
                     Label = table.Column<string>(type: "TEXT", nullable: false),
+                    ETag = table.Column<string>(type: "TEXT", nullable: false),
                     ContentType = table.Column<string>(type: "TEXT", nullable: true),
                     Value = table.Column<string>(type: "TEXT", nullable: true),
                     LastModified = table.Column<DateTimeOffset>(type: "TEXT", nullable: false),
