@@ -30,6 +30,7 @@ public class KeyValueResult(ConfigurationSetting setting) :
     object? IValueHttpResult.Value => Value;
 
     public KeyValue? Value { get; } = new(
+        setting.ETag,
         setting.Key,
         setting.Label.NormalizeNull(),
         setting.ContentType,
@@ -39,6 +40,7 @@ public class KeyValueResult(ConfigurationSetting setting) :
 }
 
 public record KeyValue(
+    string Etag,
     string Key,
     string? Label,
     string? ContentType,

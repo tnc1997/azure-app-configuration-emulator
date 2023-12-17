@@ -1,6 +1,7 @@
 namespace AzureAppConfigurationEmulator.Entities;
 
 public class ConfigurationSetting(
+    string eTag,
     string key,
     string label,
     string? contentType,
@@ -8,6 +9,8 @@ public class ConfigurationSetting(
     DateTimeOffset lastModified,
     bool isReadOnly)
 {
+    public string ETag { get; set; } = eTag;
+
     public string Key { get; set; } = key;
 
     public string Label { get; set; } = label;

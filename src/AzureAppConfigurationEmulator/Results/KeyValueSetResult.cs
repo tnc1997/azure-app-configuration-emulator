@@ -32,6 +32,7 @@ public class KeyValueSetResult(IEnumerable<ConfigurationSetting> settings) :
     public KeyValueSet? Value { get; } = new(
         settings.Select(
             setting => new KeyValue(
+                setting.ETag,
                 setting.Key,
                 setting.Label.NormalizeNull(),
                 setting.ContentType,
