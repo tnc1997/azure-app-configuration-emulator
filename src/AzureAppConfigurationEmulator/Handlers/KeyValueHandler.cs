@@ -1,35 +1,49 @@
 using System.Text.RegularExpressions;
 using AzureAppConfigurationEmulator.Constants;
-using AzureAppConfigurationEmulator.Contexts;
 using AzureAppConfigurationEmulator.Entities;
-using AzureAppConfigurationEmulator.Extensions;
+using AzureAppConfigurationEmulator.Repositories;
 using AzureAppConfigurationEmulator.Results;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 
 namespace AzureAppConfigurationEmulator.Handlers;
 
 public class KeyValueHandler
 {
-    public static async Task<Results<KeyValueResult, NotFound>> Get(
-        [FromServices] ApplicationDbContext context,
+    public static async Task<Results<KeyValueResult, NoContent>> Delete(
+        [FromServices] IConfigurationSettingRepository repository,
         [FromRoute] string key,
-        CancellationToken cancellationToken,
-        [FromQuery] string label = LabelFilter.Null)
+        [FromQuery] string label = LabelFilter.Null,
+        CancellationToken cancellationToken = default)
     {
-        var setting = await context.ConfigurationSettings.SingleOrDefaultAsync(
-            setting => setting.Key == key && setting.Label == label,
-            cancellationToken);
+        var setting = await repository.Get(key, label).SingleOrDefaultAsync(cancellationToken);
+
+        if (setting == null)
+        {
+            return TypedResults.NoContent();
+        }
+
+        await repository.RemoveAsync(setting, cancellationToken);
+
+        return new KeyValueResult(setting);
+    }
+
+    public static async Task<Results<KeyValueResult, NotFound>> Get(
+        [FromServices] IConfigurationSettingRepository repository,
+        [FromRoute] string key,
+        [FromQuery] string label = LabelFilter.Null,
+        CancellationToken cancellationToken = default)
+    {
+        var setting = await repository.Get(key, label).SingleOrDefaultAsync(cancellationToken);
 
         return setting != null ? new KeyValueResult(setting) : TypedResults.NotFound();
     }
 
     public static async Task<Results<KeyValueSetResult, InvalidCharacterResult, TooManyValuesResult>> List(
-        [FromServices] ApplicationDbContext context,
-        CancellationToken cancellationToken,
+        [FromServices] IConfigurationSettingRepository repository,
         [FromQuery] string key = KeyFilter.Any,
-        [FromQuery] string label = LabelFilter.Any)
+        [FromQuery] string label = LabelFilter.Any,
+        CancellationToken cancellationToken = default)
     {
         if (key != KeyFilter.Any)
         {
@@ -57,23 +71,19 @@ public class KeyValueHandler
             }
         }
 
-        var settings = await context.ConfigurationSettings
-            .Where(key, label)
-            .ToListAsync(cancellationToken);
+        var settings = await repository.Get(key, label).ToListAsync(cancellationToken);
 
         return new KeyValueSetResult(settings);
     }
 
     public static async Task<Results<KeyValueResult, ReadOnlyResult>> Set(
-        [FromServices] ApplicationDbContext context,
+        [FromServices] IConfigurationSettingRepository repository,
         [FromBody] SetInput input,
         [FromRoute] string key,
-        CancellationToken cancellationToken,
-        [FromQuery] string label = LabelFilter.Null)
+        [FromQuery] string label = LabelFilter.Null,
+        CancellationToken cancellationToken = default)
     {
-        var setting = await context.ConfigurationSettings.SingleOrDefaultAsync(
-            setting => setting.Key == key && setting.Label == label,
-            cancellationToken);
+        var setting = await repository.Get(key, label).SingleOrDefaultAsync(cancellationToken);
 
         if (setting == null)
         {
@@ -85,46 +95,23 @@ public class KeyValueHandler
                 DateTimeOffset.UtcNow,
                 false);
 
-            context.ConfigurationSettings.Add(setting);
+            await repository.AddAsync(setting, cancellationToken);
+
+            return new KeyValueResult(setting);
         }
-        else if (setting.IsReadOnly)
+
+        if (setting.IsReadOnly)
         {
             return new ReadOnlyResult(key);
         }
-        else
-        {
-            setting.Value = input.Value;
-            setting.ContentType = input.ContentType;
 
-            context.ConfigurationSettings.Update(setting);
-        }
+        setting.Value = input.Value;
+        setting.ContentType = input.ContentType;
 
-        await context.SaveChangesAsync(cancellationToken);
+        await repository.UpdateAsync(setting, cancellationToken);
 
         return new KeyValueResult(setting);
     }
 
     public record SetInput(string? Value, string? ContentType);
-
-    public static async Task<Results<KeyValueResult, NoContent>> Delete(
-        [FromServices] ApplicationDbContext context,
-        [FromRoute] string key,
-        CancellationToken cancellationToken,
-        [FromQuery] string label = LabelFilter.Null)
-    {
-        var setting = await context.ConfigurationSettings.SingleOrDefaultAsync(
-            setting => setting.Key == key && setting.Label == label,
-            cancellationToken);
-
-        if (setting == null)
-        {
-            return TypedResults.NoContent();
-        }
-
-        context.ConfigurationSettings.Remove(setting);
-
-        await context.SaveChangesAsync(cancellationToken);
-
-        return new KeyValueResult(setting);
-    }
 }

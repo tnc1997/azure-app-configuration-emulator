@@ -3,6 +3,7 @@ using AzureAppConfigurationEmulator.Authentication;
 using AzureAppConfigurationEmulator.Contexts;
 using AzureAppConfigurationEmulator.Extensions;
 using AzureAppConfigurationEmulator.Handlers;
+using AzureAppConfigurationEmulator.Repositories;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -15,6 +16,8 @@ builder.Services.AddDbContext<ApplicationDbContext>(builder =>
 {
     builder.UseSqlite($"Data Source={HostingExtensions.DatabasePath}");
 });
+
+builder.Services.AddScoped<IConfigurationSettingRepository, ConfigurationSettingRepository>();
 
 builder.Services.ConfigureHttpJsonOptions(options =>
 {

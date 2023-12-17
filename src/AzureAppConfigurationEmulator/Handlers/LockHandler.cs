@@ -1,23 +1,20 @@
 using AzureAppConfigurationEmulator.Constants;
-using AzureAppConfigurationEmulator.Contexts;
+using AzureAppConfigurationEmulator.Repositories;
 using AzureAppConfigurationEmulator.Results;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 
 namespace AzureAppConfigurationEmulator.Handlers;
 
 public class LockHandler
 {
     public static async Task<Results<KeyValueResult, NotFound>> Lock(
-        [FromServices] ApplicationDbContext context,
+        [FromServices] IConfigurationSettingRepository repository,
         [FromRoute] string key,
-        CancellationToken cancellationToken,
-        [FromQuery] string label = LabelFilter.Null)
+        [FromQuery] string label = LabelFilter.Null,
+        CancellationToken cancellationToken = default)
     {
-        var setting = await context.ConfigurationSettings.SingleOrDefaultAsync(
-            setting => setting.Key == key && setting.Label == label,
-            cancellationToken);
+        var setting = await repository.Get(key, label).SingleOrDefaultAsync(cancellationToken);
 
         if (setting == null)
         {
@@ -26,22 +23,18 @@ public class LockHandler
 
         setting.IsReadOnly = true;
 
-        context.ConfigurationSettings.Update(setting);
-
-        await context.SaveChangesAsync(cancellationToken);
+        await repository.UpdateAsync(setting, cancellationToken);
 
         return new KeyValueResult(setting);
     }
 
     public static async Task<Results<KeyValueResult, NotFound>> Unlock(
-        [FromServices] ApplicationDbContext context,
+        [FromServices] IConfigurationSettingRepository repository,
         [FromRoute] string key,
-        CancellationToken cancellationToken,
-        [FromQuery] string label = LabelFilter.Null)
+        [FromQuery] string label = LabelFilter.Null,
+        CancellationToken cancellationToken = default)
     {
-        var setting = await context.ConfigurationSettings.SingleOrDefaultAsync(
-            setting => setting.Key == key && setting.Label == label,
-            cancellationToken);
+        var setting = await repository.Get(key, label).SingleOrDefaultAsync(cancellationToken);
 
         if (setting == null)
         {
@@ -50,9 +43,7 @@ public class LockHandler
 
         setting.IsReadOnly = false;
 
-        context.ConfigurationSettings.Update(setting);
-
-        await context.SaveChangesAsync(cancellationToken);
+        await repository.UpdateAsync(setting, cancellationToken);
 
         return new KeyValueResult(setting);
     }
