@@ -1,20 +1,19 @@
 using System.Text.RegularExpressions;
 using AzureAppConfigurationEmulator.Constants;
-using AzureAppConfigurationEmulator.Contexts;
 using AzureAppConfigurationEmulator.Extensions;
+using AzureAppConfigurationEmulator.Repositories;
 using AzureAppConfigurationEmulator.Results;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 
 namespace AzureAppConfigurationEmulator.Handlers;
 
 public class LabelHandler
 {
     public static async Task<Results<LabelSetResult, InvalidCharacterResult, TooManyValuesResult>> List(
-        [FromServices] ApplicationDbContext context,
-        CancellationToken cancellationToken,
-        [FromQuery] string name = LabelFilter.Any)
+        [FromServices] IConfigurationSettingRepository repository,
+        [FromQuery] string name = LabelFilter.Any,
+        CancellationToken cancellationToken = default)
     {
         if (name != LabelFilter.Any)
         {
@@ -29,8 +28,7 @@ public class LabelHandler
             }
         }
 
-        var labels = await context.ConfigurationSettings
-            .Where(label: name)
+        var labels = await repository.Get(label: name)
             .Select(setting => setting.Label.NormalizeNull())
             .Distinct()
             .ToListAsync(cancellationToken);

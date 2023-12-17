@@ -1,20 +1,18 @@
 using System.Text.RegularExpressions;
 using AzureAppConfigurationEmulator.Constants;
-using AzureAppConfigurationEmulator.Contexts;
-using AzureAppConfigurationEmulator.Extensions;
+using AzureAppConfigurationEmulator.Repositories;
 using AzureAppConfigurationEmulator.Results;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 
 namespace AzureAppConfigurationEmulator.Handlers;
 
 public class KeyHandler
 {
     public static async Task<Results<KeySetResult, InvalidCharacterResult, TooManyValuesResult>> List(
-        [FromServices] ApplicationDbContext context,
-        CancellationToken cancellationToken,
-        [FromQuery] string name = KeyFilter.Any)
+        [FromServices] IConfigurationSettingRepository repository,
+        [FromQuery] string name = KeyFilter.Any,
+        CancellationToken cancellationToken = default)
     {
         if (name != KeyFilter.Any)
         {
@@ -29,8 +27,7 @@ public class KeyHandler
             }
         }
 
-        var keys = await context.ConfigurationSettings
-            .Where(key: name)
+        var keys = await repository.Get(key: name)
             .Select(setting => setting.Key)
             .Distinct()
             .ToListAsync(cancellationToken);
