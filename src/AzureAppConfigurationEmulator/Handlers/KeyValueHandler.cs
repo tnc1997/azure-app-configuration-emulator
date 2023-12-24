@@ -140,6 +140,8 @@ public class KeyValueHandler
         ifMatch = ifMatch?.TrimStart('"').TrimEnd('"');
         ifNoneMatch = ifNoneMatch?.TrimStart('"').TrimEnd('"');
 
+        var date = DateTimeOffset.UtcNow;
+
         var setting = await repository.Get(key, label).SingleOrDefaultAsync(cancellationToken);
 
         if (setting == null)
@@ -153,8 +155,6 @@ public class KeyValueHandler
             {
                 return new PreconditionFailedResult();
             }
-
-            var date = DateTimeOffset.UtcNow;
 
             setting = new ConfigurationSetting(
                 Encoding.UTF8.GetString(SHA256.HashData(Encoding.UTF8.GetBytes(date.ToString("O")))),
@@ -185,8 +185,10 @@ public class KeyValueHandler
             return new PreconditionFailedResult();
         }
 
-        setting.Value = input.Value;
+        setting.ETag = Encoding.UTF8.GetString(SHA256.HashData(Encoding.UTF8.GetBytes(date.ToString("O"))));
         setting.ContentType = input.ContentType;
+        setting.Value = input.Value;
+        setting.LastModified = date;
 
         await repository.UpdateAsync(setting, cancellationToken);
 
