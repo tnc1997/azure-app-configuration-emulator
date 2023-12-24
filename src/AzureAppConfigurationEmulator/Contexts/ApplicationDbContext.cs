@@ -7,6 +7,8 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
 {
     public DbSet<ConfigurationSetting> ConfigurationSettings => Set<ConfigurationSetting>();
 
+    public DbSet<ConfigurationSettingRevision> ConfigurationSettingRevisions => Set<ConfigurationSettingRevision>();
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
@@ -14,6 +16,11 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
         modelBuilder.Entity<ConfigurationSetting>(typeBuilder =>
         {
             typeBuilder.HasKey(setting => new { setting.Key, setting.Label });
+        });
+
+        modelBuilder.Entity<ConfigurationSettingRevision>(typeBuilder =>
+        {
+            typeBuilder.HasKey(revision => new { revision.Key, revision.Label, revision.ValidFrom });
         });
     }
 }
