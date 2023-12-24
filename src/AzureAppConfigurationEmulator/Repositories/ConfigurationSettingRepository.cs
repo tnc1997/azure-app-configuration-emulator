@@ -16,6 +16,8 @@ public class ConfigurationSettingRepository(ApplicationDbContext context) : ICon
     {
         Context.ConfigurationSettings.Add(setting);
 
+        Context.ConfigurationSettingRevisions.Add(new ConfigurationSettingRevision(setting));
+
         await Context.SaveChangesAsync(cancellationToken);
     }
 
@@ -70,14 +72,50 @@ public class ConfigurationSettingRepository(ApplicationDbContext context) : ICon
 
     public async Task RemoveAsync(ConfigurationSetting setting, CancellationToken cancellationToken = default)
     {
+        var date = DateTimeOffset.UtcNow;
+
         Context.ConfigurationSettings.Remove(setting);
+
+        var revision = await Context.ConfigurationSettingRevisions.SingleOrDefaultAsync(
+            revision =>
+                revision.Key == setting.Key &&
+                revision.Label == setting.Label &&
+                revision.ValidFrom.CompareTo(date) <= 0 &&
+                revision.ValidTo == null,
+            cancellationToken);
+
+        if (revision != null)
+        {
+            revision.ValidTo = date;
+
+            Context.ConfigurationSettingRevisions.Update(revision);
+        }
 
         await Context.SaveChangesAsync(cancellationToken);
     }
 
     public async Task UpdateAsync(ConfigurationSetting setting, CancellationToken cancellationToken = default)
     {
+        var date = DateTimeOffset.UtcNow;
+
         Context.ConfigurationSettings.Update(setting);
+
+        var revision = await Context.ConfigurationSettingRevisions.SingleOrDefaultAsync(
+            revision =>
+                revision.Key == setting.Key &&
+                revision.Label == setting.Label &&
+                revision.ValidFrom.CompareTo(date) <= 0 &&
+                revision.ValidTo == null,
+            cancellationToken);
+
+        if (revision != null)
+        {
+            revision.ValidTo = setting.LastModified;
+
+            Context.ConfigurationSettingRevisions.Update(revision);
+        }
+
+        Context.ConfigurationSettingRevisions.Add(new ConfigurationSettingRevision(setting));
 
         await Context.SaveChangesAsync(cancellationToken);
     }

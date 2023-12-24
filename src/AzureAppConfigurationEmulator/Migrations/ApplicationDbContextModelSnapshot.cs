@@ -45,6 +45,41 @@ namespace AzureAppConfigurationEmulator.Migrations
 
                     b.ToTable("ConfigurationSettings");
                 });
+
+            modelBuilder.Entity("AzureAppConfigurationEmulator.Entities.ConfigurationSettingRevision", b =>
+                {
+                    b.Property<string>("Key")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Label")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTimeOffset>("ValidFrom")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("ContentType")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("ETag")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<bool>("IsReadOnly")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateTimeOffset>("LastModified")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTimeOffset?>("ValidTo")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Value")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Key", "Label", "ValidFrom");
+
+                    b.ToTable("ConfigurationSettingRevisions");
+                });
 #pragma warning restore 612, 618
         }
     }
