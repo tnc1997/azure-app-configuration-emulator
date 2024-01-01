@@ -12,6 +12,9 @@ public class KeyValueResult(ConfigurationSetting setting) :
 {
     public async Task ExecuteAsync(HttpContext httpContext)
     {
+        httpContext.Response.Headers.ETag = setting.ETag;
+        httpContext.Response.Headers.LastModified = setting.LastModified.ToString("R");
+
         if (StatusCode.HasValue)
         {
             httpContext.Response.StatusCode = StatusCode.Value;
