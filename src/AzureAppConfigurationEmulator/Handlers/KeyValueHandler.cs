@@ -157,7 +157,7 @@ public class KeyValueHandler
             }
 
             setting = new ConfigurationSetting(
-                Encoding.UTF8.GetString(SHA256.HashData(Encoding.UTF8.GetBytes(date.ToString("O")))),
+                Convert.ToBase64String(SHA256.HashData(Encoding.UTF8.GetBytes(date.ToString("O")))),
                 key,
                 label,
                 input.ContentType,
@@ -185,7 +185,7 @@ public class KeyValueHandler
             return new PreconditionFailedResult();
         }
 
-        setting.ETag = Encoding.UTF8.GetString(SHA256.HashData(Encoding.UTF8.GetBytes(date.ToString("O"))));
+        setting.ETag = Convert.ToBase64String(SHA256.HashData(Encoding.UTF8.GetBytes(date.ToString("O"))));
         setting.ContentType = input.ContentType;
         setting.Value = input.Value;
         setting.LastModified = date;
