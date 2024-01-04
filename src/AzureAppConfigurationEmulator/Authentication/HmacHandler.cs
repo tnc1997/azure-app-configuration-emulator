@@ -100,7 +100,22 @@ public class HmacHandler(IOptionsMonitor<HmacOptions> options, ILoggerFactory lo
             }
 
             Logger.LogDebug("Checking if the signature is valid.");
-            if (!parameters[AuthenticationParameters.Signature].Equals(Convert.ToBase64String(HMACSHA256.HashData(Convert.FromBase64String(Options.Secret), Encoding.UTF8.GetBytes($"{Request.Method}\n{Request.GetEncodedPathAndQuery()}\n{string.Join(';', parameters[AuthenticationParameters.SignedHeaders].Split(';').Select(header => Request.Headers[header]))}"))), StringComparison.Ordinal))
+
+            var signedHeaders = parameters[AuthenticationParameters.SignedHeaders]
+                .Split(';')
+                .ToDictionary(i => i, i => Request.Headers[i].ToString(), StringComparer.OrdinalIgnoreCase);
+
+            if (signedHeaders.TryGetValue(HeaderNames.Host, out var hostHeader) && hostHeader.Contains(':'))
+            {
+                // Remove the port from the host header if applicable
+                signedHeaders[HeaderNames.Host] = hostHeader[..hostHeader.IndexOf(':')];
+            }
+
+            var signedHeadersPart = string.Join(';', parameters[AuthenticationParameters.SignedHeaders].Split(';').Select(header => signedHeaders[header]));
+            var stringToSign = $"{Request.Method}\n{Request.GetEncodedPathAndQuery()}\n{signedHeadersPart}";
+            var signature = Convert.ToBase64String(HMACSHA256.HashData(Convert.FromBase64String(Options.Secret), Encoding.ASCII.GetBytes(stringToSign)));
+
+            if (!parameters[AuthenticationParameters.Signature].Equals(signature, StringComparison.Ordinal))
             {
                 return AuthenticateResult.Fail("Invalid signature");
             }
