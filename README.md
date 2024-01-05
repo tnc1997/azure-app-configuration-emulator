@@ -22,7 +22,7 @@ const date = new Date().toUTCString();
 const contentHash = CryptoJS.SHA256(CryptoJS.enc.Utf8.parse(pm.request.body.toString())).toString(CryptoJS.enc.Base64);
 
 const signedHeaders = "x-ms-date;Host;x-ms-content-sha256";
-const stringToSign = `${pm.request.method}\n${pm.request.url.getPathWithQuery()}\n${date};${pm.request.url.getRemote()};${contentHash}`;
+const stringToSign = `${pm.request.method}\n${pm.request.url.getPathWithQuery()}\n${date};${pm.request.url.getHost()};${contentHash}`;
 const signature = CryptoJS.HmacSHA256(CryptoJS.enc.Utf8.parse(stringToSign), CryptoJS.enc.Base64.parse(secret)).toString(CryptoJS.enc.Base64);
 
 pm.request.headers.upsert(`x-ms-date: ${date}`);
