@@ -101,21 +101,8 @@ public class HmacHandler(IOptionsMonitor<HmacOptions> options, ILoggerFactory lo
 
             Logger.LogDebug("Checking if the signature is valid.");
 
-            var signedHeaders = parameters[AuthenticationParameters.SignedHeaders]
-                .Split(';')
-                .ToDictionary(i => i, i => Request.Headers[i].ToString(), StringComparer.OrdinalIgnoreCase);
-
-            if (signedHeaders.TryGetValue(HeaderNames.Host, out var hostHeader) && hostHeader.Contains(':'))
-            {
-                // Remove the port from the host header if applicable
-                signedHeaders[HeaderNames.Host] = hostHeader[..hostHeader.IndexOf(':')];
-            }
-
-            var signedHeadersPart = string.Join(';', parameters[AuthenticationParameters.SignedHeaders].Split(';').Select(header => signedHeaders[header]));
-            var stringToSign = $"{Request.Method}\n{Request.GetEncodedPathAndQuery()}\n{signedHeadersPart}";
-            var signature = Convert.ToBase64String(HMACSHA256.HashData(Convert.FromBase64String(Options.Secret), Encoding.ASCII.GetBytes(stringToSign)));
-
-            if (!parameters[AuthenticationParameters.Signature].Equals(signature, StringComparison.Ordinal))
+            if (!CheckSignature(parameters, tryWithStrippingPort: false)
+                && !CheckSignature(parameters, tryWithStrippingPort: true))
             {
                 return AuthenticateResult.Fail("Invalid signature");
             }
@@ -139,6 +126,25 @@ public class HmacHandler(IOptionsMonitor<HmacOptions> options, ILoggerFactory lo
 
             return AuthenticateResult.Success(new AuthenticationTicket(new ClaimsPrincipal(new ClaimsIdentity(Scheme.Name)), Scheme.Name));
         }
+    }
+
+    private bool CheckSignature(IDictionary<string, string> parameters, bool tryWithStrippingPort)
+    {
+        var signedHeaders = parameters[AuthenticationParameters.SignedHeaders]
+            .Split(';')
+            .ToDictionary(i => i, i => Request.Headers[i].ToString(), StringComparer.OrdinalIgnoreCase);
+
+        if (tryWithStrippingPort && signedHeaders.TryGetValue(HeaderNames.Host, out var hostHeader) && hostHeader.Contains(':'))
+        {
+            // the .NET SDK has an issue when running locally where it doesn't include the port in the signed host header
+            signedHeaders[HeaderNames.Host] = hostHeader[..hostHeader.IndexOf(':')];
+        }
+
+        var signedHeadersPart = string.Join(';', parameters[AuthenticationParameters.SignedHeaders].Split(';').Select(header => signedHeaders[header]));
+        var stringToSign = $"{Request.Method}\n{Request.GetEncodedPathAndQuery()}\n{signedHeadersPart}";
+        var signature = Convert.ToBase64String(HMACSHA256.HashData(Convert.FromBase64String(Options.Secret), Encoding.ASCII.GetBytes(stringToSign)));
+
+        return parameters[AuthenticationParameters.Signature].Equals(signature, StringComparison.Ordinal);
     }
 
     protected override async Task HandleChallengeAsync(AuthenticationProperties properties)
