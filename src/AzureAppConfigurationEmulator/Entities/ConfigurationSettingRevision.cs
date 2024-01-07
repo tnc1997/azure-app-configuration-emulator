@@ -6,10 +6,10 @@ public class ConfigurationSettingRevision(
     string label,
     string? contentType,
     string? value,
-    DateTimeOffset lastModified,
+    DateTime lastModified,
     bool isReadOnly,
-    DateTimeOffset validFrom,
-    DateTimeOffset? validTo)
+    DateTime validFrom,
+    DateTime? validTo)
 {
     public ConfigurationSettingRevision(ConfigurationSetting setting) : this(
         setting.ETag,
@@ -34,11 +34,11 @@ public class ConfigurationSettingRevision(
 
     public string? Value { get; set; } = value;
 
-    public DateTimeOffset LastModified { get; set; } = lastModified;
+    public DateTime LastModified { get; set; } = lastModified;
 
     public bool IsReadOnly { get; set; } = isReadOnly;
 
-    public DateTimeOffset ValidFrom { get; set; } = validFrom;
+    public DateTime ValidFrom { get; set; } = validFrom;
 
-    public DateTimeOffset? ValidTo { get; set; } = validTo;
+    public DateTime? ValidTo { get; set; } = validTo;
 }

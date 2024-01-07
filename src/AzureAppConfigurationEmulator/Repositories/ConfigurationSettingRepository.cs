@@ -21,58 +21,109 @@ public class ConfigurationSettingRepository(ApplicationDbContext context) : ICon
         await Context.SaveChangesAsync(cancellationToken);
     }
 
-    public IAsyncEnumerable<ConfigurationSetting> Get(string key = KeyFilter.Any, string label = LabelFilter.Any)
+    public IAsyncEnumerable<ConfigurationSetting> Get(string key = KeyFilter.Any, string label = LabelFilter.Any, DateTime? utcPointInTime = default)
     {
-        var outer = PredicateBuilder.New<ConfigurationSetting>(true);
-
-        if (key != KeyFilter.Any)
+        if (utcPointInTime.HasValue)
         {
-            var inner = PredicateBuilder.New<ConfigurationSetting>(false);
+            var outer = PredicateBuilder.New<ConfigurationSettingRevision>(revision => revision.ValidFrom <= utcPointInTime.Value && (revision.ValidTo == null || revision.ValidTo > utcPointInTime.Value));
 
-            foreach (var s in new Regex(@"(?<!\\),").Split(key).Select(s => s.Unescape()))
+            if (key != KeyFilter.Any)
             {
-                var match = new Regex(@"^(.*)(?<!\\)\*$").Match(s);
+                var inner = PredicateBuilder.New<ConfigurationSettingRevision>(false);
 
-                if (match.Success)
+                foreach (var s in new Regex(@"(?<!\\),").Split(key).Select(s => s.Unescape()))
                 {
-                    inner = inner.Or(setting => setting.Key.StartsWith(match.Groups[1].Value));
+                    var match = new Regex(@"^(.*)(?<!\\)\*$").Match(s);
+
+                    if (match.Success)
+                    {
+                        inner = inner.Or(setting => setting.Key.StartsWith(match.Groups[1].Value));
+                    }
+                    else
+                    {
+                        inner = inner.Or(setting => setting.Key == s);
+                    }
                 }
-                else
-                {
-                    inner = inner.Or(setting => setting.Key == s);
-                }
+
+                outer = outer.And(inner);
             }
 
-            outer = outer.And(inner);
-        }
-
-        if (label != LabelFilter.Any)
-        {
-            var inner = PredicateBuilder.New<ConfigurationSetting>(false);
-
-            foreach (var s in new Regex(@"(?<!\\),").Split(label).Select(s => s.Unescape()))
+            if (label != LabelFilter.Any)
             {
-                var match = new Regex(@"^(.*)(?<!\\)\*$").Match(s);
+                var inner = PredicateBuilder.New<ConfigurationSettingRevision>(false);
 
-                if (match.Success)
+                foreach (var s in new Regex(@"(?<!\\),").Split(label).Select(s => s.Unescape()))
                 {
-                    inner = inner.Or(setting => setting.Label.StartsWith(match.Groups[1].Value));
+                    var match = new Regex(@"^(.*)(?<!\\)\*$").Match(s);
+
+                    if (match.Success)
+                    {
+                        inner = inner.Or(setting => setting.Label.StartsWith(match.Groups[1].Value));
+                    }
+                    else
+                    {
+                        inner = inner.Or(setting => setting.Label == s);
+                    }
                 }
-                else
-                {
-                    inner = inner.Or(setting => setting.Label == s);
-                }
+
+                outer = outer.And(inner);
             }
 
-            outer = outer.And(inner);
+            return Context.ConfigurationSettingRevisions.Where(outer).Select(revision => new ConfigurationSetting(revision)).AsAsyncEnumerable();
         }
+        else
+        {
+            var outer = PredicateBuilder.New<ConfigurationSetting>(true);
 
-        return Context.ConfigurationSettings.Where(outer).AsAsyncEnumerable();
+            if (key != KeyFilter.Any)
+            {
+                var inner = PredicateBuilder.New<ConfigurationSetting>(false);
+
+                foreach (var s in new Regex(@"(?<!\\),").Split(key).Select(s => s.Unescape()))
+                {
+                    var match = new Regex(@"^(.*)(?<!\\)\*$").Match(s);
+
+                    if (match.Success)
+                    {
+                        inner = inner.Or(setting => setting.Key.StartsWith(match.Groups[1].Value));
+                    }
+                    else
+                    {
+                        inner = inner.Or(setting => setting.Key == s);
+                    }
+                }
+
+                outer = outer.And(inner);
+            }
+
+            if (label != LabelFilter.Any)
+            {
+                var inner = PredicateBuilder.New<ConfigurationSetting>(false);
+
+                foreach (var s in new Regex(@"(?<!\\),").Split(label).Select(s => s.Unescape()))
+                {
+                    var match = new Regex(@"^(.*)(?<!\\)\*$").Match(s);
+
+                    if (match.Success)
+                    {
+                        inner = inner.Or(setting => setting.Label.StartsWith(match.Groups[1].Value));
+                    }
+                    else
+                    {
+                        inner = inner.Or(setting => setting.Label == s);
+                    }
+                }
+
+                outer = outer.And(inner);
+            }
+
+            return Context.ConfigurationSettings.Where(outer).AsAsyncEnumerable();
+        }
     }
 
     public async Task RemoveAsync(ConfigurationSetting setting, CancellationToken cancellationToken = default)
     {
-        var date = DateTimeOffset.UtcNow;
+        var date = DateTime.UtcNow;
 
         Context.ConfigurationSettings.Remove(setting);
 
@@ -80,7 +131,7 @@ public class ConfigurationSettingRepository(ApplicationDbContext context) : ICon
             revision =>
                 revision.Key == setting.Key &&
                 revision.Label == setting.Label &&
-                revision.ValidFrom.CompareTo(date) <= 0 &&
+                revision.ValidFrom <= date &&
                 revision.ValidTo == null,
             cancellationToken);
 
@@ -96,7 +147,7 @@ public class ConfigurationSettingRepository(ApplicationDbContext context) : ICon
 
     public async Task UpdateAsync(ConfigurationSetting setting, CancellationToken cancellationToken = default)
     {
-        var date = DateTimeOffset.UtcNow;
+        var date = DateTime.UtcNow;
 
         Context.ConfigurationSettings.Update(setting);
 
@@ -104,7 +155,7 @@ public class ConfigurationSettingRepository(ApplicationDbContext context) : ICon
             revision =>
                 revision.Key == setting.Key &&
                 revision.Label == setting.Label &&
-                revision.ValidFrom.CompareTo(date) <= 0 &&
+                revision.ValidFrom <= date &&
                 revision.ValidTo == null,
             cancellationToken);
 

@@ -18,9 +18,9 @@ public class LockHandlerTests
         var repository = Substitute.For<IConfigurationSettingRepository>();
         var settings = new List<ConfigurationSetting>
         {
-            new("abc", "HelloWorld", LabelFilter.Null, null, null, DateTimeOffset.UtcNow, false)
+            new("abc", "HelloWorld", LabelFilter.Null, null, null, DateTime.UtcNow, false)
         };
-        repository.Get(Arg.Any<string>(), Arg.Any<string>()).Returns(settings.ToAsyncEnumerable());
+        repository.Get(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<DateTime>()).Returns(settings.ToAsyncEnumerable());
 
         // Act
         var results = await LockHandler.Lock(repository, "HelloWorld");
@@ -37,9 +37,9 @@ public class LockHandlerTests
         var repository = Substitute.For<IConfigurationSettingRepository>();
         var settings = new List<ConfigurationSetting>
         {
-            new("abc", "HelloWorld", LabelFilter.Null, null, null, DateTimeOffset.UtcNow, false)
+            new("abc", "HelloWorld", LabelFilter.Null, null, null, DateTime.UtcNow, false)
         };
-        repository.Get(Arg.Any<string>(), Arg.Any<string>()).Returns(settings.ToAsyncEnumerable());
+        repository.Get(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<DateTime>()).Returns(settings.ToAsyncEnumerable());
 
         // Act
         var results = await LockHandler.Lock(repository, "HelloWorld", ifMatch: ifMatch);
@@ -55,9 +55,9 @@ public class LockHandlerTests
         var repository = Substitute.For<IConfigurationSettingRepository>();
         var settings = new List<ConfigurationSetting>
         {
-            new("abc", "HelloWorld", LabelFilter.Null, null, null, DateTimeOffset.UtcNow, false)
+            new("abc", "HelloWorld", LabelFilter.Null, null, null, DateTime.UtcNow, false)
         };
-        repository.Get(Arg.Any<string>(), Arg.Any<string>()).Returns(settings.ToAsyncEnumerable());
+        repository.Get(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<DateTime>()).Returns(settings.ToAsyncEnumerable());
 
         // Act
         var results = await LockHandler.Lock(repository, "HelloWorld", ifNoneMatch: "def");
@@ -72,7 +72,7 @@ public class LockHandlerTests
         // Arrange
         var repository = Substitute.For<IConfigurationSettingRepository>();
         var settings = Enumerable.Empty<ConfigurationSetting>();
-        repository.Get(Arg.Any<string>(), Arg.Any<string>()).Returns(settings.ToAsyncEnumerable());
+        repository.Get(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<DateTime>()).Returns(settings.ToAsyncEnumerable());
 
         // Act
         var results = await LockHandler.Lock(repository, "HelloWorld");
@@ -89,9 +89,9 @@ public class LockHandlerTests
         var repository = Substitute.For<IConfigurationSettingRepository>();
         var settings = new List<ConfigurationSetting>
         {
-            new("abc", "HelloWorld", LabelFilter.Null, null, null, DateTimeOffset.UtcNow, false)
+            new("abc", "HelloWorld", LabelFilter.Null, null, null, DateTime.UtcNow, false)
         };
-        repository.Get(Arg.Any<string>(), Arg.Any<string>()).Returns(settings.ToAsyncEnumerable());
+        repository.Get(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<DateTime>()).Returns(settings.ToAsyncEnumerable());
 
         // Act
         var results = await LockHandler.Lock(repository, "HelloWorld", ifNoneMatch: ifNoneMatch);
@@ -107,9 +107,9 @@ public class LockHandlerTests
         var repository = Substitute.For<IConfigurationSettingRepository>();
         var settings = new List<ConfigurationSetting>
         {
-            new("abc", "HelloWorld", LabelFilter.Null, null, null, DateTimeOffset.UtcNow, false)
+            new("abc", "HelloWorld", LabelFilter.Null, null, null, DateTime.UtcNow, false)
         };
-        repository.Get(Arg.Any<string>(), Arg.Any<string>()).Returns(settings.ToAsyncEnumerable());
+        repository.Get(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<DateTime>()).Returns(settings.ToAsyncEnumerable());
 
         // Act
         var results = await LockHandler.Lock(repository, "HelloWorld", ifMatch: "def");
@@ -125,9 +125,9 @@ public class LockHandlerTests
         var repository = Substitute.For<IConfigurationSettingRepository>();
         var settings = new List<ConfigurationSetting>
         {
-            new("abc", "HelloWorld", LabelFilter.Null, null, null, DateTimeOffset.UtcNow, false)
+            new("abc", "HelloWorld", LabelFilter.Null, null, null, DateTime.UtcNow, false)
         };
-        repository.Get(Arg.Any<string>(), Arg.Any<string>()).Returns(settings.ToAsyncEnumerable());
+        repository.Get(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<DateTime>()).Returns(settings.ToAsyncEnumerable());
 
         // Act
         var results = await LockHandler.Unlock(repository, "HelloWorld");
@@ -144,9 +144,9 @@ public class LockHandlerTests
         var repository = Substitute.For<IConfigurationSettingRepository>();
         var settings = new List<ConfigurationSetting>
         {
-            new("abc", "HelloWorld", LabelFilter.Null, null, null, DateTimeOffset.UtcNow, false)
+            new("abc", "HelloWorld", LabelFilter.Null, null, null, DateTime.UtcNow, false)
         };
-        repository.Get(Arg.Any<string>(), Arg.Any<string>()).Returns(settings.ToAsyncEnumerable());
+        repository.Get(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<DateTime>()).Returns(settings.ToAsyncEnumerable());
 
         // Act
         var results = await LockHandler.Unlock(repository, "HelloWorld", ifMatch: ifMatch);
@@ -162,9 +162,9 @@ public class LockHandlerTests
         var repository = Substitute.For<IConfigurationSettingRepository>();
         var settings = new List<ConfigurationSetting>
         {
-            new("abc", "HelloWorld", LabelFilter.Null, null, null, DateTimeOffset.UtcNow, false)
+            new("abc", "HelloWorld", LabelFilter.Null, null, null, DateTime.UtcNow, false)
         };
-        repository.Get(Arg.Any<string>(), Arg.Any<string>()).Returns(settings.ToAsyncEnumerable());
+        repository.Get(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<DateTime>()).Returns(settings.ToAsyncEnumerable());
 
         // Act
         var results = await LockHandler.Unlock(repository, "HelloWorld", ifNoneMatch: "def");
@@ -179,7 +179,7 @@ public class LockHandlerTests
         // Arrange
         var repository = Substitute.For<IConfigurationSettingRepository>();
         var settings = Enumerable.Empty<ConfigurationSetting>();
-        repository.Get(Arg.Any<string>(), Arg.Any<string>()).Returns(settings.ToAsyncEnumerable());
+        repository.Get(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<DateTime>()).Returns(settings.ToAsyncEnumerable());
 
         // Act
         var results = await LockHandler.Unlock(repository, "HelloWorld");
@@ -196,9 +196,9 @@ public class LockHandlerTests
         var repository = Substitute.For<IConfigurationSettingRepository>();
         var settings = new List<ConfigurationSetting>
         {
-            new("abc", "HelloWorld", LabelFilter.Null, null, null, DateTimeOffset.UtcNow, false)
+            new("abc", "HelloWorld", LabelFilter.Null, null, null, DateTime.UtcNow, false)
         };
-        repository.Get(Arg.Any<string>(), Arg.Any<string>()).Returns(settings.ToAsyncEnumerable());
+        repository.Get(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<DateTime>()).Returns(settings.ToAsyncEnumerable());
 
         // Act
         var results = await LockHandler.Unlock(repository, "HelloWorld", ifNoneMatch: ifNoneMatch);
@@ -214,9 +214,9 @@ public class LockHandlerTests
         var repository = Substitute.For<IConfigurationSettingRepository>();
         var settings = new List<ConfigurationSetting>
         {
-            new("abc", "HelloWorld", LabelFilter.Null, null, null, DateTimeOffset.UtcNow, false)
+            new("abc", "HelloWorld", LabelFilter.Null, null, null, DateTime.UtcNow, false)
         };
-        repository.Get(Arg.Any<string>(), Arg.Any<string>()).Returns(settings.ToAsyncEnumerable());
+        repository.Get(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<DateTime>()).Returns(settings.ToAsyncEnumerable());
 
         // Act
         var results = await LockHandler.Unlock(repository, "HelloWorld", ifMatch: "def");

@@ -35,7 +35,7 @@ namespace AzureAppConfigurationEmulator.Migrations
                     b.Property<bool>("IsReadOnly")
                         .HasColumnType("INTEGER");
 
-                    b.Property<DateTimeOffset>("LastModified")
+                    b.Property<DateTime>("LastModified")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Value")
@@ -54,7 +54,7 @@ namespace AzureAppConfigurationEmulator.Migrations
                     b.Property<string>("Label")
                         .HasColumnType("TEXT");
 
-                    b.Property<DateTimeOffset>("ValidFrom")
+                    b.Property<DateTime>("ValidFrom")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("ContentType")
@@ -67,10 +67,10 @@ namespace AzureAppConfigurationEmulator.Migrations
                     b.Property<bool>("IsReadOnly")
                         .HasColumnType("INTEGER");
 
-                    b.Property<DateTimeOffset>("LastModified")
+                    b.Property<DateTime>("LastModified")
                         .HasColumnType("TEXT");
 
-                    b.Property<DateTimeOffset?>("ValidTo")
+                    b.Property<DateTime?>("ValidTo")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Value")

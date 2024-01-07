@@ -20,10 +20,10 @@ namespace AzureAppConfigurationEmulator.Migrations
                     ETag = table.Column<string>(type: "TEXT", nullable: false),
                     ContentType = table.Column<string>(type: "TEXT", nullable: true),
                     Value = table.Column<string>(type: "TEXT", nullable: true),
-                    LastModified = table.Column<DateTimeOffset>(type: "TEXT", nullable: false),
+                    LastModified = table.Column<DateTime>(type: "TEXT", nullable: false),
                     IsReadOnly = table.Column<bool>(type: "INTEGER", nullable: false),
-                    ValidFrom = table.Column<DateTimeOffset>(type: "TEXT", nullable: false),
-                    ValidTo = table.Column<DateTimeOffset>(type: "TEXT", nullable: true)
+                    ValidFrom = table.Column<DateTime>(type: "TEXT", nullable: false),
+                    ValidTo = table.Column<DateTime>(type: "TEXT", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -39,7 +39,7 @@ namespace AzureAppConfigurationEmulator.Migrations
                     ETag = table.Column<string>(type: "TEXT", nullable: false),
                     ContentType = table.Column<string>(type: "TEXT", nullable: true),
                     Value = table.Column<string>(type: "TEXT", nullable: true),
-                    LastModified = table.Column<DateTimeOffset>(type: "TEXT", nullable: false),
+                    LastModified = table.Column<DateTime>(type: "TEXT", nullable: false),
                     IsReadOnly = table.Column<bool>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>

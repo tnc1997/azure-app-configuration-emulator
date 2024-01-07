@@ -64,6 +64,7 @@ public class KeyValueHandler
         [FromServices] IConfigurationSettingRepository repository,
         [FromRoute] string key,
         [FromQuery] string label = LabelFilter.Null,
+        [FromHeader(Name = "Accept-Datetime")] DateTime? acceptDatetime = default,
         [FromHeader(Name = "If-Match")] string? ifMatch = default,
         [FromHeader(Name = "If-None-Match")] string? ifNoneMatch = default,
         CancellationToken cancellationToken = default)
@@ -71,7 +72,7 @@ public class KeyValueHandler
         ifMatch = ifMatch?.TrimStart('"').TrimEnd('"');
         ifNoneMatch = ifNoneMatch?.TrimStart('"').TrimEnd('"');
 
-        var setting = await repository.Get(key, label).SingleOrDefaultAsync(cancellationToken);
+        var setting = await repository.Get(key, label, acceptDatetime).SingleOrDefaultAsync(cancellationToken);
 
         if (setting == null)
         {
@@ -88,13 +89,14 @@ public class KeyValueHandler
             return new NotModifiedResult();
         }
 
-        return new KeyValueResult(setting);
+        return new KeyValueResult(setting, acceptDatetime);
     }
 
     public static async Task<Results<KeyValueSetResult, InvalidCharacterResult, TooManyValuesResult>> List(
         [FromServices] IConfigurationSettingRepository repository,
         [FromQuery] string key = KeyFilter.Any,
         [FromQuery] string label = LabelFilter.Any,
+        [FromHeader(Name = "Accept-Datetime")] DateTime? acceptDatetime = default,
         CancellationToken cancellationToken = default)
     {
         if (key != KeyFilter.Any)
@@ -123,9 +125,9 @@ public class KeyValueHandler
             }
         }
 
-        var settings = await repository.Get(key, label).ToListAsync(cancellationToken);
+        var settings = await repository.Get(key, label, acceptDatetime).ToListAsync(cancellationToken);
 
-        return new KeyValueSetResult(settings);
+        return new KeyValueSetResult(settings, acceptDatetime);
     }
 
     public static async Task<Results<KeyValueResult, PreconditionFailedResult, ReadOnlyResult>> Set(
@@ -140,7 +142,7 @@ public class KeyValueHandler
         ifMatch = ifMatch?.TrimStart('"').TrimEnd('"');
         ifNoneMatch = ifNoneMatch?.TrimStart('"').TrimEnd('"');
 
-        var date = DateTimeOffset.UtcNow;
+        var date = DateTime.UtcNow;
 
         var setting = await repository.Get(key, label).SingleOrDefaultAsync(cancellationToken);
 

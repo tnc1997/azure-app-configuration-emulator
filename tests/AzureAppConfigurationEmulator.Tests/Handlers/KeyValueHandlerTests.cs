@@ -18,9 +18,9 @@ public class KeyValueHandlerTests
         var repository = Substitute.For<IConfigurationSettingRepository>();
         var settings = new List<ConfigurationSetting>
         {
-            new("abc", "HelloWorld", LabelFilter.Null, null, null, DateTimeOffset.UtcNow, false)
+            new("abc", "HelloWorld", LabelFilter.Null, null, null, DateTime.UtcNow, false)
         };
-        repository.Get(Arg.Any<string>(), Arg.Any<string>()).Returns(settings.ToAsyncEnumerable());
+        repository.Get(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<DateTime>()).Returns(settings.ToAsyncEnumerable());
 
         // Act
         var results = await KeyValueHandler.Delete(repository, "HelloWorld");
@@ -37,9 +37,9 @@ public class KeyValueHandlerTests
         var repository = Substitute.For<IConfigurationSettingRepository>();
         var settings = new List<ConfigurationSetting>
         {
-            new("abc", "HelloWorld", LabelFilter.Null, null, null, DateTimeOffset.UtcNow, false)
+            new("abc", "HelloWorld", LabelFilter.Null, null, null, DateTime.UtcNow, false)
         };
-        repository.Get(Arg.Any<string>(), Arg.Any<string>()).Returns(settings.ToAsyncEnumerable());
+        repository.Get(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<DateTime>()).Returns(settings.ToAsyncEnumerable());
 
         // Act
         var results = await KeyValueHandler.Delete(repository, "HelloWorld", ifMatch: ifMatch);
@@ -55,9 +55,9 @@ public class KeyValueHandlerTests
         var repository = Substitute.For<IConfigurationSettingRepository>();
         var settings = new List<ConfigurationSetting>
         {
-            new("abc", "HelloWorld", LabelFilter.Null, null, null, DateTimeOffset.UtcNow, false)
+            new("abc", "HelloWorld", LabelFilter.Null, null, null, DateTime.UtcNow, false)
         };
-        repository.Get(Arg.Any<string>(), Arg.Any<string>()).Returns(settings.ToAsyncEnumerable());
+        repository.Get(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<DateTime>()).Returns(settings.ToAsyncEnumerable());
 
         // Act
         var results = await KeyValueHandler.Delete(repository, "HelloWorld", ifNoneMatch: "def");
@@ -72,7 +72,7 @@ public class KeyValueHandlerTests
         // Arrange
         var repository = Substitute.For<IConfigurationSettingRepository>();
         var settings = Enumerable.Empty<ConfigurationSetting>();
-        repository.Get(Arg.Any<string>(), Arg.Any<string>()).Returns(settings.ToAsyncEnumerable());
+        repository.Get(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<DateTime>()).Returns(settings.ToAsyncEnumerable());
 
         // Act
         var results = await KeyValueHandler.Delete(repository, "HelloWorld");
@@ -87,7 +87,7 @@ public class KeyValueHandlerTests
         // Arrange
         var repository = Substitute.For<IConfigurationSettingRepository>();
         var settings = Enumerable.Empty<ConfigurationSetting>();
-        repository.Get(Arg.Any<string>(), Arg.Any<string>()).Returns(settings.ToAsyncEnumerable());
+        repository.Get(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<DateTime>()).Returns(settings.ToAsyncEnumerable());
 
         // Act
         var results = await KeyValueHandler.Delete(repository, "HelloWorld", ifNoneMatch: "*");
@@ -102,7 +102,7 @@ public class KeyValueHandlerTests
         // Arrange
         var repository = Substitute.For<IConfigurationSettingRepository>();
         var settings = Enumerable.Empty<ConfigurationSetting>();
-        repository.Get(Arg.Any<string>(), Arg.Any<string>()).Returns(settings.ToAsyncEnumerable());
+        repository.Get(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<DateTime>()).Returns(settings.ToAsyncEnumerable());
 
         // Act
         var results = await KeyValueHandler.Delete(repository, "HelloWorld", ifMatch: "abc");
@@ -119,9 +119,9 @@ public class KeyValueHandlerTests
         var repository = Substitute.For<IConfigurationSettingRepository>();
         var settings = new List<ConfigurationSetting>
         {
-            new("abc", "HelloWorld", LabelFilter.Null, null, null, DateTimeOffset.UtcNow, false)
+            new("abc", "HelloWorld", LabelFilter.Null, null, null, DateTime.UtcNow, false)
         };
-        repository.Get(Arg.Any<string>(), Arg.Any<string>()).Returns(settings.ToAsyncEnumerable());
+        repository.Get(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<DateTime>()).Returns(settings.ToAsyncEnumerable());
 
         // Act
         var results = await KeyValueHandler.Delete(repository, "HelloWorld", ifNoneMatch: ifNoneMatch);
@@ -137,9 +137,9 @@ public class KeyValueHandlerTests
         var repository = Substitute.For<IConfigurationSettingRepository>();
         var settings = new List<ConfigurationSetting>
         {
-            new("abc", "HelloWorld", LabelFilter.Null, null, null, DateTimeOffset.UtcNow, false)
+            new("abc", "HelloWorld", LabelFilter.Null, null, null, DateTime.UtcNow, false)
         };
-        repository.Get(Arg.Any<string>(), Arg.Any<string>()).Returns(settings.ToAsyncEnumerable());
+        repository.Get(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<DateTime>()).Returns(settings.ToAsyncEnumerable());
 
         // Act
         var results = await KeyValueHandler.Delete(repository, "HelloWorld", ifMatch: "def");
@@ -154,7 +154,7 @@ public class KeyValueHandlerTests
         // Arrange
         var repository = Substitute.For<IConfigurationSettingRepository>();
         var settings = Enumerable.Empty<ConfigurationSetting>();
-        repository.Get(Arg.Any<string>(), Arg.Any<string>()).Returns(settings.ToAsyncEnumerable());
+        repository.Get(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<DateTime>()).Returns(settings.ToAsyncEnumerable());
 
         // Act
         var results = await KeyValueHandler.Delete(repository, "HelloWorld", ifNoneMatch: "abc");
@@ -169,7 +169,7 @@ public class KeyValueHandlerTests
         // Arrange
         var repository = Substitute.For<IConfigurationSettingRepository>();
         var settings = Enumerable.Empty<ConfigurationSetting>();
-        repository.Get(Arg.Any<string>(), Arg.Any<string>()).Returns(settings.ToAsyncEnumerable());
+        repository.Get(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<DateTime>()).Returns(settings.ToAsyncEnumerable());
 
         // Act
         var results = await KeyValueHandler.Delete(repository, "HelloWorld", ifMatch: "*");
@@ -185,9 +185,9 @@ public class KeyValueHandlerTests
         var repository = Substitute.For<IConfigurationSettingRepository>();
         var settings = new List<ConfigurationSetting>
         {
-            new("abc", "HelloWorld", LabelFilter.Null, null, null, DateTimeOffset.UtcNow, true)
+            new("abc", "HelloWorld", LabelFilter.Null, null, null, DateTime.UtcNow, true)
         };
-        repository.Get(Arg.Any<string>(), Arg.Any<string>()).Returns(settings.ToAsyncEnumerable());
+        repository.Get(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<DateTime>()).Returns(settings.ToAsyncEnumerable());
 
         // Act
         var results = await KeyValueHandler.Delete(repository, "HelloWorld");
@@ -203,9 +203,9 @@ public class KeyValueHandlerTests
         var repository = Substitute.For<IConfigurationSettingRepository>();
         var settings = new List<ConfigurationSetting>
         {
-            new("abc", "HelloWorld", LabelFilter.Null, null, null, DateTimeOffset.UtcNow, false)
+            new("abc", "HelloWorld", LabelFilter.Null, null, null, DateTime.UtcNow, false)
         };
-        repository.Get(Arg.Any<string>(), Arg.Any<string>()).Returns(settings.ToAsyncEnumerable());
+        repository.Get(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<DateTime>()).Returns(settings.ToAsyncEnumerable());
 
         // Act
         var results = await KeyValueHandler.Get(repository, "HelloWorld");
@@ -222,9 +222,9 @@ public class KeyValueHandlerTests
         var repository = Substitute.For<IConfigurationSettingRepository>();
         var settings = new List<ConfigurationSetting>
         {
-            new("abc", "HelloWorld", LabelFilter.Null, null, null, DateTimeOffset.UtcNow, false)
+            new("abc", "HelloWorld", LabelFilter.Null, null, null, DateTime.UtcNow, false)
         };
-        repository.Get(Arg.Any<string>(), Arg.Any<string>()).Returns(settings.ToAsyncEnumerable());
+        repository.Get(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<DateTime>()).Returns(settings.ToAsyncEnumerable());
 
         // Act
         var results = await KeyValueHandler.Get(repository, "HelloWorld", ifMatch: ifMatch);
@@ -240,9 +240,9 @@ public class KeyValueHandlerTests
         var repository = Substitute.For<IConfigurationSettingRepository>();
         var settings = new List<ConfigurationSetting>
         {
-            new("abc", "HelloWorld", LabelFilter.Null, null, null, DateTimeOffset.UtcNow, false)
+            new("abc", "HelloWorld", LabelFilter.Null, null, null, DateTime.UtcNow, false)
         };
-        repository.Get(Arg.Any<string>(), Arg.Any<string>()).Returns(settings.ToAsyncEnumerable());
+        repository.Get(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<DateTime>()).Returns(settings.ToAsyncEnumerable());
 
         // Act
         var results = await KeyValueHandler.Get(repository, "HelloWorld", ifNoneMatch: "def");
@@ -257,7 +257,7 @@ public class KeyValueHandlerTests
         // Arrange
         var repository = Substitute.For<IConfigurationSettingRepository>();
         var settings = Enumerable.Empty<ConfigurationSetting>();
-        repository.Get(Arg.Any<string>(), Arg.Any<string>()).Returns(settings.ToAsyncEnumerable());
+        repository.Get(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<DateTime>()).Returns(settings.ToAsyncEnumerable());
 
         // Act
         var results = await KeyValueHandler.Get(repository, "HelloWorld");
@@ -272,7 +272,7 @@ public class KeyValueHandlerTests
         // Arrange
         var repository = Substitute.For<IConfigurationSettingRepository>();
         var settings = Enumerable.Empty<ConfigurationSetting>();
-        repository.Get(Arg.Any<string>(), Arg.Any<string>()).Returns(settings.ToAsyncEnumerable());
+        repository.Get(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<DateTime>()).Returns(settings.ToAsyncEnumerable());
 
         // Act
         var results = await KeyValueHandler.Get(repository, "HelloWorld", ifNoneMatch: "abc");
@@ -287,7 +287,7 @@ public class KeyValueHandlerTests
         // Arrange
         var repository = Substitute.For<IConfigurationSettingRepository>();
         var settings = Enumerable.Empty<ConfigurationSetting>();
-        repository.Get(Arg.Any<string>(), Arg.Any<string>()).Returns(settings.ToAsyncEnumerable());
+        repository.Get(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<DateTime>()).Returns(settings.ToAsyncEnumerable());
 
         // Act
         var results = await KeyValueHandler.Get(repository, "HelloWorld", ifMatch: "*");
@@ -304,9 +304,9 @@ public class KeyValueHandlerTests
         var repository = Substitute.For<IConfigurationSettingRepository>();
         var settings = new List<ConfigurationSetting>
         {
-            new("abc", "HelloWorld", LabelFilter.Null, null, null, DateTimeOffset.UtcNow, false)
+            new("abc", "HelloWorld", LabelFilter.Null, null, null, DateTime.UtcNow, false)
         };
-        repository.Get(Arg.Any<string>(), Arg.Any<string>()).Returns(settings.ToAsyncEnumerable());
+        repository.Get(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<DateTime>()).Returns(settings.ToAsyncEnumerable());
 
         // Act
         var results = await KeyValueHandler.Get(repository, "HelloWorld", ifNoneMatch: ifNoneMatch);
@@ -322,9 +322,9 @@ public class KeyValueHandlerTests
         var repository = Substitute.For<IConfigurationSettingRepository>();
         var settings = new List<ConfigurationSetting>
         {
-            new("abc", "HelloWorld", LabelFilter.Null, null, null, DateTimeOffset.UtcNow, false)
+            new("abc", "HelloWorld", LabelFilter.Null, null, null, DateTime.UtcNow, false)
         };
-        repository.Get(Arg.Any<string>(), Arg.Any<string>()).Returns(settings.ToAsyncEnumerable());
+        repository.Get(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<DateTime>()).Returns(settings.ToAsyncEnumerable());
 
         // Act
         var results = await KeyValueHandler.Get(repository, "HelloWorld", ifMatch: "def");
@@ -340,9 +340,9 @@ public class KeyValueHandlerTests
         var repository = Substitute.For<IConfigurationSettingRepository>();
         var settings = new List<ConfigurationSetting>
         {
-            new("abc", "HelloWorld", LabelFilter.Null, null, null, DateTimeOffset.UtcNow, false)
+            new("abc", "HelloWorld", LabelFilter.Null, null, null, DateTime.UtcNow, false)
         };
-        repository.Get(Arg.Any<string>(), Arg.Any<string>()).Returns(settings.ToAsyncEnumerable());
+        repository.Get(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<DateTime>()).Returns(settings.ToAsyncEnumerable());
 
         // Act
         var input = new KeyValueHandler.SetInput(null, null);
@@ -360,9 +360,9 @@ public class KeyValueHandlerTests
         var repository = Substitute.For<IConfigurationSettingRepository>();
         var settings = new List<ConfigurationSetting>
         {
-            new("abc", "HelloWorld", LabelFilter.Null, null, null, DateTimeOffset.UtcNow, false)
+            new("abc", "HelloWorld", LabelFilter.Null, null, null, DateTime.UtcNow, false)
         };
-        repository.Get(Arg.Any<string>(), Arg.Any<string>()).Returns(settings.ToAsyncEnumerable());
+        repository.Get(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<DateTime>()).Returns(settings.ToAsyncEnumerable());
 
         // Act
         var input = new KeyValueHandler.SetInput(null, null);
@@ -379,9 +379,9 @@ public class KeyValueHandlerTests
         var repository = Substitute.For<IConfigurationSettingRepository>();
         var settings = new List<ConfigurationSetting>
         {
-            new("abc", "HelloWorld", LabelFilter.Null, null, null, DateTimeOffset.UtcNow, false)
+            new("abc", "HelloWorld", LabelFilter.Null, null, null, DateTime.UtcNow, false)
         };
-        repository.Get(Arg.Any<string>(), Arg.Any<string>()).Returns(settings.ToAsyncEnumerable());
+        repository.Get(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<DateTime>()).Returns(settings.ToAsyncEnumerable());
 
         // Act
         var input = new KeyValueHandler.SetInput(null, null);
@@ -397,7 +397,7 @@ public class KeyValueHandlerTests
         // Arrange
         var repository = Substitute.For<IConfigurationSettingRepository>();
         var settings = Enumerable.Empty<ConfigurationSetting>();
-        repository.Get(Arg.Any<string>(), Arg.Any<string>()).Returns(settings.ToAsyncEnumerable());
+        repository.Get(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<DateTime>()).Returns(settings.ToAsyncEnumerable());
 
         // Act
         var input = new KeyValueHandler.SetInput(null, null);
@@ -413,7 +413,7 @@ public class KeyValueHandlerTests
         // Arrange
         var repository = Substitute.For<IConfigurationSettingRepository>();
         var settings = Enumerable.Empty<ConfigurationSetting>();
-        repository.Get(Arg.Any<string>(), Arg.Any<string>()).Returns(settings.ToAsyncEnumerable());
+        repository.Get(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<DateTime>()).Returns(settings.ToAsyncEnumerable());
 
         // Act
         var input = new KeyValueHandler.SetInput(null, null);
@@ -429,7 +429,7 @@ public class KeyValueHandlerTests
         // Arrange
         var repository = Substitute.For<IConfigurationSettingRepository>();
         var settings = Enumerable.Empty<ConfigurationSetting>();
-        repository.Get(Arg.Any<string>(), Arg.Any<string>()).Returns(settings.ToAsyncEnumerable());
+        repository.Get(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<DateTime>()).Returns(settings.ToAsyncEnumerable());
 
         // Act
         var input = new KeyValueHandler.SetInput(null, null);
@@ -447,9 +447,9 @@ public class KeyValueHandlerTests
         var repository = Substitute.For<IConfigurationSettingRepository>();
         var settings = new List<ConfigurationSetting>
         {
-            new("abc", "HelloWorld", LabelFilter.Null, null, null, DateTimeOffset.UtcNow, false)
+            new("abc", "HelloWorld", LabelFilter.Null, null, null, DateTime.UtcNow, false)
         };
-        repository.Get(Arg.Any<string>(), Arg.Any<string>()).Returns(settings.ToAsyncEnumerable());
+        repository.Get(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<DateTime>()).Returns(settings.ToAsyncEnumerable());
 
         // Act
         var input = new KeyValueHandler.SetInput(null, null);
@@ -466,9 +466,9 @@ public class KeyValueHandlerTests
         var repository = Substitute.For<IConfigurationSettingRepository>();
         var settings = new List<ConfigurationSetting>
         {
-            new("abc", "HelloWorld", LabelFilter.Null, null, null, DateTimeOffset.UtcNow, false)
+            new("abc", "HelloWorld", LabelFilter.Null, null, null, DateTime.UtcNow, false)
         };
-        repository.Get(Arg.Any<string>(), Arg.Any<string>()).Returns(settings.ToAsyncEnumerable());
+        repository.Get(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<DateTime>()).Returns(settings.ToAsyncEnumerable());
 
         // Act
         var input = new KeyValueHandler.SetInput(null, null);
@@ -484,7 +484,7 @@ public class KeyValueHandlerTests
         // Arrange
         var repository = Substitute.For<IConfigurationSettingRepository>();
         var settings = Enumerable.Empty<ConfigurationSetting>();
-        repository.Get(Arg.Any<string>(), Arg.Any<string>()).Returns(settings.ToAsyncEnumerable());
+        repository.Get(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<DateTime>()).Returns(settings.ToAsyncEnumerable());
 
         // Act
         var input = new KeyValueHandler.SetInput(null, null);
@@ -500,7 +500,7 @@ public class KeyValueHandlerTests
         // Arrange
         var repository = Substitute.For<IConfigurationSettingRepository>();
         var settings = Enumerable.Empty<ConfigurationSetting>();
-        repository.Get(Arg.Any<string>(), Arg.Any<string>()).Returns(settings.ToAsyncEnumerable());
+        repository.Get(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<DateTime>()).Returns(settings.ToAsyncEnumerable());
 
         // Act
         var input = new KeyValueHandler.SetInput(null, null);
@@ -517,9 +517,9 @@ public class KeyValueHandlerTests
         var repository = Substitute.For<IConfigurationSettingRepository>();
         var settings = new List<ConfigurationSetting>
         {
-            new("abc", "HelloWorld", LabelFilter.Null, null, null, DateTimeOffset.UtcNow, true)
+            new("abc", "HelloWorld", LabelFilter.Null, null, null, DateTime.UtcNow, true)
         };
-        repository.Get(Arg.Any<string>(), Arg.Any<string>()).Returns(settings.ToAsyncEnumerable());
+        repository.Get(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<DateTime>()).Returns(settings.ToAsyncEnumerable());
 
         // Act
         var input = new KeyValueHandler.SetInput(null, null);

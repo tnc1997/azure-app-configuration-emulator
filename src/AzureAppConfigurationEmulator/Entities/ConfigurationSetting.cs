@@ -6,9 +6,20 @@ public class ConfigurationSetting(
     string label,
     string? contentType,
     string? value,
-    DateTimeOffset lastModified,
+    DateTime lastModified,
     bool isReadOnly)
 {
+    public ConfigurationSetting(ConfigurationSettingRevision revision) : this(
+        revision.ETag,
+        revision.Key,
+        revision.Label,
+        revision.ContentType,
+        revision.Value,
+        revision.LastModified,
+        revision.IsReadOnly)
+    {
+    }
+
     public string ETag { get; set; } = eTag;
 
     public string Key { get; set; } = key;
@@ -19,7 +30,7 @@ public class ConfigurationSetting(
 
     public string? Value { get; set; } = value;
 
-    public DateTimeOffset LastModified { get; set; } = lastModified;
+    public DateTime LastModified { get; set; } = lastModified;
 
     public bool IsReadOnly { get; set; } = isReadOnly;
 }

@@ -3,7 +3,7 @@ using AzureAppConfigurationEmulator.Extensions;
 
 namespace AzureAppConfigurationEmulator.Results;
 
-public class KeyValueResult(ConfigurationSetting setting) :
+public class KeyValueResult(ConfigurationSetting setting, DateTime? mementoDatetime = default) :
     IResult,
     IContentTypeHttpResult,
     IStatusCodeHttpResult,
@@ -12,8 +12,13 @@ public class KeyValueResult(ConfigurationSetting setting) :
 {
     public async Task ExecuteAsync(HttpContext httpContext)
     {
-        httpContext.Response.Headers.ETag = setting.ETag;
-        httpContext.Response.Headers.LastModified = setting.LastModified.ToString("R");
+        httpContext.Response.Headers.ETag = Setting.ETag;
+        httpContext.Response.Headers.LastModified = Setting.LastModified.ToString("R");
+
+        if (MementoDatetime.HasValue)
+        {
+            httpContext.Response.Headers["Memento-Datetime"] = MementoDatetime.Value.ToString("R");
+        }
 
         if (StatusCode.HasValue)
         {
@@ -40,6 +45,10 @@ public class KeyValueResult(ConfigurationSetting setting) :
         setting.Value,
         setting.LastModified,
         setting.IsReadOnly);
+
+    private DateTime? MementoDatetime { get; } = mementoDatetime;
+
+    private ConfigurationSetting Setting { get; } = setting;
 }
 
 public record KeyValue(
@@ -48,5 +57,5 @@ public record KeyValue(
     string? Label,
     string? ContentType,
     string? Value,
-    DateTimeOffset LastModified,
+    DateTime LastModified,
     bool Locked);
