@@ -1,6 +1,7 @@
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Web;
 using AzureAppConfigurationEmulator.Constants;
 using AzureAppConfigurationEmulator.Entities;
 using AzureAppConfigurationEmulator.Repositories;
@@ -20,6 +21,8 @@ public class KeyValueHandler
         [FromHeader(Name = "If-None-Match")] string? ifNoneMatch = default,
         CancellationToken cancellationToken = default)
     {
+        key = HttpUtility.UrlDecode(key);
+
         ifMatch = ifMatch?.TrimStart('"').TrimEnd('"');
         ifNoneMatch = ifNoneMatch?.TrimStart('"').TrimEnd('"');
 
@@ -68,6 +71,8 @@ public class KeyValueHandler
         [FromHeader(Name = "If-None-Match")] string? ifNoneMatch = default,
         CancellationToken cancellationToken = default)
     {
+        key = HttpUtility.UrlDecode(key);
+
         ifMatch = ifMatch?.TrimStart('"').TrimEnd('"');
         ifNoneMatch = ifNoneMatch?.TrimStart('"').TrimEnd('"');
 
@@ -137,6 +142,8 @@ public class KeyValueHandler
         [FromHeader(Name = "If-None-Match")] string? ifNoneMatch = default,
         CancellationToken cancellationToken = default)
     {
+        key = HttpUtility.UrlDecode(key);
+
         ifMatch = ifMatch?.TrimStart('"').TrimEnd('"');
         ifNoneMatch = ifNoneMatch?.TrimStart('"').TrimEnd('"');
 
