@@ -26,4 +26,6 @@ public static class StringExtensions
 
         return builder.ToString();
     }
+
+    public static string UrlDecodeSlashes(this string s) => s.Replace("%2F", "/");
 }
