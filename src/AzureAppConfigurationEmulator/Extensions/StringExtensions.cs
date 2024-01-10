@@ -27,6 +27,4 @@ public static class StringExtensions
 
         return builder.ToString();
     }
-
-    public static string UrlDecodeKey(this string s) => HttpUtility.UrlDecode(s.Replace("+", "%2B"));
 }
