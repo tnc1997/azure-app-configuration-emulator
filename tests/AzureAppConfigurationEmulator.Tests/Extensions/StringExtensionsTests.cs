@@ -8,9 +8,10 @@ public class StringExtensionsTests
     [TestCase(".appconfig.featureflag/flag1", ".appconfig.featureflag/flag1")]
     [TestCase(".appconfig.featureflag%2Fflag1", ".appconfig.featureflag/flag1")]
     [TestCase(".appconfig.featureflag%2Fflag1+flag2", ".appconfig.featureflag/flag1+flag2")]
-    public void UrlDecodeSlashesTests(string input, string expected)
+    [TestCase(".appconfig.featureflag%2Fflag1%2Bflag2", ".appconfig.featureflag/flag1+flag2")]
+    public void UrlDecodeKeyTests(string input, string expected)
     {
-        var result = input.UrlDecodeSlashes();
+        var result = input.UrlDecodeKey();
 
         Assert.That(result, Is.EqualTo(expected));
     }

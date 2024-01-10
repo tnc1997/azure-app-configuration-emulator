@@ -1,4 +1,5 @@
 using System.Text;
+using System.Web;
 using AzureAppConfigurationEmulator.Constants;
 
 namespace AzureAppConfigurationEmulator.Extensions;
@@ -27,5 +28,5 @@ public static class StringExtensions
         return builder.ToString();
     }
 
-    public static string UrlDecodeSlashes(this string s) => s.Replace("%2F", "/");
+    public static string UrlDecodeKey(this string s) => HttpUtility.UrlDecode(s.Replace("+", "%2B"));
 }
