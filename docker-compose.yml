@@ -1,0 +1,22 @@
+version: '3'
+services:
+  emulator:
+    build: 
+      context: .
+      dockerfile: ./src/AzureAppConfigurationEmulator/Dockerfile
+    ports:
+      - 8080:8080
+      - 8081:8081
+    volumes:
+      - data:/var/lib/azureappconfigurationemulator
+      - data-protection-keys:/root/.aspnet/DataProtection-Keys
+    environment:
+      - ASPNETCORE_HTTP_PORTS=8080
+      - ASPNETCORE_HTTPS_PORTS=8081
+      - ASPNETCORE_URLS=http://+:8080;https://+:8081
+      - DATABASE_PATH=/var/lib/azureappconfigurationemulator/emulator.db
+      - SSL_CERTIFICATE_KEY_PATH=/var/lib/azureappconfigurationemulator/emulator.key
+      - SSL_CERTIFICATE_CERT_PATH=/var/lib/azureappconfigurationemulator/emulator.crt
+volumes:
+  data:
+  data-protection-keys:

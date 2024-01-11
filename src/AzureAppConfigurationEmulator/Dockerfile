@@ -10,5 +10,13 @@ RUN dotnet publish "./src/AzureAppConfigurationEmulator/AzureAppConfigurationEmu
 
 FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS final
 WORKDIR /app
+
+RUN apt-get update && apt-get -y install openssh-client
+
 COPY --from=publish /app/publish .
-ENTRYPOINT ["dotnet", "AzureAppConfigurationEmulator.dll"]
+COPY "keygen.sh" .
+COPY "container-entrypoint.sh" .
+
+RUN chmod +x keygen.sh && chmod +x container-entrypoint.sh
+
+ENTRYPOINT ["./container-entrypoint.sh"]
