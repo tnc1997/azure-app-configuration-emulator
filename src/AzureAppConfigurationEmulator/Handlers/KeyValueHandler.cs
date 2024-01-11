@@ -22,6 +22,7 @@ public class KeyValueHandler
     {
         ifMatch = ifMatch?.TrimStart('"').TrimEnd('"');
         ifNoneMatch = ifNoneMatch?.TrimStart('"').TrimEnd('"');
+        key = Uri.UnescapeDataString(key);
 
         var setting = await repository.Get(key, label).SingleOrDefaultAsync(cancellationToken);
 
@@ -70,6 +71,7 @@ public class KeyValueHandler
     {
         ifMatch = ifMatch?.TrimStart('"').TrimEnd('"');
         ifNoneMatch = ifNoneMatch?.TrimStart('"').TrimEnd('"');
+        key = Uri.UnescapeDataString(key);
 
         var setting = await repository.Get(key, label).SingleOrDefaultAsync(cancellationToken);
 
@@ -139,6 +141,7 @@ public class KeyValueHandler
     {
         ifMatch = ifMatch?.TrimStart('"').TrimEnd('"');
         ifNoneMatch = ifNoneMatch?.TrimStart('"').TrimEnd('"');
+        key = Uri.UnescapeDataString(key);
 
         var date = DateTimeOffset.UtcNow;
 
