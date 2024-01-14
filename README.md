@@ -42,7 +42,7 @@ pm.request.headers.upsert(`Authorization: HMAC-SHA256 Credential=${credential}&S
 | List (Pagination)        | ❌   |
 | List (Filtering)         | ✔️  |
 | List (Select Fields)     | ❌   |
-| List (Time-Based Access) | ❌   |
+| List (Time-Based Access) | ✔️  |
 | Set                      | ✔️  |
 | Set (Conditionally)      | ✔️  |
 | Delete                   | ✔️  |
@@ -56,7 +56,7 @@ pm.request.headers.upsert(`Authorization: HMAC-SHA256 Credential=${credential}&S
 | List (Pagination)        | ❌  |
 | List (Filtering)         | ✔️ |
 | List (Select Fields)     | ❌  |
-| List (Time-Based Access) | ❌  |
+| List (Time-Based Access) | ✔️ |
 
 ### Labels
 
@@ -66,7 +66,7 @@ pm.request.headers.upsert(`Authorization: HMAC-SHA256 Credential=${credential}&S
 | List (Pagination)        | ❌  |
 | List (Filtering)         | ✔️ |
 | List (Select Fields)     | ❌  |
-| List (Time-Based Access) | ❌  |
+| List (Time-Based Access) | ✔️ |
 
 ### Locks
 
