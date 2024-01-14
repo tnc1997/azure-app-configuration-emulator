@@ -1,6 +1,5 @@
 using System.Text.RegularExpressions;
 using AzureAppConfigurationEmulator.Constants;
-using AzureAppConfigurationEmulator.Extensions;
 using AzureAppConfigurationEmulator.Repositories;
 using AzureAppConfigurationEmulator.Results;
 using Microsoft.AspNetCore.Http.HttpResults;
@@ -28,8 +27,8 @@ public class LabelHandler
             }
         }
 
-        var labels = await repository.Get(label: name)
-            .Select(setting => setting.Label.NormalizeNull())
+        var labels = await repository.Get(label: name, cancellationToken: cancellationToken)
+            .Select(setting => setting.Label)
             .Distinct()
             .ToListAsync(cancellationToken);
 

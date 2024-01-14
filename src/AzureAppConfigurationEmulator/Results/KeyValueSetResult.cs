@@ -1,5 +1,4 @@
 using AzureAppConfigurationEmulator.Entities;
-using AzureAppConfigurationEmulator.Extensions;
 
 namespace AzureAppConfigurationEmulator.Results;
 
@@ -17,28 +16,16 @@ public class KeyValueSetResult(IEnumerable<ConfigurationSetting> settings) :
             httpContext.Response.StatusCode = StatusCode.Value;
         }
 
-        if (Value is not null)
-        {
-            await httpContext.Response.WriteAsJsonAsync(Value, options: default, ContentType);
-        }
+        await httpContext.Response.WriteAsJsonAsync(Value, options: default, ContentType);
     }
 
     public string? ContentType => "application/vnd.microsoft.appconfig.kvset+json";
 
     public int? StatusCode => StatusCodes.Status200OK;
 
-    object? IValueHttpResult.Value => Value;
+    object IValueHttpResult.Value => Value;
 
-    public KeyValueSet? Value { get; } = new(
-        settings.Select(
-            setting => new KeyValue(
-                setting.ETag,
-                setting.Key,
-                setting.Label.NormalizeNull(),
-                setting.ContentType,
-                setting.Value,
-                setting.LastModified,
-                setting.IsReadOnly)));
+    public KeyValueSet Value { get; } = new(settings);
 }
 
-public record KeyValueSet(IEnumerable<KeyValue> Items);
+public record KeyValueSet(IEnumerable<ConfigurationSetting> Items);
