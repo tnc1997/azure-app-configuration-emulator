@@ -28,7 +28,7 @@ public class LabelHandler
             }
         }
 
-        var labels = await repository.Get(label: name, utcPointInTime: acceptDatetime, cancellationToken: cancellationToken)
+        var labels = await repository.Get(label: name, moment: acceptDatetime, cancellationToken: cancellationToken)
             .Select(setting => setting.Label)
             .Distinct()
             .ToListAsync(cancellationToken);

@@ -12,7 +12,7 @@ public interface IConfigurationSettingRepository
     public IAsyncEnumerable<ConfigurationSetting> Get(
         string key = KeyFilter.Any,
         string label = LabelFilter.Any,
-        DateTimeOffset? utcPointInTime = default,
+        DateTimeOffset? moment = default,
         CancellationToken cancellationToken = default);
 
     public Task RemoveAsync(

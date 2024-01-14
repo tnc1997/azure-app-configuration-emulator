@@ -24,7 +24,7 @@ public class KeyValueHandler
         ifNoneMatch = ifNoneMatch?.TrimStart('"').TrimEnd('"');
         key = Uri.UnescapeDataString(key);
 
-        var setting = await repository.Get(key, label, cancellationToken).SingleOrDefaultAsync(cancellationToken);
+        var setting = await repository.Get(key, label, cancellationToken: cancellationToken).SingleOrDefaultAsync(cancellationToken);
 
         if (setting == null)
         {
@@ -145,9 +145,9 @@ public class KeyValueHandler
         ifNoneMatch = ifNoneMatch?.TrimStart('"').TrimEnd('"');
         key = Uri.UnescapeDataString(key);
 
-        var date = DateTime.UtcNow;
+        var date = DateTimeOffset.UtcNow;
 
-        var setting = await repository.Get(key, label, cancellationToken).SingleOrDefaultAsync(cancellationToken);
+        var setting = await repository.Get(key, label, cancellationToken: cancellationToken).SingleOrDefaultAsync(cancellationToken);
 
         if (setting == null)
         {

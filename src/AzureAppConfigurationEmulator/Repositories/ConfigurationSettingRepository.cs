@@ -48,10 +48,10 @@ public partial class ConfigurationSettingRepository(
     public async IAsyncEnumerable<ConfigurationSetting> Get(
         string key = KeyFilter.Any,
         string label = LabelFilter.Any,
-        DateTimeOffset? utcPointInTime = default,
+        DateTimeOffset? moment = default,
         [EnumeratorCancellation] CancellationToken cancellationToken = default)
     {
-        var text = $"SELECT etag, key, label, content_type, value, last_modified, locked, tags FROM {(utcPointInTime is not null ? "configuration_settings_history" : "configuration_settings")}";
+        var text = $"SELECT etag, key, label, content_type, value, last_modified, locked, tags FROM {(moment is not null ? "configuration_settings_history" : "configuration_settings")}";
 
         var parameters = new List<DbParameter>();
 
@@ -100,11 +100,11 @@ public partial class ConfigurationSettingRepository(
             outers.Add($"({string.Join(" OR ", inners)})");
         }
 
-        if (utcPointInTime is not null)
+        if (moment is not null)
         {
-            parameters.Add(ParameterFactory.Create("$utc_point_in_time", utcPointInTime));
+            parameters.Add(ParameterFactory.Create("$moment", moment));
 
-            outers.Add("(valid_from >= $utc_point_in_time AND valid_to < $utc_point_in_time)");
+            outers.Add("(valid_from >= $moment AND valid_to < $moment)");
         }
 
         if (outers.Count > 0)
