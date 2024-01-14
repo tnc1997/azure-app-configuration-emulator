@@ -104,7 +104,7 @@ public partial class ConfigurationSettingRepository(
         {
             parameters.Add(ParameterFactory.Create("$moment", moment));
 
-            outers.Add("(valid_from >= $moment AND valid_to < $moment)");
+            outers.Add("(valid_from <= $moment AND valid_to > $moment)");
         }
 
         if (outers.Count > 0)
