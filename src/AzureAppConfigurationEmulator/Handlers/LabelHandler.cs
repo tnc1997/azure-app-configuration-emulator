@@ -12,6 +12,7 @@ public class LabelHandler
     public static async Task<Results<LabelSetResult, InvalidCharacterResult, TooManyValuesResult>> List(
         [FromServices] IConfigurationSettingRepository repository,
         [FromQuery] string name = LabelFilter.Any,
+        [FromHeader(Name = "Accept-Datetime")] DateTimeOffset? acceptDatetime = default,
         CancellationToken cancellationToken = default)
     {
         if (name != LabelFilter.Any)
@@ -27,7 +28,7 @@ public class LabelHandler
             }
         }
 
-        var labels = await repository.Get(label: name, cancellationToken: cancellationToken)
+        var labels = await repository.Get(label: name, moment: acceptDatetime, cancellationToken: cancellationToken)
             .Select(setting => setting.Label)
             .Distinct()
             .ToListAsync(cancellationToken);

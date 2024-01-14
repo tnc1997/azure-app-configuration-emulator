@@ -2,7 +2,7 @@ using AzureAppConfigurationEmulator.Entities;
 
 namespace AzureAppConfigurationEmulator.Results;
 
-public class KeyValueResult(ConfigurationSetting setting) :
+public class KeyValueResult(ConfigurationSetting setting, DateTimeOffset? mementoDatetime = default) :
     IResult,
     IContentTypeHttpResult,
     IStatusCodeHttpResult,
@@ -13,6 +13,11 @@ public class KeyValueResult(ConfigurationSetting setting) :
     {
         httpContext.Response.Headers.ETag = Value.Etag;
         httpContext.Response.Headers.LastModified = Value.LastModified.ToString("R");
+
+        if (MementoDatetime.HasValue)
+        {
+            httpContext.Response.Headers["Memento-Datetime"] = MementoDatetime.Value.ToString("R");
+        }
 
         if (StatusCode.HasValue)
         {
@@ -29,4 +34,6 @@ public class KeyValueResult(ConfigurationSetting setting) :
     object IValueHttpResult.Value => Value;
 
     public ConfigurationSetting Value { get; } = setting;
+
+    private DateTimeOffset? MementoDatetime { get; } = mementoDatetime;
 }

@@ -1,4 +1,3 @@
-using AzureAppConfigurationEmulator.Constants;
 using AzureAppConfigurationEmulator.Entities;
 using AzureAppConfigurationEmulator.Handlers;
 using AzureAppConfigurationEmulator.Repositories;
@@ -18,9 +17,9 @@ public class KeyValueHandlerTests
         var repository = Substitute.For<IConfigurationSettingRepository>();
         var settings = new List<ConfigurationSetting>
         {
-            new("abc", "HelloWorld", LabelFilter.Null, null, null, DateTimeOffset.UtcNow, false, null)
+            new("TestEtag", "TestKey", null, null, null, DateTimeOffset.UtcNow, false, null)
         };
-        repository.Get(Arg.Any<string>(), Arg.Any<string>()).Returns(settings.ToAsyncEnumerable());
+        repository.Get(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<DateTimeOffset?>(), Arg.Any<CancellationToken>()).Returns(settings.ToAsyncEnumerable());
 
         // Act
         var results = await KeyValueHandler.Delete(repository, "HelloWorld");
@@ -29,7 +28,7 @@ public class KeyValueHandlerTests
         Assert.That(results.Result, Is.TypeOf<KeyValueResult>());
     }
 
-    [TestCase("abc")]
+    [TestCase("TestEtag")]
     [TestCase("*")]
     public async Task Delete_KeyValueResult_ExistingConfigurationSettingMatchingIfMatch(string ifMatch)
     {
@@ -37,12 +36,12 @@ public class KeyValueHandlerTests
         var repository = Substitute.For<IConfigurationSettingRepository>();
         var settings = new List<ConfigurationSetting>
         {
-            new("abc", "HelloWorld", LabelFilter.Null, null, null, DateTimeOffset.UtcNow, false, null)
+            new("TestEtag", "TestKey", null, null, null, DateTimeOffset.UtcNow, false, null)
         };
-        repository.Get(Arg.Any<string>(), Arg.Any<string>()).Returns(settings.ToAsyncEnumerable());
+        repository.Get(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<DateTimeOffset?>(), Arg.Any<CancellationToken>()).Returns(settings.ToAsyncEnumerable());
 
         // Act
-        var results = await KeyValueHandler.Delete(repository, "HelloWorld", ifMatch: ifMatch);
+        var results = await KeyValueHandler.Delete(repository, "TestKey", ifMatch: ifMatch);
 
         // Assert
         Assert.That(results.Result, Is.TypeOf<KeyValueResult>());
@@ -55,12 +54,12 @@ public class KeyValueHandlerTests
         var repository = Substitute.For<IConfigurationSettingRepository>();
         var settings = new List<ConfigurationSetting>
         {
-            new("abc", "HelloWorld", LabelFilter.Null, null, null, DateTimeOffset.UtcNow, false, null)
+            new("TestEtag", "TestKey", null, null, null, DateTimeOffset.UtcNow, false, null)
         };
-        repository.Get(Arg.Any<string>(), Arg.Any<string>()).Returns(settings.ToAsyncEnumerable());
+        repository.Get(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<DateTimeOffset?>(), Arg.Any<CancellationToken>()).Returns(settings.ToAsyncEnumerable());
 
         // Act
-        var results = await KeyValueHandler.Delete(repository, "HelloWorld", ifNoneMatch: "def");
+        var results = await KeyValueHandler.Delete(repository, "TestKey", ifNoneMatch: "abc");
 
         // Assert
         Assert.That(results.Result, Is.TypeOf<KeyValueResult>());
@@ -72,10 +71,10 @@ public class KeyValueHandlerTests
         // Arrange
         var repository = Substitute.For<IConfigurationSettingRepository>();
         var settings = Enumerable.Empty<ConfigurationSetting>();
-        repository.Get(Arg.Any<string>(), Arg.Any<string>()).Returns(settings.ToAsyncEnumerable());
+        repository.Get(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<DateTimeOffset?>(), Arg.Any<CancellationToken>()).Returns(settings.ToAsyncEnumerable());
 
         // Act
-        var results = await KeyValueHandler.Delete(repository, "HelloWorld");
+        var results = await KeyValueHandler.Delete(repository, "TestKey");
 
         // Assert
         Assert.That(results.Result, Is.TypeOf<NoContent>());
@@ -87,10 +86,10 @@ public class KeyValueHandlerTests
         // Arrange
         var repository = Substitute.For<IConfigurationSettingRepository>();
         var settings = Enumerable.Empty<ConfigurationSetting>();
-        repository.Get(Arg.Any<string>(), Arg.Any<string>()).Returns(settings.ToAsyncEnumerable());
+        repository.Get(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<DateTimeOffset?>(), Arg.Any<CancellationToken>()).Returns(settings.ToAsyncEnumerable());
 
         // Act
-        var results = await KeyValueHandler.Delete(repository, "HelloWorld", ifNoneMatch: "*");
+        var results = await KeyValueHandler.Delete(repository, "TestKey", ifNoneMatch: "*");
 
         // Assert
         Assert.That(results.Result, Is.TypeOf<NoContent>());
@@ -102,16 +101,16 @@ public class KeyValueHandlerTests
         // Arrange
         var repository = Substitute.For<IConfigurationSettingRepository>();
         var settings = Enumerable.Empty<ConfigurationSetting>();
-        repository.Get(Arg.Any<string>(), Arg.Any<string>()).Returns(settings.ToAsyncEnumerable());
+        repository.Get(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<DateTimeOffset?>(), Arg.Any<CancellationToken>()).Returns(settings.ToAsyncEnumerable());
 
         // Act
-        var results = await KeyValueHandler.Delete(repository, "HelloWorld", ifMatch: "abc");
+        var results = await KeyValueHandler.Delete(repository, "TestKey", ifMatch: "TestEtag");
 
         // Assert
         Assert.That(results.Result, Is.TypeOf<NoContent>());
     }
 
-    [TestCase("abc")]
+    [TestCase("TestEtag")]
     [TestCase("*")]
     public async Task Delete_PreconditionFailedResult_ExistingConfigurationSettingMatchingIfNoneMatch(string ifNoneMatch)
     {
@@ -119,12 +118,12 @@ public class KeyValueHandlerTests
         var repository = Substitute.For<IConfigurationSettingRepository>();
         var settings = new List<ConfigurationSetting>
         {
-            new("abc", "HelloWorld", LabelFilter.Null, null, null, DateTimeOffset.UtcNow, false, null)
+            new("TestEtag", "TestKey", null, null, null, DateTimeOffset.UtcNow, false, null)
         };
-        repository.Get(Arg.Any<string>(), Arg.Any<string>()).Returns(settings.ToAsyncEnumerable());
+        repository.Get(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<DateTimeOffset?>(), Arg.Any<CancellationToken>()).Returns(settings.ToAsyncEnumerable());
 
         // Act
-        var results = await KeyValueHandler.Delete(repository, "HelloWorld", ifNoneMatch: ifNoneMatch);
+        var results = await KeyValueHandler.Delete(repository, "TestKey", ifNoneMatch: ifNoneMatch);
 
         // Assert
         Assert.That(results.Result, Is.TypeOf<PreconditionFailedResult>());
@@ -137,12 +136,12 @@ public class KeyValueHandlerTests
         var repository = Substitute.For<IConfigurationSettingRepository>();
         var settings = new List<ConfigurationSetting>
         {
-            new("abc", "HelloWorld", LabelFilter.Null, null, null, DateTimeOffset.UtcNow, false, null)
+            new("TestEtag", "TestKey", null, null, null, DateTimeOffset.UtcNow, false, null)
         };
-        repository.Get(Arg.Any<string>(), Arg.Any<string>()).Returns(settings.ToAsyncEnumerable());
+        repository.Get(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<DateTimeOffset?>(), Arg.Any<CancellationToken>()).Returns(settings.ToAsyncEnumerable());
 
         // Act
-        var results = await KeyValueHandler.Delete(repository, "HelloWorld", ifMatch: "def");
+        var results = await KeyValueHandler.Delete(repository, "TestKey", ifMatch: "abc");
 
         // Assert
         Assert.That(results.Result, Is.TypeOf<PreconditionFailedResult>());
@@ -154,10 +153,10 @@ public class KeyValueHandlerTests
         // Arrange
         var repository = Substitute.For<IConfigurationSettingRepository>();
         var settings = Enumerable.Empty<ConfigurationSetting>();
-        repository.Get(Arg.Any<string>(), Arg.Any<string>()).Returns(settings.ToAsyncEnumerable());
+        repository.Get(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<DateTimeOffset?>(), Arg.Any<CancellationToken>()).Returns(settings.ToAsyncEnumerable());
 
         // Act
-        var results = await KeyValueHandler.Delete(repository, "HelloWorld", ifNoneMatch: "abc");
+        var results = await KeyValueHandler.Delete(repository, "TestKey", ifNoneMatch: "TestEtag");
 
         // Assert
         Assert.That(results.Result, Is.TypeOf<PreconditionFailedResult>());
@@ -169,10 +168,10 @@ public class KeyValueHandlerTests
         // Arrange
         var repository = Substitute.For<IConfigurationSettingRepository>();
         var settings = Enumerable.Empty<ConfigurationSetting>();
-        repository.Get(Arg.Any<string>(), Arg.Any<string>()).Returns(settings.ToAsyncEnumerable());
+        repository.Get(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<DateTimeOffset?>(), Arg.Any<CancellationToken>()).Returns(settings.ToAsyncEnumerable());
 
         // Act
-        var results = await KeyValueHandler.Delete(repository, "HelloWorld", ifMatch: "*");
+        var results = await KeyValueHandler.Delete(repository, "TestKey", ifMatch: "*");
 
         // Assert
         Assert.That(results.Result, Is.TypeOf<PreconditionFailedResult>());
@@ -185,12 +184,12 @@ public class KeyValueHandlerTests
         var repository = Substitute.For<IConfigurationSettingRepository>();
         var settings = new List<ConfigurationSetting>
         {
-            new("abc", "HelloWorld", LabelFilter.Null, null, null, DateTimeOffset.UtcNow, true, null)
+            new("TestEtag", "TestKey", null, null, null, DateTimeOffset.UtcNow, true, null)
         };
-        repository.Get(Arg.Any<string>(), Arg.Any<string>()).Returns(settings.ToAsyncEnumerable());
+        repository.Get(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<DateTimeOffset?>(), Arg.Any<CancellationToken>()).Returns(settings.ToAsyncEnumerable());
 
         // Act
-        var results = await KeyValueHandler.Delete(repository, "HelloWorld");
+        var results = await KeyValueHandler.Delete(repository, "TestKey");
 
         // Assert
         Assert.That(results.Result, Is.TypeOf<ReadOnlyResult>());
@@ -203,18 +202,18 @@ public class KeyValueHandlerTests
         var repository = Substitute.For<IConfigurationSettingRepository>();
         var settings = new List<ConfigurationSetting>
         {
-            new("abc", "HelloWorld", LabelFilter.Null, null, null, DateTimeOffset.UtcNow, false, null)
+            new("TestEtag", "TestKey", null, null, null, DateTimeOffset.UtcNow, false, null)
         };
-        repository.Get(Arg.Any<string>(), Arg.Any<string>()).Returns(settings.ToAsyncEnumerable());
+        repository.Get(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<DateTimeOffset?>(), Arg.Any<CancellationToken>()).Returns(settings.ToAsyncEnumerable());
 
         // Act
-        var results = await KeyValueHandler.Get(repository, "HelloWorld");
+        var results = await KeyValueHandler.Get(repository, "TestKey");
 
         // Assert
         Assert.That(results.Result, Is.TypeOf<KeyValueResult>());
     }
 
-    [TestCase("abc")]
+    [TestCase("TestEtag")]
     [TestCase("*")]
     public async Task Get_KeyValueResult_ExistingConfigurationSettingMatchingIfMatch(string ifMatch)
     {
@@ -222,12 +221,12 @@ public class KeyValueHandlerTests
         var repository = Substitute.For<IConfigurationSettingRepository>();
         var settings = new List<ConfigurationSetting>
         {
-            new("abc", "HelloWorld", LabelFilter.Null, null, null, DateTimeOffset.UtcNow, false, null)
+            new("TestEtag", "TestKey", null, null, null, DateTimeOffset.UtcNow, false, null)
         };
-        repository.Get(Arg.Any<string>(), Arg.Any<string>()).Returns(settings.ToAsyncEnumerable());
+        repository.Get(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<DateTimeOffset?>(), Arg.Any<CancellationToken>()).Returns(settings.ToAsyncEnumerable());
 
         // Act
-        var results = await KeyValueHandler.Get(repository, "HelloWorld", ifMatch: ifMatch);
+        var results = await KeyValueHandler.Get(repository, "TestKey", ifMatch: ifMatch);
 
         // Assert
         Assert.That(results.Result, Is.TypeOf<KeyValueResult>());
@@ -240,12 +239,12 @@ public class KeyValueHandlerTests
         var repository = Substitute.For<IConfigurationSettingRepository>();
         var settings = new List<ConfigurationSetting>
         {
-            new("abc", "HelloWorld", LabelFilter.Null, null, null, DateTimeOffset.UtcNow, false, null)
+            new("TestEtag", "TestKey", null, null, null, DateTimeOffset.UtcNow, false, null)
         };
-        repository.Get(Arg.Any<string>(), Arg.Any<string>()).Returns(settings.ToAsyncEnumerable());
+        repository.Get(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<DateTimeOffset?>(), Arg.Any<CancellationToken>()).Returns(settings.ToAsyncEnumerable());
 
         // Act
-        var results = await KeyValueHandler.Get(repository, "HelloWorld", ifNoneMatch: "def");
+        var results = await KeyValueHandler.Get(repository, "TestKey", ifNoneMatch: "abc");
 
         // Assert
         Assert.That(results.Result, Is.TypeOf<KeyValueResult>());
@@ -257,10 +256,10 @@ public class KeyValueHandlerTests
         // Arrange
         var repository = Substitute.For<IConfigurationSettingRepository>();
         var settings = Enumerable.Empty<ConfigurationSetting>();
-        repository.Get(Arg.Any<string>(), Arg.Any<string>()).Returns(settings.ToAsyncEnumerable());
+        repository.Get(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<DateTimeOffset?>(), Arg.Any<CancellationToken>()).Returns(settings.ToAsyncEnumerable());
 
         // Act
-        var results = await KeyValueHandler.Get(repository, "HelloWorld");
+        var results = await KeyValueHandler.Get(repository, "TestKey");
 
         // Assert
         Assert.That(results.Result, Is.TypeOf<NotFound>());
@@ -272,10 +271,10 @@ public class KeyValueHandlerTests
         // Arrange
         var repository = Substitute.For<IConfigurationSettingRepository>();
         var settings = Enumerable.Empty<ConfigurationSetting>();
-        repository.Get(Arg.Any<string>(), Arg.Any<string>()).Returns(settings.ToAsyncEnumerable());
+        repository.Get(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<DateTimeOffset?>(), Arg.Any<CancellationToken>()).Returns(settings.ToAsyncEnumerable());
 
         // Act
-        var results = await KeyValueHandler.Get(repository, "HelloWorld", ifNoneMatch: "abc");
+        var results = await KeyValueHandler.Get(repository, "TestKey", ifNoneMatch: "TestEtag");
 
         // Assert
         Assert.That(results.Result, Is.TypeOf<NotFound>());
@@ -287,16 +286,16 @@ public class KeyValueHandlerTests
         // Arrange
         var repository = Substitute.For<IConfigurationSettingRepository>();
         var settings = Enumerable.Empty<ConfigurationSetting>();
-        repository.Get(Arg.Any<string>(), Arg.Any<string>()).Returns(settings.ToAsyncEnumerable());
+        repository.Get(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<DateTimeOffset?>(), Arg.Any<CancellationToken>()).Returns(settings.ToAsyncEnumerable());
 
         // Act
-        var results = await KeyValueHandler.Get(repository, "HelloWorld", ifMatch: "*");
+        var results = await KeyValueHandler.Get(repository, "TestKey", ifMatch: "*");
 
         // Assert
         Assert.That(results.Result, Is.TypeOf<NotFound>());
     }
 
-    [TestCase("abc")]
+    [TestCase("TestEtag")]
     [TestCase("*")]
     public async Task Get_NotModifiedResult_ExistingConfigurationSettingMatchingIfNoneMatch(string ifNoneMatch)
     {
@@ -304,12 +303,12 @@ public class KeyValueHandlerTests
         var repository = Substitute.For<IConfigurationSettingRepository>();
         var settings = new List<ConfigurationSetting>
         {
-            new("abc", "HelloWorld", LabelFilter.Null, null, null, DateTimeOffset.UtcNow, false, null)
+            new("TestEtag", "TestKey", null, null, null, DateTimeOffset.UtcNow, false, null)
         };
-        repository.Get(Arg.Any<string>(), Arg.Any<string>()).Returns(settings.ToAsyncEnumerable());
+        repository.Get(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<DateTimeOffset?>(), Arg.Any<CancellationToken>()).Returns(settings.ToAsyncEnumerable());
 
         // Act
-        var results = await KeyValueHandler.Get(repository, "HelloWorld", ifNoneMatch: ifNoneMatch);
+        var results = await KeyValueHandler.Get(repository, "TestKey", ifNoneMatch: ifNoneMatch);
 
         // Assert
         Assert.That(results.Result, Is.TypeOf<NotModifiedResult>());
@@ -322,12 +321,12 @@ public class KeyValueHandlerTests
         var repository = Substitute.For<IConfigurationSettingRepository>();
         var settings = new List<ConfigurationSetting>
         {
-            new("abc", "HelloWorld", LabelFilter.Null, null, null, DateTimeOffset.UtcNow, false, null)
+            new("TestEtag", "TestKey", null, null, null, DateTimeOffset.UtcNow, false, null)
         };
-        repository.Get(Arg.Any<string>(), Arg.Any<string>()).Returns(settings.ToAsyncEnumerable());
+        repository.Get(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<DateTimeOffset?>(), Arg.Any<CancellationToken>()).Returns(settings.ToAsyncEnumerable());
 
         // Act
-        var results = await KeyValueHandler.Get(repository, "HelloWorld", ifMatch: "def");
+        var results = await KeyValueHandler.Get(repository, "TestKey", ifMatch: "abc");
 
         // Assert
         Assert.That(results.Result, Is.TypeOf<PreconditionFailedResult>());
@@ -340,19 +339,19 @@ public class KeyValueHandlerTests
         var repository = Substitute.For<IConfigurationSettingRepository>();
         var settings = new List<ConfigurationSetting>
         {
-            new("abc", "HelloWorld", LabelFilter.Null, null, null, DateTimeOffset.UtcNow, false, null)
+            new("TestEtag", "TestKey", null, null, null, DateTimeOffset.UtcNow, false, null)
         };
-        repository.Get(Arg.Any<string>(), Arg.Any<string>()).Returns(settings.ToAsyncEnumerable());
+        repository.Get(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<DateTimeOffset?>(), Arg.Any<CancellationToken>()).Returns(settings.ToAsyncEnumerable());
 
         // Act
         var input = new KeyValueHandler.SetInput(null, null, null);
-        var results = await KeyValueHandler.Set(repository, input, "HelloWorld");
+        var results = await KeyValueHandler.Set(repository, input, "TestKey");
 
         // Assert
         Assert.That(results.Result, Is.TypeOf<KeyValueResult>());
     }
 
-    [TestCase("abc")]
+    [TestCase("TestEtag")]
     [TestCase("*")]
     public async Task Set_KeyValueResult_ExistingConfigurationSettingMatchingIfMatch(string ifMatch)
     {
@@ -360,13 +359,13 @@ public class KeyValueHandlerTests
         var repository = Substitute.For<IConfigurationSettingRepository>();
         var settings = new List<ConfigurationSetting>
         {
-            new("abc", "HelloWorld", LabelFilter.Null, null, null, DateTimeOffset.UtcNow, false, null)
+            new("TestEtag", "TestKey", null, null, null, DateTimeOffset.UtcNow, false, null)
         };
-        repository.Get(Arg.Any<string>(), Arg.Any<string>()).Returns(settings.ToAsyncEnumerable());
+        repository.Get(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<DateTimeOffset?>(), Arg.Any<CancellationToken>()).Returns(settings.ToAsyncEnumerable());
 
         // Act
         var input = new KeyValueHandler.SetInput(null, null, null);
-        var results = await KeyValueHandler.Set(repository, input, "HelloWorld", ifMatch: ifMatch);
+        var results = await KeyValueHandler.Set(repository, input, "TestKey", ifMatch: ifMatch);
 
         // Assert
         Assert.That(results.Result, Is.TypeOf<KeyValueResult>());
@@ -379,13 +378,13 @@ public class KeyValueHandlerTests
         var repository = Substitute.For<IConfigurationSettingRepository>();
         var settings = new List<ConfigurationSetting>
         {
-            new("abc", "HelloWorld", LabelFilter.Null, null, null, DateTimeOffset.UtcNow, false, null)
+            new("TestEtag", "TestKey", null, null, null, DateTimeOffset.UtcNow, false, null)
         };
-        repository.Get(Arg.Any<string>(), Arg.Any<string>()).Returns(settings.ToAsyncEnumerable());
+        repository.Get(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<DateTimeOffset?>(), Arg.Any<CancellationToken>()).Returns(settings.ToAsyncEnumerable());
 
         // Act
         var input = new KeyValueHandler.SetInput(null, null, null);
-        var results = await KeyValueHandler.Set(repository, input, "HelloWorld", ifNoneMatch: "def");
+        var results = await KeyValueHandler.Set(repository, input, "TestKey", ifNoneMatch: "abc");
 
         // Assert
         Assert.That(results.Result, Is.TypeOf<KeyValueResult>());
@@ -397,11 +396,11 @@ public class KeyValueHandlerTests
         // Arrange
         var repository = Substitute.For<IConfigurationSettingRepository>();
         var settings = Enumerable.Empty<ConfigurationSetting>();
-        repository.Get(Arg.Any<string>(), Arg.Any<string>()).Returns(settings.ToAsyncEnumerable());
+        repository.Get(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<DateTimeOffset?>(), Arg.Any<CancellationToken>()).Returns(settings.ToAsyncEnumerable());
 
         // Act
         var input = new KeyValueHandler.SetInput(null, null, null);
-        var results = await KeyValueHandler.Set(repository, input, "HelloWorld");
+        var results = await KeyValueHandler.Set(repository, input, "TestKey");
 
         // Assert
         Assert.That(results.Result, Is.TypeOf<KeyValueResult>());
@@ -413,11 +412,11 @@ public class KeyValueHandlerTests
         // Arrange
         var repository = Substitute.For<IConfigurationSettingRepository>();
         var settings = Enumerable.Empty<ConfigurationSetting>();
-        repository.Get(Arg.Any<string>(), Arg.Any<string>()).Returns(settings.ToAsyncEnumerable());
+        repository.Get(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<DateTimeOffset?>(), Arg.Any<CancellationToken>()).Returns(settings.ToAsyncEnumerable());
 
         // Act
         var input = new KeyValueHandler.SetInput(null, null, null);
-        var results = await KeyValueHandler.Set(repository, input, "HelloWorld", ifNoneMatch: "*");
+        var results = await KeyValueHandler.Set(repository, input, "TestKey", ifNoneMatch: "*");
 
         // Assert
         Assert.That(results.Result, Is.TypeOf<KeyValueResult>());
@@ -429,17 +428,17 @@ public class KeyValueHandlerTests
         // Arrange
         var repository = Substitute.For<IConfigurationSettingRepository>();
         var settings = Enumerable.Empty<ConfigurationSetting>();
-        repository.Get(Arg.Any<string>(), Arg.Any<string>()).Returns(settings.ToAsyncEnumerable());
+        repository.Get(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<DateTimeOffset?>(), Arg.Any<CancellationToken>()).Returns(settings.ToAsyncEnumerable());
 
         // Act
         var input = new KeyValueHandler.SetInput(null, null, null);
-        var results = await KeyValueHandler.Set(repository, input, "HelloWorld", ifMatch: "abc");
+        var results = await KeyValueHandler.Set(repository, input, "TestKey", ifMatch: "TestEtag");
 
         // Assert
         Assert.That(results.Result, Is.TypeOf<KeyValueResult>());
     }
 
-    [TestCase("abc")]
+    [TestCase("TestEtag")]
     [TestCase("*")]
     public async Task Set_PreconditionFailedResult_ExistingConfigurationSettingMatchingIfNoneMatch(string ifNoneMatch)
     {
@@ -447,13 +446,13 @@ public class KeyValueHandlerTests
         var repository = Substitute.For<IConfigurationSettingRepository>();
         var settings = new List<ConfigurationSetting>
         {
-            new("abc", "HelloWorld", LabelFilter.Null, null, null, DateTimeOffset.UtcNow, false, null)
+            new("TestEtag", "TestKey", null, null, null, DateTimeOffset.UtcNow, false, null)
         };
-        repository.Get(Arg.Any<string>(), Arg.Any<string>()).Returns(settings.ToAsyncEnumerable());
+        repository.Get(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<DateTimeOffset?>(), Arg.Any<CancellationToken>()).Returns(settings.ToAsyncEnumerable());
 
         // Act
         var input = new KeyValueHandler.SetInput(null, null, null);
-        var results = await KeyValueHandler.Set(repository, input, "HelloWorld", ifNoneMatch: ifNoneMatch);
+        var results = await KeyValueHandler.Set(repository, input, "TestKey", ifNoneMatch: ifNoneMatch);
 
         // Assert
         Assert.That(results.Result, Is.TypeOf<PreconditionFailedResult>());
@@ -466,13 +465,13 @@ public class KeyValueHandlerTests
         var repository = Substitute.For<IConfigurationSettingRepository>();
         var settings = new List<ConfigurationSetting>
         {
-            new("abc", "HelloWorld", LabelFilter.Null, null, null, DateTimeOffset.UtcNow, false, null)
+            new("TestEtag", "TestKey", null, null, null, DateTimeOffset.UtcNow, false, null)
         };
-        repository.Get(Arg.Any<string>(), Arg.Any<string>()).Returns(settings.ToAsyncEnumerable());
+        repository.Get(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<DateTimeOffset?>(), Arg.Any<CancellationToken>()).Returns(settings.ToAsyncEnumerable());
 
         // Act
         var input = new KeyValueHandler.SetInput(null, null, null);
-        var results = await KeyValueHandler.Set(repository, input, "HelloWorld", ifMatch: "def");
+        var results = await KeyValueHandler.Set(repository, input, "TestKey", ifMatch: "abc");
 
         // Assert
         Assert.That(results.Result, Is.TypeOf<PreconditionFailedResult>());
@@ -484,11 +483,11 @@ public class KeyValueHandlerTests
         // Arrange
         var repository = Substitute.For<IConfigurationSettingRepository>();
         var settings = Enumerable.Empty<ConfigurationSetting>();
-        repository.Get(Arg.Any<string>(), Arg.Any<string>()).Returns(settings.ToAsyncEnumerable());
+        repository.Get(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<DateTimeOffset?>(), Arg.Any<CancellationToken>()).Returns(settings.ToAsyncEnumerable());
 
         // Act
         var input = new KeyValueHandler.SetInput(null, null, null);
-        var results = await KeyValueHandler.Set(repository, input, "HelloWorld", ifNoneMatch: "abc");
+        var results = await KeyValueHandler.Set(repository, input, "TestKey", ifNoneMatch: "TestEtag");
 
         // Assert
         Assert.That(results.Result, Is.TypeOf<PreconditionFailedResult>());
@@ -500,11 +499,11 @@ public class KeyValueHandlerTests
         // Arrange
         var repository = Substitute.For<IConfigurationSettingRepository>();
         var settings = Enumerable.Empty<ConfigurationSetting>();
-        repository.Get(Arg.Any<string>(), Arg.Any<string>()).Returns(settings.ToAsyncEnumerable());
+        repository.Get(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<DateTimeOffset?>(), Arg.Any<CancellationToken>()).Returns(settings.ToAsyncEnumerable());
 
         // Act
         var input = new KeyValueHandler.SetInput(null, null, null);
-        var results = await KeyValueHandler.Set(repository, input, "HelloWorld", ifMatch: "*");
+        var results = await KeyValueHandler.Set(repository, input, "TestKey", ifMatch: "*");
 
         // Assert
         Assert.That(results.Result, Is.TypeOf<PreconditionFailedResult>());
@@ -517,13 +516,13 @@ public class KeyValueHandlerTests
         var repository = Substitute.For<IConfigurationSettingRepository>();
         var settings = new List<ConfigurationSetting>
         {
-            new("abc", "HelloWorld", LabelFilter.Null, null, null, DateTimeOffset.UtcNow, true, null)
+            new("TestEtag", "TestKey", null, null, null, DateTimeOffset.UtcNow, true, null)
         };
-        repository.Get(Arg.Any<string>(), Arg.Any<string>()).Returns(settings.ToAsyncEnumerable());
+        repository.Get(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<DateTimeOffset?>(), Arg.Any<CancellationToken>()).Returns(settings.ToAsyncEnumerable());
 
         // Act
         var input = new KeyValueHandler.SetInput(null, null, null);
-        var results = await KeyValueHandler.Set(repository, input, "HelloWorld");
+        var results = await KeyValueHandler.Set(repository, input, "TestKey");
 
         // Assert
         Assert.That(results.Result, Is.TypeOf<ReadOnlyResult>());

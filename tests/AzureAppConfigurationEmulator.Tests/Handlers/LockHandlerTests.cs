@@ -1,4 +1,3 @@
-using AzureAppConfigurationEmulator.Constants;
 using AzureAppConfigurationEmulator.Entities;
 using AzureAppConfigurationEmulator.Handlers;
 using AzureAppConfigurationEmulator.Repositories;
@@ -18,9 +17,9 @@ public class LockHandlerTests
         var repository = Substitute.For<IConfigurationSettingRepository>();
         var settings = new List<ConfigurationSetting>
         {
-            new("abc", "HelloWorld", LabelFilter.Null, null, null, DateTimeOffset.UtcNow, false, null)
+            new("TestEtag", "TestKey", null, null, null, DateTimeOffset.UtcNow, false, null)
         };
-        repository.Get(Arg.Any<string>(), Arg.Any<string>()).Returns(settings.ToAsyncEnumerable());
+        repository.Get(Arg.Any<string?>(), Arg.Any<string?>(), Arg.Any<DateTimeOffset?>(), Arg.Any<CancellationToken>()).Returns(settings.ToAsyncEnumerable());
 
         // Act
         var results = await LockHandler.Lock(repository, "HelloWorld");
@@ -29,7 +28,7 @@ public class LockHandlerTests
         Assert.That(results.Result, Is.TypeOf<KeyValueResult>());
     }
 
-    [TestCase("abc")]
+    [TestCase("TestEtag")]
     [TestCase("*")]
     public async Task Lock_KeyValueResult_MatchingIfMatch(string ifMatch)
     {
@@ -37,9 +36,9 @@ public class LockHandlerTests
         var repository = Substitute.For<IConfigurationSettingRepository>();
         var settings = new List<ConfigurationSetting>
         {
-            new("abc", "HelloWorld", LabelFilter.Null, null, null, DateTimeOffset.UtcNow, false, null)
+            new("TestEtag", "TestKey", null, null, null, DateTimeOffset.UtcNow, false, null)
         };
-        repository.Get(Arg.Any<string>(), Arg.Any<string>()).Returns(settings.ToAsyncEnumerable());
+        repository.Get(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<DateTimeOffset?>(), Arg.Any<CancellationToken>()).Returns(settings.ToAsyncEnumerable());
 
         // Act
         var results = await LockHandler.Lock(repository, "HelloWorld", ifMatch: ifMatch);
@@ -55,9 +54,9 @@ public class LockHandlerTests
         var repository = Substitute.For<IConfigurationSettingRepository>();
         var settings = new List<ConfigurationSetting>
         {
-            new("abc", "HelloWorld", LabelFilter.Null, null, null, DateTimeOffset.UtcNow, false, null)
+            new("TestEtag", "TestKey", null, null, null, DateTimeOffset.UtcNow, false, null)
         };
-        repository.Get(Arg.Any<string>(), Arg.Any<string>()).Returns(settings.ToAsyncEnumerable());
+        repository.Get(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<DateTimeOffset?>(), Arg.Any<CancellationToken>()).Returns(settings.ToAsyncEnumerable());
 
         // Act
         var results = await LockHandler.Lock(repository, "HelloWorld", ifNoneMatch: "def");
@@ -72,7 +71,7 @@ public class LockHandlerTests
         // Arrange
         var repository = Substitute.For<IConfigurationSettingRepository>();
         var settings = Enumerable.Empty<ConfigurationSetting>();
-        repository.Get(Arg.Any<string>(), Arg.Any<string>()).Returns(settings.ToAsyncEnumerable());
+        repository.Get(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<DateTimeOffset?>(), Arg.Any<CancellationToken>()).Returns(settings.ToAsyncEnumerable());
 
         // Act
         var results = await LockHandler.Lock(repository, "HelloWorld");
@@ -81,7 +80,7 @@ public class LockHandlerTests
         Assert.That(results.Result, Is.TypeOf<NotFound>());
     }
 
-    [TestCase("abc")]
+    [TestCase("TestEtag")]
     [TestCase("*")]
     public async Task Lock_PreconditionFailedResult_MatchingIfNoneMatch(string ifNoneMatch)
     {
@@ -89,9 +88,9 @@ public class LockHandlerTests
         var repository = Substitute.For<IConfigurationSettingRepository>();
         var settings = new List<ConfigurationSetting>
         {
-            new("abc", "HelloWorld", LabelFilter.Null, null, null, DateTimeOffset.UtcNow, false, null)
+            new("TestEtag", "TestKey", null, null, null, DateTimeOffset.UtcNow, false, null)
         };
-        repository.Get(Arg.Any<string>(), Arg.Any<string>()).Returns(settings.ToAsyncEnumerable());
+        repository.Get(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<DateTimeOffset?>(), Arg.Any<CancellationToken>()).Returns(settings.ToAsyncEnumerable());
 
         // Act
         var results = await LockHandler.Lock(repository, "HelloWorld", ifNoneMatch: ifNoneMatch);
@@ -107,9 +106,9 @@ public class LockHandlerTests
         var repository = Substitute.For<IConfigurationSettingRepository>();
         var settings = new List<ConfigurationSetting>
         {
-            new("abc", "HelloWorld", LabelFilter.Null, null, null, DateTimeOffset.UtcNow, false, null)
+            new("TestEtag", "TestKey", null, null, null, DateTimeOffset.UtcNow, false, null)
         };
-        repository.Get(Arg.Any<string>(), Arg.Any<string>()).Returns(settings.ToAsyncEnumerable());
+        repository.Get(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<DateTimeOffset?>(), Arg.Any<CancellationToken>()).Returns(settings.ToAsyncEnumerable());
 
         // Act
         var results = await LockHandler.Lock(repository, "HelloWorld", ifMatch: "def");
@@ -125,9 +124,9 @@ public class LockHandlerTests
         var repository = Substitute.For<IConfigurationSettingRepository>();
         var settings = new List<ConfigurationSetting>
         {
-            new("abc", "HelloWorld", LabelFilter.Null, null, null, DateTimeOffset.UtcNow, false, null)
+            new("TestEtag", "TestKey", null, null, null, DateTimeOffset.UtcNow, false, null)
         };
-        repository.Get(Arg.Any<string>(), Arg.Any<string>()).Returns(settings.ToAsyncEnumerable());
+        repository.Get(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<DateTimeOffset?>(), Arg.Any<CancellationToken>()).Returns(settings.ToAsyncEnumerable());
 
         // Act
         var results = await LockHandler.Unlock(repository, "HelloWorld");
@@ -136,7 +135,7 @@ public class LockHandlerTests
         Assert.That(results.Result, Is.TypeOf<KeyValueResult>());
     }
 
-    [TestCase("abc")]
+    [TestCase("TestEtag")]
     [TestCase("*")]
     public async Task Unlock_KeyValueResult_MatchingIfMatch(string ifMatch)
     {
@@ -144,9 +143,9 @@ public class LockHandlerTests
         var repository = Substitute.For<IConfigurationSettingRepository>();
         var settings = new List<ConfigurationSetting>
         {
-            new("abc", "HelloWorld", LabelFilter.Null, null, null, DateTimeOffset.UtcNow, false, null)
+            new("TestEtag", "TestKey", null, null, null, DateTimeOffset.UtcNow, false, null)
         };
-        repository.Get(Arg.Any<string>(), Arg.Any<string>()).Returns(settings.ToAsyncEnumerable());
+        repository.Get(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<DateTimeOffset?>(), Arg.Any<CancellationToken>()).Returns(settings.ToAsyncEnumerable());
 
         // Act
         var results = await LockHandler.Unlock(repository, "HelloWorld", ifMatch: ifMatch);
@@ -162,9 +161,9 @@ public class LockHandlerTests
         var repository = Substitute.For<IConfigurationSettingRepository>();
         var settings = new List<ConfigurationSetting>
         {
-            new("abc", "HelloWorld", LabelFilter.Null, null, null, DateTimeOffset.UtcNow, false, null)
+            new("TestEtag", "TestKey", null, null, null, DateTimeOffset.UtcNow, false, null)
         };
-        repository.Get(Arg.Any<string>(), Arg.Any<string>()).Returns(settings.ToAsyncEnumerable());
+        repository.Get(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<DateTimeOffset?>(), Arg.Any<CancellationToken>()).Returns(settings.ToAsyncEnumerable());
 
         // Act
         var results = await LockHandler.Unlock(repository, "HelloWorld", ifNoneMatch: "def");
@@ -179,7 +178,7 @@ public class LockHandlerTests
         // Arrange
         var repository = Substitute.For<IConfigurationSettingRepository>();
         var settings = Enumerable.Empty<ConfigurationSetting>();
-        repository.Get(Arg.Any<string>(), Arg.Any<string>()).Returns(settings.ToAsyncEnumerable());
+        repository.Get(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<DateTimeOffset?>(), Arg.Any<CancellationToken>()).Returns(settings.ToAsyncEnumerable());
 
         // Act
         var results = await LockHandler.Unlock(repository, "HelloWorld");
@@ -188,7 +187,7 @@ public class LockHandlerTests
         Assert.That(results.Result, Is.TypeOf<NotFound>());
     }
 
-    [TestCase("abc")]
+    [TestCase("TestEtag")]
     [TestCase("*")]
     public async Task Unlock_PreconditionFailedResult_MatchingIfNoneMatch(string ifNoneMatch)
     {
@@ -196,9 +195,9 @@ public class LockHandlerTests
         var repository = Substitute.For<IConfigurationSettingRepository>();
         var settings = new List<ConfigurationSetting>
         {
-            new("abc", "HelloWorld", LabelFilter.Null, null, null, DateTimeOffset.UtcNow, false, null)
+            new("TestEtag", "TestKey", null, null, null, DateTimeOffset.UtcNow, false, null)
         };
-        repository.Get(Arg.Any<string>(), Arg.Any<string>()).Returns(settings.ToAsyncEnumerable());
+        repository.Get(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<DateTimeOffset?>(), Arg.Any<CancellationToken>()).Returns(settings.ToAsyncEnumerable());
 
         // Act
         var results = await LockHandler.Unlock(repository, "HelloWorld", ifNoneMatch: ifNoneMatch);
@@ -214,9 +213,9 @@ public class LockHandlerTests
         var repository = Substitute.For<IConfigurationSettingRepository>();
         var settings = new List<ConfigurationSetting>
         {
-            new("abc", "HelloWorld", LabelFilter.Null, null, null, DateTimeOffset.UtcNow, false, null)
+            new("TestEtag", "TestKey", null, null, null, DateTimeOffset.UtcNow, false, null)
         };
-        repository.Get(Arg.Any<string>(), Arg.Any<string>()).Returns(settings.ToAsyncEnumerable());
+        repository.Get(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<DateTimeOffset?>(), Arg.Any<CancellationToken>()).Returns(settings.ToAsyncEnumerable());
 
         // Act
         var results = await LockHandler.Unlock(repository, "HelloWorld", ifMatch: "def");

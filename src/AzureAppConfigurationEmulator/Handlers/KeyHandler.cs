@@ -12,6 +12,7 @@ public class KeyHandler
     public static async Task<Results<KeySetResult, InvalidCharacterResult, TooManyValuesResult>> List(
         [FromServices] IConfigurationSettingRepository repository,
         [FromQuery] string name = KeyFilter.Any,
+        [FromHeader(Name = "Accept-Datetime")] DateTimeOffset? acceptDatetime = default,
         CancellationToken cancellationToken = default)
     {
         if (name != KeyFilter.Any)
@@ -27,11 +28,11 @@ public class KeyHandler
             }
         }
 
-        var keys = await repository.Get(key: name, cancellationToken: cancellationToken)
+        var keys = await repository.Get(key: name, moment: acceptDatetime, cancellationToken: cancellationToken)
             .Select(setting => setting.Key)
             .Distinct()
             .ToListAsync(cancellationToken);
 
-        return new KeySetResult(keys);
+        return new KeySetResult(keys, acceptDatetime);
     }
 }

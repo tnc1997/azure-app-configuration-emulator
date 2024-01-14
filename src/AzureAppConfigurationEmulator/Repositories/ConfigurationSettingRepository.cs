@@ -48,9 +48,10 @@ public partial class ConfigurationSettingRepository(
     public async IAsyncEnumerable<ConfigurationSetting> Get(
         string key = KeyFilter.Any,
         string label = LabelFilter.Any,
+        DateTimeOffset? moment = default,
         [EnumeratorCancellation] CancellationToken cancellationToken = default)
     {
-        var text = "SELECT etag, key, label, content_type, value, last_modified, locked, tags FROM configuration_settings";
+        var text = $"SELECT etag, key, label, content_type, value, last_modified, locked, tags FROM {(moment is not null ? "configuration_settings_history" : "configuration_settings")}";
 
         var parameters = new List<DbParameter>();
 
@@ -97,6 +98,13 @@ public partial class ConfigurationSettingRepository(
             }
 
             outers.Add($"({string.Join(" OR ", inners)})");
+        }
+
+        if (moment is not null)
+        {
+            parameters.Add(ParameterFactory.Create("$moment", moment));
+
+            outers.Add("(valid_from <= $moment AND valid_to > $moment)");
         }
 
         if (outers.Count > 0)
