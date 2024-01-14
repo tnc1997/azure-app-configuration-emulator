@@ -44,10 +44,10 @@ public static class HostingExtensions
     public static void InitializeDatabase(this IApplicationBuilder app)
     {
         using var scope = app.ApplicationServices.GetRequiredService<IServiceScopeFactory>().CreateScope();
+        var commandFactory = scope.ServiceProvider.GetRequiredService<IDbCommandFactory>();
+        var connectionFactory = scope.ServiceProvider.GetRequiredService<IDbConnectionFactory>();
 
-        var factory = scope.ServiceProvider.GetRequiredService<IDbConnectionFactory>();
-
-        using var connection = factory.Create();
+        using var connection = connectionFactory.Create();
 
         if (!Directory.Exists(Path.GetDirectoryName(connection.DataSource)!))
         {
@@ -61,7 +61,7 @@ public static class HostingExtensions
 
         connection.Open();
 
-        using var command = connection.CreateCommand();
+        using var command = commandFactory.Create(connection);
 
         command.CommandText = """
                               CREATE TABLE IF NOT EXISTS configuration_settings (
@@ -86,7 +86,7 @@ public static class HostingExtensions
                                   locked INTEGER NOT NULL,
                                   tags TEXT,
                                   valid_from TEXT NOT NULL,
-                                  valid_to TEXT
+                                  valid_to TEXT NOT NULL
                               );
 
                               CREATE TRIGGER IF NOT EXISTS delete_configuration_setting
