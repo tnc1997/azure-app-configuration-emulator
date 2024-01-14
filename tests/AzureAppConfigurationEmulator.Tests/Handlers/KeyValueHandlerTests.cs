@@ -22,7 +22,7 @@ public class KeyValueHandlerTests
         repository.Get(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<DateTimeOffset?>(), Arg.Any<CancellationToken>()).Returns(settings.ToAsyncEnumerable());
 
         // Act
-        var results = await KeyValueHandler.Delete(repository, "HelloWorld");
+        var results = await KeyValueHandler.Delete(repository, "TestKey");
 
         // Assert
         Assert.That(results.Result, Is.TypeOf<KeyValueResult>());
