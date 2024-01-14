@@ -19,7 +19,7 @@ public class LockHandlerTests
         {
             new("TestEtag", "TestKey", null, null, null, DateTimeOffset.UtcNow, false, null)
         };
-        repository.Get(Arg.Any<string?>(), Arg.Any<string?>(), Arg.Any<DateTimeOffset?>(), Arg.Any<CancellationToken>()).Returns(settings.ToAsyncEnumerable());
+        repository.Get(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<DateTimeOffset?>(), Arg.Any<CancellationToken>()).Returns(settings.ToAsyncEnumerable());
 
         // Act
         var results = await LockHandler.Lock(repository, "HelloWorld");
@@ -59,7 +59,7 @@ public class LockHandlerTests
         repository.Get(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<DateTimeOffset?>(), Arg.Any<CancellationToken>()).Returns(settings.ToAsyncEnumerable());
 
         // Act
-        var results = await LockHandler.Lock(repository, "HelloWorld", ifNoneMatch: "def");
+        var results = await LockHandler.Lock(repository, "HelloWorld", ifNoneMatch: "abc");
 
         // Assert
         Assert.That(results.Result, Is.TypeOf<KeyValueResult>());
@@ -111,7 +111,7 @@ public class LockHandlerTests
         repository.Get(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<DateTimeOffset?>(), Arg.Any<CancellationToken>()).Returns(settings.ToAsyncEnumerable());
 
         // Act
-        var results = await LockHandler.Lock(repository, "HelloWorld", ifMatch: "def");
+        var results = await LockHandler.Lock(repository, "HelloWorld", ifMatch: "abc");
 
         // Assert
         Assert.That(results.Result, Is.TypeOf<PreconditionFailedResult>());
@@ -166,7 +166,7 @@ public class LockHandlerTests
         repository.Get(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<DateTimeOffset?>(), Arg.Any<CancellationToken>()).Returns(settings.ToAsyncEnumerable());
 
         // Act
-        var results = await LockHandler.Unlock(repository, "HelloWorld", ifNoneMatch: "def");
+        var results = await LockHandler.Unlock(repository, "HelloWorld", ifNoneMatch: "abc");
 
         // Assert
         Assert.That(results.Result, Is.TypeOf<KeyValueResult>());
@@ -218,7 +218,7 @@ public class LockHandlerTests
         repository.Get(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<DateTimeOffset?>(), Arg.Any<CancellationToken>()).Returns(settings.ToAsyncEnumerable());
 
         // Act
-        var results = await LockHandler.Unlock(repository, "HelloWorld", ifMatch: "def");
+        var results = await LockHandler.Unlock(repository, "HelloWorld", ifMatch: "abc");
 
         // Assert
         Assert.That(results.Result, Is.TypeOf<PreconditionFailedResult>());
