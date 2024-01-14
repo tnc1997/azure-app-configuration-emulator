@@ -24,7 +24,7 @@ public class KeyValueHandler
         ifNoneMatch = ifNoneMatch?.TrimStart('"').TrimEnd('"');
         key = Uri.UnescapeDataString(key);
 
-        var setting = await repository.Get(key, label).SingleOrDefaultAsync(cancellationToken);
+        var setting = await repository.Get(key, label, cancellationToken).SingleOrDefaultAsync(cancellationToken);
 
         if (setting == null)
         {
@@ -41,17 +41,17 @@ public class KeyValueHandler
             return TypedResults.NoContent();
         }
 
-        if (setting.IsReadOnly)
+        if (setting.Locked)
         {
             return new ReadOnlyResult(key);
         }
 
-        if (ifMatch != null && (ifMatch != setting.ETag && ifMatch != "*"))
+        if (ifMatch != null && (ifMatch != setting.Etag && ifMatch != "*"))
         {
             return new PreconditionFailedResult();
         }
 
-        if (ifNoneMatch != null && (ifNoneMatch == setting.ETag || ifNoneMatch == "*"))
+        if (ifNoneMatch != null && (ifNoneMatch == setting.Etag || ifNoneMatch == "*"))
         {
             return new PreconditionFailedResult();
         }
@@ -73,19 +73,19 @@ public class KeyValueHandler
         ifNoneMatch = ifNoneMatch?.TrimStart('"').TrimEnd('"');
         key = Uri.UnescapeDataString(key);
 
-        var setting = await repository.Get(key, label).SingleOrDefaultAsync(cancellationToken);
+        var setting = await repository.Get(key, label, cancellationToken).SingleOrDefaultAsync(cancellationToken);
 
         if (setting == null)
         {
             return TypedResults.NotFound();
         }
 
-        if (ifMatch != null && (ifMatch != setting.ETag && ifMatch != "*"))
+        if (ifMatch != null && (ifMatch != setting.Etag && ifMatch != "*"))
         {
             return new PreconditionFailedResult();
         }
 
-        if (ifNoneMatch != null && (ifNoneMatch == setting.ETag || ifNoneMatch == "*"))
+        if (ifNoneMatch != null && (ifNoneMatch == setting.Etag || ifNoneMatch == "*"))
         {
             return new NotModifiedResult();
         }
@@ -125,7 +125,7 @@ public class KeyValueHandler
             }
         }
 
-        var settings = await repository.Get(key, label).ToListAsync(cancellationToken);
+        var settings = await repository.Get(key, label, cancellationToken).ToListAsync(cancellationToken);
 
         return new KeyValueSetResult(settings);
     }
@@ -145,7 +145,7 @@ public class KeyValueHandler
 
         var date = DateTimeOffset.UtcNow;
 
-        var setting = await repository.Get(key, label).SingleOrDefaultAsync(cancellationToken);
+        var setting = await repository.Get(key, label, cancellationToken).SingleOrDefaultAsync(cancellationToken);
 
         if (setting == null)
         {
@@ -160,43 +160,45 @@ public class KeyValueHandler
             }
 
             setting = new ConfigurationSetting(
-                Convert.ToBase64String(SHA256.HashData(Encoding.UTF8.GetBytes(date.ToString("O")))),
+                Convert.ToBase64String(SHA256.HashData(Encoding.UTF8.GetBytes(date.UtcDateTime.ToString("yyyy-MM-dd HH:mm:ss")))),
                 key,
-                label,
+                label is LabelFilter.Null ? null : label,
                 input.ContentType,
                 input.Value,
                 date,
-                false);
+                false,
+                input.Tags);
 
             await repository.AddAsync(setting, cancellationToken);
 
             return new KeyValueResult(setting);
         }
 
-        if (setting.IsReadOnly)
+        if (setting.Locked)
         {
             return new ReadOnlyResult(key);
         }
 
-        if (ifMatch != null && (ifMatch != setting.ETag && ifMatch != "*"))
+        if (ifMatch != null && (ifMatch != setting.Etag && ifMatch != "*"))
         {
             return new PreconditionFailedResult();
         }
 
-        if (ifNoneMatch != null && (ifNoneMatch == setting.ETag || ifNoneMatch == "*"))
+        if (ifNoneMatch != null && (ifNoneMatch == setting.Etag || ifNoneMatch == "*"))
         {
             return new PreconditionFailedResult();
         }
 
-        setting.ETag = Convert.ToBase64String(SHA256.HashData(Encoding.UTF8.GetBytes(date.ToString("O"))));
+        setting.Etag = Convert.ToBase64String(SHA256.HashData(Encoding.UTF8.GetBytes(date.UtcDateTime.ToString("yyyy-MM-dd HH:mm:ss"))));
         setting.ContentType = input.ContentType;
         setting.Value = input.Value;
         setting.LastModified = date;
+        setting.Tags = input.Tags;
 
         await repository.UpdateAsync(setting, cancellationToken);
 
         return new KeyValueResult(setting);
     }
 
-    public record SetInput(string? Value, string? ContentType);
+    public record SetInput(string? Value, string? ContentType, IDictionary<string, object?>? Tags);
 }

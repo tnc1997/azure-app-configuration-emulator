@@ -27,7 +27,7 @@ public class KeyHandler
             }
         }
 
-        var keys = await repository.Get(key: name)
+        var keys = await repository.Get(key: name, cancellationToken: cancellationToken)
             .Select(setting => setting.Key)
             .Distinct()
             .ToListAsync(cancellationToken);

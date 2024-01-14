@@ -1,5 +1,4 @@
 using AzureAppConfigurationEmulator.Entities;
-using AzureAppConfigurationEmulator.Extensions;
 
 namespace AzureAppConfigurationEmulator.Results;
 
@@ -8,45 +7,26 @@ public class KeyValueResult(ConfigurationSetting setting) :
     IContentTypeHttpResult,
     IStatusCodeHttpResult,
     IValueHttpResult,
-    IValueHttpResult<KeyValue>
+    IValueHttpResult<ConfigurationSetting>
 {
     public async Task ExecuteAsync(HttpContext httpContext)
     {
-        httpContext.Response.Headers.ETag = setting.ETag;
-        httpContext.Response.Headers.LastModified = setting.LastModified.ToString("R");
+        httpContext.Response.Headers.ETag = Value.Etag;
+        httpContext.Response.Headers.LastModified = Value.LastModified.ToString("R");
 
         if (StatusCode.HasValue)
         {
             httpContext.Response.StatusCode = StatusCode.Value;
         }
 
-        if (Value is not null)
-        {
-            await httpContext.Response.WriteAsJsonAsync(Value, options: default, ContentType);
-        }
+        await httpContext.Response.WriteAsJsonAsync(Value, options: default, ContentType);
     }
 
     public string? ContentType => "application/vnd.microsoft.appconfig.kv+json";
 
     public int? StatusCode => StatusCodes.Status200OK;
 
-    object? IValueHttpResult.Value => Value;
+    object IValueHttpResult.Value => Value;
 
-    public KeyValue? Value { get; } = new(
-        setting.ETag,
-        setting.Key,
-        setting.Label.NormalizeNull(),
-        setting.ContentType,
-        setting.Value,
-        setting.LastModified,
-        setting.IsReadOnly);
+    public ConfigurationSetting Value { get; } = setting;
 }
-
-public record KeyValue(
-    string Etag,
-    string Key,
-    string? Label,
-    string? ContentType,
-    string? Value,
-    DateTimeOffset LastModified,
-    bool Locked);

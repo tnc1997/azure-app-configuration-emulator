@@ -18,7 +18,7 @@ public class LockHandlerTests
         var repository = Substitute.For<IConfigurationSettingRepository>();
         var settings = new List<ConfigurationSetting>
         {
-            new("abc", "HelloWorld", LabelFilter.Null, null, null, DateTimeOffset.UtcNow, false)
+            new("abc", "HelloWorld", LabelFilter.Null, null, null, DateTimeOffset.UtcNow, false, null)
         };
         repository.Get(Arg.Any<string>(), Arg.Any<string>()).Returns(settings.ToAsyncEnumerable());
 
@@ -37,7 +37,7 @@ public class LockHandlerTests
         var repository = Substitute.For<IConfigurationSettingRepository>();
         var settings = new List<ConfigurationSetting>
         {
-            new("abc", "HelloWorld", LabelFilter.Null, null, null, DateTimeOffset.UtcNow, false)
+            new("abc", "HelloWorld", LabelFilter.Null, null, null, DateTimeOffset.UtcNow, false, null)
         };
         repository.Get(Arg.Any<string>(), Arg.Any<string>()).Returns(settings.ToAsyncEnumerable());
 
@@ -55,7 +55,7 @@ public class LockHandlerTests
         var repository = Substitute.For<IConfigurationSettingRepository>();
         var settings = new List<ConfigurationSetting>
         {
-            new("abc", "HelloWorld", LabelFilter.Null, null, null, DateTimeOffset.UtcNow, false)
+            new("abc", "HelloWorld", LabelFilter.Null, null, null, DateTimeOffset.UtcNow, false, null)
         };
         repository.Get(Arg.Any<string>(), Arg.Any<string>()).Returns(settings.ToAsyncEnumerable());
 
@@ -89,7 +89,7 @@ public class LockHandlerTests
         var repository = Substitute.For<IConfigurationSettingRepository>();
         var settings = new List<ConfigurationSetting>
         {
-            new("abc", "HelloWorld", LabelFilter.Null, null, null, DateTimeOffset.UtcNow, false)
+            new("abc", "HelloWorld", LabelFilter.Null, null, null, DateTimeOffset.UtcNow, false, null)
         };
         repository.Get(Arg.Any<string>(), Arg.Any<string>()).Returns(settings.ToAsyncEnumerable());
 
@@ -107,7 +107,7 @@ public class LockHandlerTests
         var repository = Substitute.For<IConfigurationSettingRepository>();
         var settings = new List<ConfigurationSetting>
         {
-            new("abc", "HelloWorld", LabelFilter.Null, null, null, DateTimeOffset.UtcNow, false)
+            new("abc", "HelloWorld", LabelFilter.Null, null, null, DateTimeOffset.UtcNow, false, null)
         };
         repository.Get(Arg.Any<string>(), Arg.Any<string>()).Returns(settings.ToAsyncEnumerable());
 
@@ -125,7 +125,7 @@ public class LockHandlerTests
         var repository = Substitute.For<IConfigurationSettingRepository>();
         var settings = new List<ConfigurationSetting>
         {
-            new("abc", "HelloWorld", LabelFilter.Null, null, null, DateTimeOffset.UtcNow, false)
+            new("abc", "HelloWorld", LabelFilter.Null, null, null, DateTimeOffset.UtcNow, false, null)
         };
         repository.Get(Arg.Any<string>(), Arg.Any<string>()).Returns(settings.ToAsyncEnumerable());
 
@@ -144,7 +144,7 @@ public class LockHandlerTests
         var repository = Substitute.For<IConfigurationSettingRepository>();
         var settings = new List<ConfigurationSetting>
         {
-            new("abc", "HelloWorld", LabelFilter.Null, null, null, DateTimeOffset.UtcNow, false)
+            new("abc", "HelloWorld", LabelFilter.Null, null, null, DateTimeOffset.UtcNow, false, null)
         };
         repository.Get(Arg.Any<string>(), Arg.Any<string>()).Returns(settings.ToAsyncEnumerable());
 
@@ -162,7 +162,7 @@ public class LockHandlerTests
         var repository = Substitute.For<IConfigurationSettingRepository>();
         var settings = new List<ConfigurationSetting>
         {
-            new("abc", "HelloWorld", LabelFilter.Null, null, null, DateTimeOffset.UtcNow, false)
+            new("abc", "HelloWorld", LabelFilter.Null, null, null, DateTimeOffset.UtcNow, false, null)
         };
         repository.Get(Arg.Any<string>(), Arg.Any<string>()).Returns(settings.ToAsyncEnumerable());
 
@@ -196,7 +196,7 @@ public class LockHandlerTests
         var repository = Substitute.For<IConfigurationSettingRepository>();
         var settings = new List<ConfigurationSetting>
         {
-            new("abc", "HelloWorld", LabelFilter.Null, null, null, DateTimeOffset.UtcNow, false)
+            new("abc", "HelloWorld", LabelFilter.Null, null, null, DateTimeOffset.UtcNow, false, null)
         };
         repository.Get(Arg.Any<string>(), Arg.Any<string>()).Returns(settings.ToAsyncEnumerable());
 
@@ -214,7 +214,7 @@ public class LockHandlerTests
         var repository = Substitute.For<IConfigurationSettingRepository>();
         var settings = new List<ConfigurationSetting>
         {
-            new("abc", "HelloWorld", LabelFilter.Null, null, null, DateTimeOffset.UtcNow, false)
+            new("abc", "HelloWorld", LabelFilter.Null, null, null, DateTimeOffset.UtcNow, false, null)
         };
         repository.Get(Arg.Any<string>(), Arg.Any<string>()).Returns(settings.ToAsyncEnumerable());
 
