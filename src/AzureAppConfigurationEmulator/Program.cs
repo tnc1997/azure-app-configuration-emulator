@@ -1,10 +1,9 @@
 using System.Text.Json;
 using AzureAppConfigurationEmulator.Authentication;
-using AzureAppConfigurationEmulator.Contexts;
 using AzureAppConfigurationEmulator.Extensions;
+using AzureAppConfigurationEmulator.Factories;
 using AzureAppConfigurationEmulator.Handlers;
 using AzureAppConfigurationEmulator.Repositories;
-using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -12,12 +11,10 @@ builder.Services.AddAuthentication().AddHmac();
 
 builder.Services.AddAuthorization();
 
-builder.Services.AddDbContext<ApplicationDbContext>(builder =>
-{
-    builder.UseSqlite($"Data Source={HostingExtensions.DatabasePath}");
-});
-
-builder.Services.AddScoped<IConfigurationSettingRepository, ConfigurationSettingRepository>();
+builder.Services.AddSingleton<IConfigurationSettingRepository, ConfigurationSettingRepository>();
+builder.Services.AddSingleton<IDbCommandFactory, DbCommandFactory>();
+builder.Services.AddSingleton<IDbConnectionFactory, DbConnectionFactory>();
+builder.Services.AddSingleton<IDbParameterFactory, DbParameterFactory>();
 
 builder.Services.ConfigureHttpJsonOptions(options =>
 {

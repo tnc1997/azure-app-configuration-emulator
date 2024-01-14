@@ -1,173 +1,243 @@
+using System.Data.Common;
+using System.Globalization;
+using System.Runtime.CompilerServices;
+using System.Text.Json;
 using System.Text.RegularExpressions;
 using AzureAppConfigurationEmulator.Constants;
-using AzureAppConfigurationEmulator.Contexts;
 using AzureAppConfigurationEmulator.Entities;
 using AzureAppConfigurationEmulator.Extensions;
-using LinqKit;
-using Microsoft.EntityFrameworkCore;
+using AzureAppConfigurationEmulator.Factories;
 
 namespace AzureAppConfigurationEmulator.Repositories;
 
-public class ConfigurationSettingRepository(ApplicationDbContext context) : IConfigurationSettingRepository
+public partial class ConfigurationSettingRepository(
+    IDbCommandFactory commandFactory,
+    IDbConnectionFactory connectionFactory,
+    ILogger<ConfigurationSettingRepository> logger,
+    IDbParameterFactory parameterFactory) : IConfigurationSettingRepository
 {
-    private ApplicationDbContext Context { get; } = context;
+    private IDbCommandFactory CommandFactory { get; } = commandFactory;
 
-    public async Task AddAsync(ConfigurationSetting setting, CancellationToken cancellationToken = default)
+    private IDbConnectionFactory ConnectionFactory { get; } = connectionFactory;
+
+    private ILogger<ConfigurationSettingRepository> Logger { get; } = logger;
+    
+    private IDbParameterFactory ParameterFactory { get; } = parameterFactory;
+
+    public async Task AddAsync(
+        ConfigurationSetting setting,
+        CancellationToken cancellationToken = default)
     {
-        Context.ConfigurationSettings.Add(setting);
+        const string text = "INSERT INTO configuration_settings (etag, key, label, content_type, value, last_modified, locked, tags) VALUES ($etag, $key, $label, $content_type, $value, $last_modified, $locked, $tags)";
 
-        Context.ConfigurationSettingRevisions.Add(new ConfigurationSettingRevision(setting));
+        var parameters = new List<DbParameter>
+        {
+            ParameterFactory.Create("$etag", setting.Etag),
+            ParameterFactory.Create("$key", setting.Key),
+            ParameterFactory.Create("$label", setting.Label),
+            ParameterFactory.Create("$content_type", setting.ContentType),
+            ParameterFactory.Create("$value", setting.Value),
+            ParameterFactory.Create("$last_modified", setting.LastModified),
+            ParameterFactory.Create("$locked", setting.Locked),
+            ParameterFactory.Create("$tags", setting.Tags)
+        };
 
-        await Context.SaveChangesAsync(cancellationToken);
+        await ExecuteNonQueryAsync(text, parameters, cancellationToken);
     }
 
-    public IAsyncEnumerable<ConfigurationSetting> Get(string key = KeyFilter.Any, string label = LabelFilter.Any, DateTime? utcPointInTime = default)
+    public async IAsyncEnumerable<ConfigurationSetting> Get(
+        string key = KeyFilter.Any,
+        string label = LabelFilter.Any,
+        DateTimeOffset? utcPointInTime = default,
+        [EnumeratorCancellation] CancellationToken cancellationToken = default)
     {
-        if (utcPointInTime.HasValue)
+        var text = $"SELECT etag, key, label, content_type, value, last_modified, locked, tags FROM {(utcPointInTime is not null ? "configuration_settings_history" : "configuration_settings")}";
+
+        var parameters = new List<DbParameter>();
+
+        var outers = new List<string>();
+
+        if (key is not KeyFilter.Any)
         {
-            var outer = PredicateBuilder.New<ConfigurationSettingRevision>(revision => revision.ValidFrom <= utcPointInTime.Value && (revision.ValidTo == null || revision.ValidTo > utcPointInTime.Value));
+            var keys = UnescapedCommaRegex().Split(key).Select(s => s.Unescape()).ToList();
 
-            if (key != KeyFilter.Any)
+            var inners = new List<string>();
+
+            for (var i = 0; i < keys.Count; i++)
             {
-                var inner = PredicateBuilder.New<ConfigurationSettingRevision>(false);
+                var match = TrailingWildcardRegex().Match(keys[i]);
 
-                foreach (var s in new Regex(@"(?<!\\),").Split(key).Select(s => s.Unescape()))
-                {
-                    var match = new Regex(@"^(.*)(?<!\\)\*$").Match(s);
+                parameters.Add(ParameterFactory.Create($"$key{i}", match.Success ? $"{match.Groups[1].Value}%" : keys[i]));
 
-                    if (match.Success)
-                    {
-                        inner = inner.Or(setting => setting.Key.StartsWith(match.Groups[1].Value));
-                    }
-                    else
-                    {
-                        inner = inner.Or(setting => setting.Key == s);
-                    }
-                }
-
-                outer = outer.And(inner);
+                inners.Add(match.Success ? $"key LIKE $key{i}" : $"key = $key{i}");
             }
 
-            if (label != LabelFilter.Any)
+            outers.Add($"({string.Join(" OR ", inners)})");
+        }
+
+        if (label is not LabelFilter.Any)
+        {
+            var labels = UnescapedCommaRegex().Split(label).Select(s => s.Unescape()).ToList();
+
+            var inners = new List<string>();
+
+            for (var i = 0; i < labels.Count; i++)
             {
-                var inner = PredicateBuilder.New<ConfigurationSettingRevision>(false);
-
-                foreach (var s in new Regex(@"(?<!\\),").Split(label).Select(s => s.Unescape()))
+                if (labels[i] == LabelFilter.Null)
                 {
-                    var match = new Regex(@"^(.*)(?<!\\)\*$").Match(s);
-
-                    if (match.Success)
-                    {
-                        inner = inner.Or(setting => setting.Label.StartsWith(match.Groups[1].Value));
-                    }
-                    else
-                    {
-                        inner = inner.Or(setting => setting.Label == s);
-                    }
+                    inners.Add("label IS NULL");
                 }
+                else
+                {
+                    var match = TrailingWildcardRegex().Match(labels[i]);
 
-                outer = outer.And(inner);
+                    parameters.Add(ParameterFactory.Create($"$label{i}", match.Success ? $"{match.Groups[1].Value}%" : labels[i]));
+
+                    inners.Add(match.Success ? $"label LIKE $label{i}" : $"label = $label{i}");
+                }
             }
 
-            return Context.ConfigurationSettingRevisions.Where(outer).Select(revision => new ConfigurationSetting(revision)).AsAsyncEnumerable();
+            outers.Add($"({string.Join(" OR ", inners)})");
+        }
+
+        if (utcPointInTime is not null)
+        {
+            parameters.Add(ParameterFactory.Create("$utc_point_in_time", utcPointInTime));
+
+            outers.Add("(valid_from >= $utc_point_in_time AND valid_to < $utc_point_in_time)");
+        }
+
+        if (outers.Count > 0)
+        {
+            text += $" WHERE {string.Join(" AND ", outers)}";
+        }
+
+        await foreach (var reader in ExecuteReader(text, parameters, cancellationToken))
+        {
+            yield return new ConfigurationSetting(
+                reader.GetString(0),
+                reader.GetString(1),
+                reader.IsDBNull(2) ? null : reader.GetString(2),
+                reader.IsDBNull(3) ? null : reader.GetString(3),
+                reader.IsDBNull(4) ? null : reader.GetString(4),
+                DateTimeOffset.Parse(reader.GetString(5), styles: DateTimeStyles.AssumeUniversal),
+                reader.GetBoolean(6),
+                reader.IsDBNull(7) ? null : JsonSerializer.Deserialize<IDictionary<string, object?>>(reader.GetString(7)));
+        }
+    }
+
+    public async Task RemoveAsync(
+        ConfigurationSetting setting,
+        CancellationToken cancellationToken = default)
+    {
+        var text = "DELETE FROM configuration_settings";
+
+        var parameters = new List<DbParameter> { ParameterFactory.Create("$key", setting.Key) };
+
+        var outers = new List<string> { "key = $key" };
+
+        if (setting.Label is not null)
+        {
+            parameters.Add(ParameterFactory.Create("$label", setting.Label));
+
+            outers.Add("label = $label");
         }
         else
         {
-            var outer = PredicateBuilder.New<ConfigurationSetting>(true);
+            outers.Add("label IS NULL");
+        }
 
-            if (key != KeyFilter.Any)
-            {
-                var inner = PredicateBuilder.New<ConfigurationSetting>(false);
+        if (outers.Count > 0)
+        {
+            text += $" WHERE {string.Join(" AND ", outers)}";
+        }
 
-                foreach (var s in new Regex(@"(?<!\\),").Split(key).Select(s => s.Unescape()))
-                {
-                    var match = new Regex(@"^(.*)(?<!\\)\*$").Match(s);
+        await ExecuteNonQueryAsync(text, parameters, cancellationToken);
+    }
 
-                    if (match.Success)
-                    {
-                        inner = inner.Or(setting => setting.Key.StartsWith(match.Groups[1].Value));
-                    }
-                    else
-                    {
-                        inner = inner.Or(setting => setting.Key == s);
-                    }
-                }
+    public async Task UpdateAsync(
+        ConfigurationSetting setting,
+        CancellationToken cancellationToken = default)
+    {
+        var text = "UPDATE configuration_settings SET etag = $etag, content_type = $content_type, value = $value, last_modified = $last_modified, locked = $locked, tags = $tags";
 
-                outer = outer.And(inner);
-            }
+        var parameters = new List<DbParameter>
+        {
+            ParameterFactory.Create("$etag", setting.Etag),
+            ParameterFactory.Create("$key", setting.Key),
+            ParameterFactory.Create("$content_type", setting.ContentType),
+            ParameterFactory.Create("$value", setting.Value),
+            ParameterFactory.Create("$last_modified", setting.LastModified),
+            ParameterFactory.Create("$locked", setting.Locked),
+            ParameterFactory.Create("$tags", setting.Tags)
+        };
 
-            if (label != LabelFilter.Any)
-            {
-                var inner = PredicateBuilder.New<ConfigurationSetting>(false);
+        var outers = new List<string> { "key = $key" };
 
-                foreach (var s in new Regex(@"(?<!\\),").Split(label).Select(s => s.Unescape()))
-                {
-                    var match = new Regex(@"^(.*)(?<!\\)\*$").Match(s);
+        if (setting.Label is not null)
+        {
+            parameters.Add(ParameterFactory.Create("$label", setting.Label));
 
-                    if (match.Success)
-                    {
-                        inner = inner.Or(setting => setting.Label.StartsWith(match.Groups[1].Value));
-                    }
-                    else
-                    {
-                        inner = inner.Or(setting => setting.Label == s);
-                    }
-                }
+            outers.Add("label = $label");
+        }
+        else
+        {
+            outers.Add("label IS NULL");
+        }
 
-                outer = outer.And(inner);
-            }
+        if (outers.Count > 0)
+        {
+            text += $" WHERE {string.Join(" AND ", outers)}";
+        }
 
-            return Context.ConfigurationSettings.Where(outer).AsAsyncEnumerable();
+        await ExecuteNonQueryAsync(text, parameters, cancellationToken);
+    }
+
+    [GeneratedRegex(@"^(.*)(?<!\\)\*$")]
+    private static partial Regex TrailingWildcardRegex();
+
+    [GeneratedRegex(@"(?<!\\),")]
+    private static partial Regex UnescapedCommaRegex();
+
+    private async Task ExecuteNonQueryAsync(
+        string text,
+        IEnumerable<DbParameter> parameters,
+        CancellationToken cancellationToken = default)
+    {
+        using (Logger.BeginScope(new Dictionary<string, object?> { { "CommandText", text } }))
+        {
+            Logger.LogDebug("Creating the connection.");
+            await using var connection = ConnectionFactory.Create();
+            await connection.OpenAsync(cancellationToken);
+
+            Logger.LogDebug("Creating the command.");
+            await using var command = CommandFactory.Create(connection, text, parameters);
+
+            Logger.LogDebug("Executing the command.");
+            await command.ExecuteNonQueryAsync(cancellationToken);
         }
     }
 
-    public async Task RemoveAsync(ConfigurationSetting setting, CancellationToken cancellationToken = default)
+    private async IAsyncEnumerable<DbDataReader> ExecuteReader(
+        string text,
+        IEnumerable<DbParameter> parameters,
+        [EnumeratorCancellation] CancellationToken cancellationToken = default)
     {
-        var date = DateTime.UtcNow;
-
-        Context.ConfigurationSettings.Remove(setting);
-
-        var revision = await Context.ConfigurationSettingRevisions.SingleOrDefaultAsync(
-            revision =>
-                revision.Key == setting.Key &&
-                revision.Label == setting.Label &&
-                revision.ValidFrom <= date &&
-                revision.ValidTo == null,
-            cancellationToken);
-
-        if (revision != null)
+        using (Logger.BeginScope(new Dictionary<string, object?> { { "CommandText", text } }))
         {
-            revision.ValidTo = date;
+            Logger.LogDebug("Creating the connection.");
+            await using var connection = ConnectionFactory.Create();
+            await connection.OpenAsync(cancellationToken);
 
-            Context.ConfigurationSettingRevisions.Update(revision);
+            Logger.LogDebug("Creating the command.");
+            await using var command = CommandFactory.Create(connection, text, parameters);
+
+            Logger.LogDebug("Executing the command.");
+            await using var reader = await command.ExecuteReaderAsync(cancellationToken);
+            while (await reader.ReadAsync(cancellationToken))
+            {
+                yield return reader;
+            }
         }
-
-        await Context.SaveChangesAsync(cancellationToken);
-    }
-
-    public async Task UpdateAsync(ConfigurationSetting setting, CancellationToken cancellationToken = default)
-    {
-        var date = DateTime.UtcNow;
-
-        Context.ConfigurationSettings.Update(setting);
-
-        var revision = await Context.ConfigurationSettingRevisions.SingleOrDefaultAsync(
-            revision =>
-                revision.Key == setting.Key &&
-                revision.Label == setting.Label &&
-                revision.ValidFrom <= date &&
-                revision.ValidTo == null,
-            cancellationToken);
-
-        if (revision != null)
-        {
-            revision.ValidTo = setting.LastModified;
-
-            Context.ConfigurationSettingRevisions.Update(revision);
-        }
-
-        Context.ConfigurationSettingRevisions.Add(new ConfigurationSettingRevision(setting));
-
-        await Context.SaveChangesAsync(cancellationToken);
     }
 }

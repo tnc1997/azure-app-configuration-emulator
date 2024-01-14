@@ -1,6 +1,6 @@
 namespace AzureAppConfigurationEmulator.Results;
 
-public class KeySetResult(IEnumerable<string> keys, DateTime? mementoDatetime = default) :
+public class KeySetResult(IEnumerable<string> keys, DateTimeOffset? mementoDatetime = default) :
     IResult,
     IContentTypeHttpResult,
     IStatusCodeHttpResult,
@@ -19,21 +19,18 @@ public class KeySetResult(IEnumerable<string> keys, DateTime? mementoDatetime = 
             httpContext.Response.StatusCode = StatusCode.Value;
         }
 
-        if (Value is not null)
-        {
-            await httpContext.Response.WriteAsJsonAsync(Value, options: default, ContentType);
-        }
+        await httpContext.Response.WriteAsJsonAsync(Value, options: default, ContentType);
     }
 
     public string? ContentType => "application/vnd.microsoft.appconfig.keyset+json";
 
     public int? StatusCode => StatusCodes.Status200OK;
 
-    object? IValueHttpResult.Value => Value;
+    object IValueHttpResult.Value => Value;
 
-    public KeySet? Value { get; } = new(keys.Select(key => new Key(key)));
+    public KeySet Value { get; } = new(keys.Select(key => new Key(key)));
 
-    private DateTime? MementoDatetime { get; } = mementoDatetime;
+    private DateTimeOffset? MementoDatetime { get; } = mementoDatetime;
 }
 
 public record KeySet(IEnumerable<Key> Items);

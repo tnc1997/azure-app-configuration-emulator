@@ -22,8 +22,9 @@ public class KeyValueHandler
     {
         ifMatch = ifMatch?.TrimStart('"').TrimEnd('"');
         ifNoneMatch = ifNoneMatch?.TrimStart('"').TrimEnd('"');
+        key = Uri.UnescapeDataString(key);
 
-        var setting = await repository.Get(key, label).SingleOrDefaultAsync(cancellationToken);
+        var setting = await repository.Get(key, label, cancellationToken).SingleOrDefaultAsync(cancellationToken);
 
         if (setting == null)
         {
@@ -40,17 +41,17 @@ public class KeyValueHandler
             return TypedResults.NoContent();
         }
 
-        if (setting.IsReadOnly)
+        if (setting.Locked)
         {
             return new ReadOnlyResult(key);
         }
 
-        if (ifMatch != null && (ifMatch != setting.ETag && ifMatch != "*"))
+        if (ifMatch != null && (ifMatch != setting.Etag && ifMatch != "*"))
         {
             return new PreconditionFailedResult();
         }
 
-        if (ifNoneMatch != null && (ifNoneMatch == setting.ETag || ifNoneMatch == "*"))
+        if (ifNoneMatch != null && (ifNoneMatch == setting.Etag || ifNoneMatch == "*"))
         {
             return new PreconditionFailedResult();
         }
@@ -64,27 +65,28 @@ public class KeyValueHandler
         [FromServices] IConfigurationSettingRepository repository,
         [FromRoute] string key,
         [FromQuery] string label = LabelFilter.Null,
-        [FromHeader(Name = "Accept-Datetime")] DateTime? acceptDatetime = default,
+        [FromHeader(Name = "Accept-Datetime")] DateTimeOffset? acceptDatetime = default,
         [FromHeader(Name = "If-Match")] string? ifMatch = default,
         [FromHeader(Name = "If-None-Match")] string? ifNoneMatch = default,
         CancellationToken cancellationToken = default)
     {
         ifMatch = ifMatch?.TrimStart('"').TrimEnd('"');
         ifNoneMatch = ifNoneMatch?.TrimStart('"').TrimEnd('"');
+        key = Uri.UnescapeDataString(key);
 
-        var setting = await repository.Get(key, label, acceptDatetime).SingleOrDefaultAsync(cancellationToken);
+        var setting = await repository.Get(key, label, acceptDatetime, cancellationToken).SingleOrDefaultAsync(cancellationToken);
 
         if (setting == null)
         {
             return TypedResults.NotFound();
         }
 
-        if (ifMatch != null && (ifMatch != setting.ETag && ifMatch != "*"))
+        if (ifMatch != null && (ifMatch != setting.Etag && ifMatch != "*"))
         {
             return new PreconditionFailedResult();
         }
 
-        if (ifNoneMatch != null && (ifNoneMatch == setting.ETag || ifNoneMatch == "*"))
+        if (ifNoneMatch != null && (ifNoneMatch == setting.Etag || ifNoneMatch == "*"))
         {
             return new NotModifiedResult();
         }
@@ -96,7 +98,7 @@ public class KeyValueHandler
         [FromServices] IConfigurationSettingRepository repository,
         [FromQuery] string key = KeyFilter.Any,
         [FromQuery] string label = LabelFilter.Any,
-        [FromHeader(Name = "Accept-Datetime")] DateTime? acceptDatetime = default,
+        [FromHeader(Name = "Accept-Datetime")] DateTimeOffset? acceptDatetime = default,
         CancellationToken cancellationToken = default)
     {
         if (key != KeyFilter.Any)
@@ -125,7 +127,7 @@ public class KeyValueHandler
             }
         }
 
-        var settings = await repository.Get(key, label, acceptDatetime).ToListAsync(cancellationToken);
+        var settings = await repository.Get(key, label, acceptDatetime, cancellationToken).ToListAsync(cancellationToken);
 
         return new KeyValueSetResult(settings, acceptDatetime);
     }
@@ -141,10 +143,11 @@ public class KeyValueHandler
     {
         ifMatch = ifMatch?.TrimStart('"').TrimEnd('"');
         ifNoneMatch = ifNoneMatch?.TrimStart('"').TrimEnd('"');
+        key = Uri.UnescapeDataString(key);
 
         var date = DateTime.UtcNow;
 
-        var setting = await repository.Get(key, label).SingleOrDefaultAsync(cancellationToken);
+        var setting = await repository.Get(key, label, cancellationToken).SingleOrDefaultAsync(cancellationToken);
 
         if (setting == null)
         {
@@ -159,43 +162,45 @@ public class KeyValueHandler
             }
 
             setting = new ConfigurationSetting(
-                Convert.ToBase64String(SHA256.HashData(Encoding.UTF8.GetBytes(date.ToString("O")))),
+                Convert.ToBase64String(SHA256.HashData(Encoding.UTF8.GetBytes(date.UtcDateTime.ToString("yyyy-MM-dd HH:mm:ss")))),
                 key,
-                label,
+                label is LabelFilter.Null ? null : label,
                 input.ContentType,
                 input.Value,
                 date,
-                false);
+                false,
+                input.Tags);
 
             await repository.AddAsync(setting, cancellationToken);
 
             return new KeyValueResult(setting);
         }
 
-        if (setting.IsReadOnly)
+        if (setting.Locked)
         {
             return new ReadOnlyResult(key);
         }
 
-        if (ifMatch != null && (ifMatch != setting.ETag && ifMatch != "*"))
+        if (ifMatch != null && (ifMatch != setting.Etag && ifMatch != "*"))
         {
             return new PreconditionFailedResult();
         }
 
-        if (ifNoneMatch != null && (ifNoneMatch == setting.ETag || ifNoneMatch == "*"))
+        if (ifNoneMatch != null && (ifNoneMatch == setting.Etag || ifNoneMatch == "*"))
         {
             return new PreconditionFailedResult();
         }
 
-        setting.ETag = Convert.ToBase64String(SHA256.HashData(Encoding.UTF8.GetBytes(date.ToString("O"))));
+        setting.Etag = Convert.ToBase64String(SHA256.HashData(Encoding.UTF8.GetBytes(date.UtcDateTime.ToString("yyyy-MM-dd HH:mm:ss"))));
         setting.ContentType = input.ContentType;
         setting.Value = input.Value;
         setting.LastModified = date;
+        setting.Tags = input.Tags;
 
         await repository.UpdateAsync(setting, cancellationToken);
 
         return new KeyValueResult(setting);
     }
 
-    public record SetInput(string? Value, string? ContentType);
+    public record SetInput(string? Value, string? ContentType, IDictionary<string, object?>? Tags);
 }

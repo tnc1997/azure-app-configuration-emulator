@@ -1,36 +1,28 @@
 namespace AzureAppConfigurationEmulator.Entities;
 
 public class ConfigurationSetting(
-    string eTag,
+    string etag,
     string key,
-    string label,
+    string? label,
     string? contentType,
     string? value,
-    DateTime lastModified,
-    bool isReadOnly)
+    DateTimeOffset lastModified,
+    bool locked,
+    IDictionary<string, object?>? tags)
 {
-    public ConfigurationSetting(ConfigurationSettingRevision revision) : this(
-        revision.ETag,
-        revision.Key,
-        revision.Label,
-        revision.ContentType,
-        revision.Value,
-        revision.LastModified,
-        revision.IsReadOnly)
-    {
-    }
-
-    public string ETag { get; set; } = eTag;
+    public string Etag { get; set; } = etag;
 
     public string Key { get; set; } = key;
 
-    public string Label { get; set; } = label;
+    public string? Label { get; set; } = label;
 
     public string? ContentType { get; set; } = contentType;
 
     public string? Value { get; set; } = value;
 
-    public DateTime LastModified { get; set; } = lastModified;
+    public DateTimeOffset LastModified { get; set; } = lastModified;
 
-    public bool IsReadOnly { get; set; } = isReadOnly;
+    public bool Locked { get; set; } = locked;
+
+    public IDictionary<string, object?>? Tags { get; set; } = tags;
 }

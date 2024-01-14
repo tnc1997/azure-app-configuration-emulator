@@ -26,17 +26,17 @@ public class LockHandler
             return TypedResults.NotFound();
         }
 
-        if (ifMatch != null && (ifMatch != setting.ETag && ifMatch != "*"))
+        if (ifMatch != null && (ifMatch != setting.Etag && ifMatch != "*"))
         {
             return new PreconditionFailedResult();
         }
 
-        if (ifNoneMatch != null && (ifNoneMatch == setting.ETag || ifNoneMatch == "*"))
+        if (ifNoneMatch != null && (ifNoneMatch == setting.Etag || ifNoneMatch == "*"))
         {
             return new PreconditionFailedResult();
         }
 
-        setting.IsReadOnly = true;
+        setting.Locked = true;
 
         await repository.UpdateAsync(setting, cancellationToken);
 
@@ -62,17 +62,17 @@ public class LockHandler
             return TypedResults.NotFound();
         }
 
-        if (ifMatch != null && (ifMatch != setting.ETag && ifMatch != "*"))
+        if (ifMatch != null && (ifMatch != setting.Etag && ifMatch != "*"))
         {
             return new PreconditionFailedResult();
         }
 
-        if (ifNoneMatch != null && (ifNoneMatch == setting.ETag || ifNoneMatch == "*"))
+        if (ifNoneMatch != null && (ifNoneMatch == setting.Etag || ifNoneMatch == "*"))
         {
             return new PreconditionFailedResult();
         }
 
-        setting.IsReadOnly = false;
+        setting.Locked = false;
 
         await repository.UpdateAsync(setting, cancellationToken);
 

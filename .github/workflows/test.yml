@@ -1,0 +1,29 @@
+name: Test
+on:
+  pull_request:
+    branches:
+      - main
+jobs:
+  test:
+    name: Test
+    runs-on: ${{ matrix.os }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+      - name: Setup .NET SDK
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: 8.0
+      - name: Install dependencies
+        run: dotnet restore
+      - name: Run tests
+        run: dotnet test --logger "trx;LogFileName=TestResults.trx"
+      - name: Upload test results
+        if: ${{ always() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-results-${{ matrix.os }}
+          path: "**/TestResults.trx"
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest]
