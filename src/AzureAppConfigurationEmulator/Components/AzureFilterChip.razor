@@ -1,0 +1,17 @@
+<button class="flex flex-row items-center my-0.5 mx-1.5 rounded-full h-[24px] bg-solitude enabled:hover:bg-tropical-blue enabled:dark:hover:bg-tuatara dark:bg-mine-shaft">
+    <div class="flex flex-row pr-6 pl-2.5 m-1.5 h-[18px]">
+        <div>@Key</div>
+
+        <div class="px-1">@Operator</div>
+
+        <div class="font-bold">@Value</div>
+    </div>
+</button>
+
+@code {
+    [EditorRequired, Parameter] public string Key { get; set; } = null!;
+    
+    [Parameter] public char Operator { get; set; } = ':';
+    
+    [EditorRequired, Parameter] public string Value { get; set; } = null!;
+}

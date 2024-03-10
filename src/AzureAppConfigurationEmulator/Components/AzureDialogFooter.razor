@@ -1,0 +1,7 @@
+<div class="flex flex-row gap-2.5">
+    @ChildContent
+</div>
+
+@code {
+    [Parameter] public RenderFragment? ChildContent { get; set; }
+}

@@ -1,0 +1,13 @@
+<div class="mb-2">
+    <div class="mx-5 font-semibold leading-8 border-b border-b-alto dark:border-b-masala">@Header</div>
+
+    <ul>
+        @ChildContent
+    </ul>
+</div>
+
+@code {
+    [EditorRequired, Parameter] public string Header { get; set; } = null!;
+
+    [Parameter] public RenderFragment? ChildContent { get; set; }
+}

@@ -1,0 +1,94 @@
+@attribute [StreamRendering]
+@inject IConfigurationSettingRepository ConfigurationSettingRepository
+@page "/ff"
+@rendermode InteractiveServer
+@using AzureAppConfigurationEmulator.Entities
+@using AzureAppConfigurationEmulator.Repositories
+
+<PageTitle>Feature manager</PageTitle>
+
+<div class="flex flex-col">
+    <AzureToolbar>
+        <AzureToolbarButton IsDisabled="true" Label="Create"/>
+        <AzureToolbarButton Label="Refresh" OnClick="@HandleRefreshClick"/>
+
+        <AzureToolbarDivider/>
+
+        <AzureToolbarButton IsDisabled="true" Label="Manage view"/>
+
+        <AzureToolbarDivider/>
+
+        <AzureToolbarButton IsDisabled="@(SelectedConfigurationSettings is { Count: 0 })" Label="Delete" OnClick="@HandleDeleteClick"/>
+    </AzureToolbar>
+
+    <div class="p-5">
+        <div class="flex flex-row mb-6">
+            <div class="mt-1">Filter all feature flags:</div>
+
+            <AzureFilterChip Key="Keys" Value="Select key"/>
+            <AzureFilterChip Key="Labels" Value="Select label"/>
+            <AzureFilterChip Key="Date" Value="Select date"/>
+        </div>
+
+        <div class="mb-6 max-w-[300px]">
+            <AzureTextField @bind-Value="@SearchQuery" Placeholder="Search displayed feature flags"/>
+        </div>
+
+        <div>Loaded @FilteredConfigurationSettings.Count() feature flags.</div>
+    </div>
+
+    <div class="mx-5">
+        <FeatureFlagConfigurationSettingTable @bind-SelectedConfigurationSettings="@SelectedConfigurationSettings" ConfigurationSettings="@FilteredConfigurationSettings"/>
+    </div>
+</div>
+
+@code {
+    private ICollection<FeatureFlagConfigurationSetting> ConfigurationSettings { get; } = [];
+
+    private IEnumerable<FeatureFlagConfigurationSetting> FilteredConfigurationSettings => ConfigurationSettings.Where(setting => string.IsNullOrEmpty(SearchQuery) || setting.Key.Contains(SearchQuery) || setting.Description?.Contains(SearchQuery) == true || setting.Label?.Contains(SearchQuery) == true).ToList();
+
+    private string? SearchQuery { get; set; }
+
+    private ICollection<FeatureFlagConfigurationSetting> SelectedConfigurationSettings { get; set; } = [];
+
+    protected override async Task OnInitializedAsync()
+    {
+        await foreach (var setting in ConfigurationSettingRepository.Get())
+        {
+            if (setting is FeatureFlagConfigurationSetting flag)
+            {
+                ConfigurationSettings.Add(flag);
+                StateHasChanged();
+            }
+        }
+    }
+
+    private async Task HandleDeleteClick(MouseEventArgs args)
+    {
+        foreach (var setting in SelectedConfigurationSettings.ToList())
+        {
+            await ConfigurationSettingRepository.RemoveAsync(setting);
+
+            if (ConfigurationSettings.Remove(setting) && SelectedConfigurationSettings.Remove(setting))
+            {
+                StateHasChanged();
+            }
+        }
+    }
+
+    private async Task HandleRefreshClick(MouseEventArgs args)
+    {
+        ConfigurationSettings.Clear();
+        StateHasChanged();
+
+        await foreach (var setting in ConfigurationSettingRepository.Get())
+        {
+            if (setting is FeatureFlagConfigurationSetting flag)
+            {
+                ConfigurationSettings.Add(flag);
+                StateHasChanged();
+            }
+        }
+    }
+
+}

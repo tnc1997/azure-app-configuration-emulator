@@ -1,9 +1,11 @@
 using System.Text.Json;
 using AzureAppConfigurationEmulator.Authentication;
+using AzureAppConfigurationEmulator.Components;
 using AzureAppConfigurationEmulator.Extensions;
 using AzureAppConfigurationEmulator.Factories;
 using AzureAppConfigurationEmulator.Handlers;
 using AzureAppConfigurationEmulator.Repositories;
+using AzureAppConfigurationEmulator.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -11,6 +13,11 @@ builder.Services.AddAuthentication().AddHmac();
 
 builder.Services.AddAuthorization();
 
+builder.Services.AddRazorComponents().AddInteractiveServerComponents();
+
+builder.Services.AddScoped<IDialogService, DialogService>();
+
+builder.Services.AddSingleton<IConfigurationSettingFactory, ConfigurationSettingFactory>();
 builder.Services.AddSingleton<IConfigurationSettingRepository, ConfigurationSettingRepository>();
 builder.Services.AddSingleton<IDbCommandFactory, DbCommandFactory>();
 builder.Services.AddSingleton<IDbConnectionFactory, DbConnectionFactory>();
@@ -25,6 +32,19 @@ builder.WebHost.ConfigureKestrel();
 
 var app = builder.Build();
 
+app.Map("/_explorer", app =>
+{
+    app.UseRouting();
+    app.UseStaticFiles();
+    app.UseAntiforgery();
+
+    app.UseEndpoints(endpoints =>
+    {
+        endpoints.MapRazorComponents<App>().AddInteractiveServerRenderMode();
+    });
+});
+
+app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
 

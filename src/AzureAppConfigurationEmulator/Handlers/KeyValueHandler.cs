@@ -164,11 +164,11 @@ public class KeyValueHandler
             setting = new ConfigurationSetting(
                 Convert.ToBase64String(SHA256.HashData(Encoding.UTF8.GetBytes(date.UtcDateTime.ToString("yyyy-MM-dd HH:mm:ss")))),
                 key,
+                date,
+                false,
                 label is LabelFilter.Null ? null : label,
                 input.ContentType,
                 input.Value,
-                date,
-                false,
                 input.Tags);
 
             await repository.AddAsync(setting, cancellationToken);
@@ -191,16 +191,19 @@ public class KeyValueHandler
             return new PreconditionFailedResult();
         }
 
-        setting.Etag = Convert.ToBase64String(SHA256.HashData(Encoding.UTF8.GetBytes(date.UtcDateTime.ToString("yyyy-MM-dd HH:mm:ss"))));
-        setting.ContentType = input.ContentType;
-        setting.Value = input.Value;
-        setting.LastModified = date;
-        setting.Tags = input.Tags;
+        setting = setting with
+        {
+            Etag = Convert.ToBase64String(SHA256.HashData(Encoding.UTF8.GetBytes(date.UtcDateTime.ToString("yyyy-MM-dd HH:mm:ss")))),
+            ContentType = input.ContentType,
+            Value = input.Value,
+            LastModified = date,
+            Tags = input.Tags
+        };
 
         await repository.UpdateAsync(setting, cancellationToken);
 
         return new KeyValueResult(setting);
     }
 
-    public record SetInput(string? Value, string? ContentType, IDictionary<string, object?>? Tags);
+    public record SetInput(string? Value, string? ContentType, IReadOnlyDictionary<string, object?>? Tags);
 }

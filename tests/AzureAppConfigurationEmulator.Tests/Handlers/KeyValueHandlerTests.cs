@@ -24,7 +24,7 @@ public class KeyValueHandlerTests
         // Arrange
         var settings = new List<ConfigurationSetting>
         {
-            new("TestEtag", "TestKey", null, null, null, DateTimeOffset.UtcNow, false, null)
+            new("TestEtag", "TestKey", DateTimeOffset.UtcNow, false)
         };
         Repository.Get(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<DateTimeOffset?>(), Arg.Any<CancellationToken>()).Returns(settings.ToAsyncEnumerable());
 
@@ -42,7 +42,7 @@ public class KeyValueHandlerTests
         // Arrange
         var settings = new List<ConfigurationSetting>
         {
-            new("TestEtag", "TestKey", null, null, null, DateTimeOffset.UtcNow, false, null)
+            new("TestEtag", "TestKey", DateTimeOffset.UtcNow, false)
         };
         Repository.Get(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<DateTimeOffset?>(), Arg.Any<CancellationToken>()).Returns(settings.ToAsyncEnumerable());
 
@@ -59,7 +59,7 @@ public class KeyValueHandlerTests
         // Arrange
         var settings = new List<ConfigurationSetting>
         {
-            new("TestEtag", "TestKey", null, null, null, DateTimeOffset.UtcNow, false, null)
+            new("TestEtag", "TestKey", DateTimeOffset.UtcNow, false)
         };
         Repository.Get(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<DateTimeOffset?>(), Arg.Any<CancellationToken>()).Returns(settings.ToAsyncEnumerable());
 
@@ -119,7 +119,7 @@ public class KeyValueHandlerTests
         // Arrange
         var settings = new List<ConfigurationSetting>
         {
-            new("TestEtag", "TestKey", null, null, null, DateTimeOffset.UtcNow, false, null)
+            new("TestEtag", "TestKey", DateTimeOffset.UtcNow, false)
         };
         Repository.Get(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<DateTimeOffset?>(), Arg.Any<CancellationToken>()).Returns(settings.ToAsyncEnumerable());
 
@@ -136,7 +136,7 @@ public class KeyValueHandlerTests
         // Arrange
         var settings = new List<ConfigurationSetting>
         {
-            new("TestEtag", "TestKey", null, null, null, DateTimeOffset.UtcNow, false, null)
+            new("TestEtag", "TestKey", DateTimeOffset.UtcNow, false)
         };
         Repository.Get(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<DateTimeOffset?>(), Arg.Any<CancellationToken>()).Returns(settings.ToAsyncEnumerable());
 
@@ -181,7 +181,7 @@ public class KeyValueHandlerTests
         // Arrange
         var settings = new List<ConfigurationSetting>
         {
-            new("TestEtag", "TestKey", null, null, null, DateTimeOffset.UtcNow, true, null)
+            new("TestEtag", "TestKey", DateTimeOffset.UtcNow, true)
         };
         Repository.Get(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<DateTimeOffset?>(), Arg.Any<CancellationToken>()).Returns(settings.ToAsyncEnumerable());
 
@@ -220,7 +220,7 @@ public class KeyValueHandlerTests
         // Arrange
         var settings = new List<ConfigurationSetting>
         {
-            new("TestEtag", "TestKey", null, null, null, DateTimeOffset.UtcNow, false, null)
+            new("TestEtag", "TestKey", DateTimeOffset.UtcNow, false)
         };
         Repository.Get(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<DateTimeOffset?>(), Arg.Any<CancellationToken>()).Returns(settings.ToAsyncEnumerable());
 
@@ -238,7 +238,7 @@ public class KeyValueHandlerTests
         // Arrange
         var settings = new List<ConfigurationSetting>
         {
-            new("TestEtag", "TestKey", null, null, null, DateTimeOffset.UtcNow, false, null)
+            new("TestEtag", "TestKey", DateTimeOffset.UtcNow, false)
         };
         Repository.Get(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<DateTimeOffset?>(), Arg.Any<CancellationToken>()).Returns(settings.ToAsyncEnumerable());
 
@@ -255,7 +255,7 @@ public class KeyValueHandlerTests
         // Arrange
         var settings = new List<ConfigurationSetting>
         {
-            new("TestEtag", "TestKey", null, null, null, DateTimeOffset.UtcNow, false, null)
+            new("TestEtag", "TestKey", DateTimeOffset.UtcNow, false)
         };
         Repository.Get(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<DateTimeOffset?>(), Arg.Any<CancellationToken>()).Returns(settings.ToAsyncEnumerable());
 
@@ -315,7 +315,7 @@ public class KeyValueHandlerTests
         // Arrange
         var settings = new List<ConfigurationSetting>
         {
-            new("TestEtag", "TestKey", null, null, null, DateTimeOffset.UtcNow, false, null)
+            new("TestEtag", "TestKey", DateTimeOffset.UtcNow, false)
         };
         Repository.Get(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<DateTimeOffset?>(), Arg.Any<CancellationToken>()).Returns(settings.ToAsyncEnumerable());
 
@@ -332,7 +332,7 @@ public class KeyValueHandlerTests
         // Arrange
         var settings = new List<ConfigurationSetting>
         {
-            new("TestEtag", "TestKey", null, null, null, DateTimeOffset.UtcNow, false, null)
+            new("TestEtag", "TestKey", DateTimeOffset.UtcNow, false)
         };
         Repository.Get(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<DateTimeOffset?>(), Arg.Any<CancellationToken>()).Returns(settings.ToAsyncEnumerable());
 
@@ -371,7 +371,7 @@ public class KeyValueHandlerTests
         // Arrange
         var settings = new List<ConfigurationSetting>
         {
-            new("TestEtag", "TestKey", null, null, null, DateTimeOffset.UtcNow, false, null)
+            new("TestEtag", "TestKey", DateTimeOffset.UtcNow, false)
         };
         Repository.Get(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<DateTimeOffset?>(), Arg.Any<CancellationToken>()).Returns(settings.ToAsyncEnumerable());
         var input = new KeyValueHandler.SetInput(null, null, null);
@@ -390,7 +390,7 @@ public class KeyValueHandlerTests
         // Arrange
         var settings = new List<ConfigurationSetting>
         {
-            new("TestEtag", "TestKey", null, null, null, DateTimeOffset.UtcNow, false, null)
+            new("TestEtag", "TestKey", DateTimeOffset.UtcNow, false)
         };
         Repository.Get(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<DateTimeOffset?>(), Arg.Any<CancellationToken>()).Returns(settings.ToAsyncEnumerable());
         var input = new KeyValueHandler.SetInput(null, null, null);
@@ -408,7 +408,7 @@ public class KeyValueHandlerTests
         // Arrange
         var settings = new List<ConfigurationSetting>
         {
-            new("TestEtag", "TestKey", null, null, null, DateTimeOffset.UtcNow, false, null)
+            new("TestEtag", "TestKey", DateTimeOffset.UtcNow, false)
         };
         Repository.Get(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<DateTimeOffset?>(), Arg.Any<CancellationToken>()).Returns(settings.ToAsyncEnumerable());
         var input = new KeyValueHandler.SetInput(null, null, null);
@@ -472,7 +472,7 @@ public class KeyValueHandlerTests
         // Arrange
         var settings = new List<ConfigurationSetting>
         {
-            new("TestEtag", "TestKey", null, null, null, DateTimeOffset.UtcNow, false, null)
+            new("TestEtag", "TestKey", DateTimeOffset.UtcNow, false)
         };
         Repository.Get(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<DateTimeOffset?>(), Arg.Any<CancellationToken>()).Returns(settings.ToAsyncEnumerable());
         var input = new KeyValueHandler.SetInput(null, null, null);
@@ -490,7 +490,7 @@ public class KeyValueHandlerTests
         // Arrange
         var settings = new List<ConfigurationSetting>
         {
-            new("TestEtag", "TestKey", null, null, null, DateTimeOffset.UtcNow, false, null)
+            new("TestEtag", "TestKey", DateTimeOffset.UtcNow, false)
         };
         Repository.Get(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<DateTimeOffset?>(), Arg.Any<CancellationToken>()).Returns(settings.ToAsyncEnumerable());
         var input = new KeyValueHandler.SetInput(null, null, null);
@@ -538,7 +538,7 @@ public class KeyValueHandlerTests
         // Arrange
         var settings = new List<ConfigurationSetting>
         {
-            new("TestEtag", "TestKey", null, null, null, DateTimeOffset.UtcNow, true, null)
+            new("TestEtag", "TestKey", DateTimeOffset.UtcNow, true)
         };
         Repository.Get(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<DateTimeOffset?>(), Arg.Any<CancellationToken>()).Returns(settings.ToAsyncEnumerable());
         var input = new KeyValueHandler.SetInput(null, null, null);

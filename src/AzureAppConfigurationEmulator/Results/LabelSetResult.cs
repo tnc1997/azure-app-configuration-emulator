@@ -1,3 +1,5 @@
+using AzureAppConfigurationEmulator.Constants;
+
 namespace AzureAppConfigurationEmulator.Results;
 
 public class LabelSetResult(IEnumerable<string?> labels, DateTimeOffset? mementoDatetime = default) :
@@ -22,7 +24,7 @@ public class LabelSetResult(IEnumerable<string?> labels, DateTimeOffset? memento
         await httpContext.Response.WriteAsJsonAsync(Value, options: default, ContentType);
     }
 
-    public string? ContentType => "application/vnd.microsoft.appconfig.labelset+json";
+    public string? ContentType => MediaType.LabelSet;
 
     public int? StatusCode => StatusCodes.Status200OK;
 

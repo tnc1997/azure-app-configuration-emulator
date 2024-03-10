@@ -13,6 +13,8 @@ public class ConfigurationSettingRepositoryTests
 {
     private IDbCommandFactory CommandFactory { get; set; }
 
+    private IConfigurationSettingFactory ConfigurationSettingFactory { get; set; }
+
     private IDbConnectionFactory ConnectionFactory { get; set; }
 
     private ILogger<ConfigurationSettingRepository> Logger { get; set; }
@@ -40,6 +42,8 @@ public class ConfigurationSettingRepositoryTests
                 return command;
             });
 
+        ConfigurationSettingFactory = Substitute.For<IConfigurationSettingFactory>();
+
         ConnectionFactory = Substitute.For<IDbConnectionFactory>();
         ConnectionFactory
             .Create()
@@ -53,14 +57,14 @@ public class ConfigurationSettingRepositoryTests
 
         ParameterFactory = Substitute.For<IDbParameterFactory>();
 
-        Repository = new ConfigurationSettingRepository(CommandFactory, ConnectionFactory, Logger, ParameterFactory);
+        Repository = new ConfigurationSettingRepository(CommandFactory, ConfigurationSettingFactory, ConnectionFactory, Logger, ParameterFactory);
     }
 
     [Test]
     public async Task AddAsync_CommandText_ConfigurationSetting()
     {
         // Arrange
-        var setting = new ConfigurationSetting("TestEtag", "TestKey", null, null, null, DateTimeOffset.UtcNow, false, null);
+        var setting = new ConfigurationSetting("TestEtag", "TestKey", DateTimeOffset.UtcNow, false, null, null, null, null);
 
         // Act
         await Repository.AddAsync(setting);
@@ -79,7 +83,7 @@ public class ConfigurationSettingRepositoryTests
     {
         // Arrange
         const string contentType = "TestContentType";
-        var setting = new ConfigurationSetting("TestEtag", "TestKey", null, contentType, null, DateTimeOffset.UtcNow, false, null);
+        var setting = new ConfigurationSetting("TestEtag", "TestKey", DateTimeOffset.UtcNow, false, null, contentType, null, null);
 
         // Act
         await Repository.AddAsync(setting);
@@ -97,7 +101,7 @@ public class ConfigurationSettingRepositoryTests
     {
         // Arrange
         const string etag = "TestEtag";
-        var setting = new ConfigurationSetting(etag, "TestKey", null, null, null, DateTimeOffset.UtcNow, false, null);
+        var setting = new ConfigurationSetting(etag, "TestKey", DateTimeOffset.UtcNow, false, null, null, null, null);
 
         // Act
         await Repository.AddAsync(setting);
@@ -115,7 +119,7 @@ public class ConfigurationSettingRepositoryTests
     {
         // Arrange
         const string key = "TestKey";
-        var setting = new ConfigurationSetting("TestEtag", key, null, null, null, DateTimeOffset.UtcNow, false, null);
+        var setting = new ConfigurationSetting("TestEtag", key, DateTimeOffset.UtcNow, false, null, null, null, null);
 
         // Act
         await Repository.AddAsync(setting);
@@ -133,7 +137,7 @@ public class ConfigurationSettingRepositoryTests
     {
         // Arrange
         const string label = "TestLabel";
-        var setting = new ConfigurationSetting("TestEtag", "TestKey", label, null, null, DateTimeOffset.UtcNow, false, null);
+        var setting = new ConfigurationSetting("TestEtag", "TestKey", DateTimeOffset.UtcNow, false, label, null, null, null);
 
         // Act
         await Repository.AddAsync(setting);
@@ -151,7 +155,7 @@ public class ConfigurationSettingRepositoryTests
     {
         // Arrange
         var lastModified = DateTimeOffset.UtcNow;
-        var setting = new ConfigurationSetting("TestEtag", "TestKey", null, null, null, lastModified, false, null);
+        var setting = new ConfigurationSetting("TestEtag", "TestKey", lastModified, false, null, null, null, null);
 
         // Act
         await Repository.AddAsync(setting);
@@ -169,7 +173,7 @@ public class ConfigurationSettingRepositoryTests
     {
         // Arrange
         const bool locked = false;
-        var setting = new ConfigurationSetting("TestEtag", "TestKey", null, null, null, DateTimeOffset.UtcNow, locked, null);
+        var setting = new ConfigurationSetting("TestEtag", "TestKey", DateTimeOffset.UtcNow, locked, null, null, null, null);
 
         // Act
         await Repository.AddAsync(setting);
@@ -187,7 +191,7 @@ public class ConfigurationSettingRepositoryTests
     {
         // Arrange
         var tags = new Dictionary<string, object?> { { "TestKey", "TestValue" } };
-        var setting = new ConfigurationSetting("TestEtag", "TestKey", null, null, null, DateTimeOffset.UtcNow, false, tags);
+        var setting = new ConfigurationSetting("TestEtag", "TestKey", DateTimeOffset.UtcNow, false, null, null, null, tags);
 
         // Act
         await Repository.AddAsync(setting);
@@ -205,7 +209,7 @@ public class ConfigurationSettingRepositoryTests
     {
         // Arrange
         const string value = "TestValue";
-        var setting = new ConfigurationSetting("TestEtag", "TestKey", null, null, value, DateTimeOffset.UtcNow, false, null);
+        var setting = new ConfigurationSetting("TestEtag", "TestKey", DateTimeOffset.UtcNow, false, null, null, value, null);
 
         // Act
         await Repository.AddAsync(setting);
@@ -293,7 +297,7 @@ public class ConfigurationSettingRepositoryTests
     public async Task RemoveAsync_CommandText_ConfigurationSetting(string key, string? label, string expected)
     {
         // Arrange
-        var setting = new ConfigurationSetting("TestEtag", key, label, null, null, DateTimeOffset.UtcNow, false, null);
+        var setting = new ConfigurationSetting("TestEtag", key, DateTimeOffset.UtcNow, false, label, null, null, null);
 
         // Act
         await Repository.RemoveAsync(setting);
@@ -312,7 +316,7 @@ public class ConfigurationSettingRepositoryTests
     {
         // Arrange
         const string key = "TestKey";
-        var setting = new ConfigurationSetting("TestEtag", key, null, null, null, DateTimeOffset.UtcNow, false, null);
+        var setting = new ConfigurationSetting("TestEtag", key, DateTimeOffset.UtcNow, false, null, null, null, null);
 
         // Act
         await Repository.RemoveAsync(setting);
@@ -330,7 +334,7 @@ public class ConfigurationSettingRepositoryTests
     public async Task RemoveAsync_LabelParameter_ConfigurationSetting(string? label)
     {
         // Arrange
-        var setting = new ConfigurationSetting("TestEtag", "TestKey", label, null, null, DateTimeOffset.UtcNow, false, null);
+        var setting = new ConfigurationSetting("TestEtag", "TestKey", DateTimeOffset.UtcNow, false, label, null, null, null);
 
         // Act
         await Repository.RemoveAsync(setting);
@@ -359,7 +363,7 @@ public class ConfigurationSettingRepositoryTests
     public async Task UpdateAsync_CommandText_ConfigurationSetting(string key, string? label, string expected)
     {
         // Arrange
-        var setting = new ConfigurationSetting("TestEtag", key, label, null, null, DateTimeOffset.UtcNow, false, null);
+        var setting = new ConfigurationSetting("TestEtag", key, DateTimeOffset.UtcNow, false, label, null, null, null);
 
         // Act
         await Repository.UpdateAsync(setting);
@@ -378,7 +382,7 @@ public class ConfigurationSettingRepositoryTests
     {
         // Arrange
         const string contentType = "TestContentType";
-        var setting = new ConfigurationSetting("TestEtag", "TestKey", null, contentType, null, DateTimeOffset.UtcNow, false, null);
+        var setting = new ConfigurationSetting("TestEtag", "TestKey", DateTimeOffset.UtcNow, false, null, contentType, null, null);
 
         // Act
         await Repository.UpdateAsync(setting);
@@ -396,7 +400,7 @@ public class ConfigurationSettingRepositoryTests
     {
         // Arrange
         const string etag = "TestEtag";
-        var setting = new ConfigurationSetting(etag, "TestKey", null, null, null, DateTimeOffset.UtcNow, false, null);
+        var setting = new ConfigurationSetting(etag, "TestKey", DateTimeOffset.UtcNow, false, null, null, null, null);
 
         // Act
         await Repository.UpdateAsync(setting);
@@ -414,7 +418,7 @@ public class ConfigurationSettingRepositoryTests
     {
         // Arrange
         const string key = "TestKey";
-        var setting = new ConfigurationSetting("TestEtag", key, null, null, null, DateTimeOffset.UtcNow, false, null);
+        var setting = new ConfigurationSetting("TestEtag", key, DateTimeOffset.UtcNow, false, null, null, null, null);
 
         // Act
         await Repository.UpdateAsync(setting);
@@ -432,7 +436,7 @@ public class ConfigurationSettingRepositoryTests
     public async Task UpdateAsync_LabelParameter_ConfigurationSetting(string? label)
     {
         // Arrange
-        var setting = new ConfigurationSetting("TestEtag", "TestKey", label, null, null, DateTimeOffset.UtcNow, false, null);
+        var setting = new ConfigurationSetting("TestEtag", "TestKey", DateTimeOffset.UtcNow, false, label, null, null, null);
 
         // Act
         await Repository.UpdateAsync(setting);
@@ -461,7 +465,7 @@ public class ConfigurationSettingRepositoryTests
     {
         // Arrange
         var lastModified = DateTimeOffset.UtcNow;
-        var setting = new ConfigurationSetting("TestEtag", "TestKey", null, null, null, lastModified, false, null);
+        var setting = new ConfigurationSetting("TestEtag", "TestKey", lastModified, false, null, null, null, null);
 
         // Act
         await Repository.UpdateAsync(setting);
@@ -479,7 +483,7 @@ public class ConfigurationSettingRepositoryTests
     {
         // Arrange
         const bool locked = false;
-        var setting = new ConfigurationSetting("TestEtag", "TestKey", null, null, null, DateTimeOffset.UtcNow, locked, null);
+        var setting = new ConfigurationSetting("TestEtag", "TestKey", DateTimeOffset.UtcNow, locked, null, null, null, null);
 
         // Act
         await Repository.UpdateAsync(setting);
@@ -497,7 +501,7 @@ public class ConfigurationSettingRepositoryTests
     {
         // Arrange
         var tags = new Dictionary<string, object?> { { "TestKey", "TestValue" } };
-        var setting = new ConfigurationSetting("TestEtag", "TestKey", null, null, null, DateTimeOffset.UtcNow, false, tags);
+        var setting = new ConfigurationSetting("TestEtag", "TestKey", DateTimeOffset.UtcNow, false, null, null, null, tags);
 
         // Act
         await Repository.UpdateAsync(setting);
@@ -515,7 +519,7 @@ public class ConfigurationSettingRepositoryTests
     {
         // Arrange
         const string value = "TestValue";
-        var setting = new ConfigurationSetting("TestEtag", "TestKey", null, null, value, DateTimeOffset.UtcNow, false, null);
+        var setting = new ConfigurationSetting("TestEtag", "TestKey", DateTimeOffset.UtcNow, false, null, null, value, null);
 
         // Act
         await Repository.UpdateAsync(setting);

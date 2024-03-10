@@ -1,0 +1,37 @@
+<button class="@BackgroundClasses @BorderClasses @ColorClasses font-semibold h-[24px] px-5 rounded-sm" disabled="@IsDisabled" @onclick="OnClick">
+    @Label
+</button>
+
+@code {
+    [Parameter] public AzureAppearance Appearance { get; set; } = AzureAppearance.Default;
+
+    [Parameter] public bool IsDisabled { get; set; }
+
+    [EditorRequired, Parameter] public string Label { get; set; } = null!;
+
+    [Parameter] public EventCallback<MouseEventArgs> OnClick { get; set; }
+
+    private string BackgroundClasses => Appearance switch
+    {
+        AzureAppearance.Default => "bg-white hover:bg-concrete disabled:bg-concrete dark:bg-cod-grey dark:hover:bg-shark dark:disabled:bg-shark",
+        AzureAppearance.Primary => "bg-lochmara hover:bg-science-blue active:bg-venice-blue disabled:bg-concrete dark:bg-lochmara dark:hover:bg-dodger-blue dark:active:bg-jordy-blue dark:disabled:bg-shark",
+        _ => throw new ArgumentOutOfRangeException()
+    };
+
+    private string BorderClasses => Appearance switch
+    {
+        AzureAppearance.Default => "border border-mine-shaft disabled:border-star-dust dark:border-desert-storm dark:disabled:border-natural-grey",
+        AzureAppearance.Primary => "border border-lochmara hover:border-science-blue active:border-venice-blue disabled:border-star-dust dark:border-lochmara dark:hover:border-dodger-blue dark:active:border-jordy-blue dark:disabled:border-natural-grey",
+        _ => throw new ArgumentOutOfRangeException()
+    };
+
+    private string ColorClasses => Appearance switch
+    {
+        AzureAppearance.Default => "text-mine-shaft disabled:text-star-dust dark:text-desert-storm dark:disabled:text-natural-grey",
+        AzureAppearance.Primary => "text-white disabled:text-star-dust dark:text-mine-shaft dark:disabled:text-natural-grey",
+        _ => throw new ArgumentOutOfRangeException()
+    };
+
+    public enum AzureAppearance { Default, Primary }
+
+}

@@ -1,28 +1,48 @@
 namespace AzureAppConfigurationEmulator.Entities;
 
-public class ConfigurationSetting(
-    string etag,
-    string key,
-    string? label,
-    string? contentType,
-    string? value,
-    DateTimeOffset lastModified,
-    bool locked,
-    IDictionary<string, object?>? tags)
-{
-    public string Etag { get; set; } = etag;
+/// <summary>
+/// https://github.com/Azure/azure-sdk-for-net/blob/main/sdk/appconfiguration/Azure.Data.AppConfiguration/src/Models/ConfigurationSetting.cs
+/// </summary>
+public record ConfigurationSetting(
+    string Etag,
+    string Key,
+    DateTimeOffset LastModified,
+    bool Locked,
+    string? Label = null,
+    string? ContentType = null,
+    string? Value = null,
+    IReadOnlyDictionary<string, object?>? Tags = null);
 
-    public string Key { get; set; } = key;
+/// <summary>
+/// https://github.com/Azure/azure-sdk-for-net/blob/main/sdk/appconfiguration/Azure.Data.AppConfiguration/src/Models/FeatureFlagConfigurationSetting.cs
+/// </summary>
+public record FeatureFlagConfigurationSetting(
+    string Id,
+    bool Enabled,
+    IReadOnlyCollection<FeatureFlagFilter> ClientFilters,
+    string Etag,
+    string Key,
+    string Value,
+    DateTimeOffset LastModified,
+    bool Locked,
+    string? Description = null,
+    string? DisplayName = null,
+    string? Label = null,
+    string? ContentType = null,
+    IReadOnlyDictionary<string, object?>? Tags = null)
+    : ConfigurationSetting(
+        Etag,
+        Key,
+        LastModified,
+        Locked,
+        Label,
+        ContentType,
+        Value,
+        Tags);
 
-    public string? Label { get; set; } = label;
-
-    public string? ContentType { get; set; } = contentType;
-
-    public string? Value { get; set; } = value;
-
-    public DateTimeOffset LastModified { get; set; } = lastModified;
-
-    public bool Locked { get; set; } = locked;
-
-    public IDictionary<string, object?>? Tags { get; set; } = tags;
-}
+/// <summary>
+/// https://github.com/Azure/azure-sdk-for-net/blob/main/sdk/appconfiguration/Azure.Data.AppConfiguration/src/Models/FeatureFlagFilter.cs
+/// </summary>
+public record FeatureFlagFilter(
+    string Name,
+    IReadOnlyDictionary<string, object?>? Parameters);
