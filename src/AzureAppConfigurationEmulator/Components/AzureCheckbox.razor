@@ -1,0 +1,7 @@
+<input checked="@Checked" class="h-[18px] w-[18px] appearance-none rounded-sm border border-mine-shaft checked:border-lochmara checked:bg-lochmara checked:bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTYiIGhlaWdodD0iMTYiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHBhdGggZD0iTTEzLjg2IDMuNjZhLjUuNSAwIDAxLS4wMi43bC03LjkzIDcuNDhhLjYuNiAwIDAxLS44NC0uMDJMMi40IDkuMWEuNS41IDAgMDEuNzItLjdsMi40IDIuNDQgNy42NS03LjJhLjUuNSAwIDAxLjcuMDJ6IiBmaWxsPSIjZmZmZmZmIj48L3BhdGg+PC9zdmc+')] checked:bg-center checked:bg-no-repeat dark:border-desert-storm dark:checked:bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTYiIGhlaWdodD0iMTYiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHBhdGggZD0iTTEzLjg2IDMuNjZhLjUuNSAwIDAxLS4wMi43bC03LjkzIDcuNDhhLjYuNiAwIDAxLS44NC0uMDJMMi40IDkuMWEuNS41IDAgMDEuNzItLjdsMi40IDIuNDQgNy42NS03LjJhLjUuNSAwIDAxLjcuMDJ6IiBmaWxsPSIjMWIxYTE5Ij48L3BhdGg+PC9zdmc+')]" @onchange="OnChange" type="checkbox"/>
+
+@code {
+    [Parameter] public bool Checked { get; set; }
+
+    [Parameter] public EventCallback<ChangeEventArgs> OnChange { get; set; }
+}

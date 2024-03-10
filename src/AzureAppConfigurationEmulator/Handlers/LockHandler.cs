@@ -36,7 +36,7 @@ public class LockHandler
             return new PreconditionFailedResult();
         }
 
-        setting.Locked = true;
+        setting = setting with { Locked = true };
 
         await repository.UpdateAsync(setting, cancellationToken);
 
@@ -72,7 +72,7 @@ public class LockHandler
             return new PreconditionFailedResult();
         }
 
-        setting.Locked = false;
+        setting = setting with { Locked = false };
 
         await repository.UpdateAsync(setting, cancellationToken);
 

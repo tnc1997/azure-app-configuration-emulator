@@ -1,3 +1,4 @@
+using AzureAppConfigurationEmulator.Constants;
 using AzureAppConfigurationEmulator.Entities;
 
 namespace AzureAppConfigurationEmulator.Results;
@@ -27,7 +28,7 @@ public class KeyValueResult(ConfigurationSetting setting, DateTimeOffset? mement
         await httpContext.Response.WriteAsJsonAsync(Value, options: default, ContentType);
     }
 
-    public string? ContentType => "application/vnd.microsoft.appconfig.kv+json";
+    public string? ContentType => MediaType.KeyValue;
 
     public int? StatusCode => StatusCodes.Status200OK;
 

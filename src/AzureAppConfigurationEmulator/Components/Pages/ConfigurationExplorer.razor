@@ -1,0 +1,123 @@
+@attribute [StreamRendering]
+@inject IConfigurationSettingRepository ConfigurationSettingRepository
+@inject IDialogService DialogService
+@page "/kvs"
+@rendermode InteractiveServer
+@using AzureAppConfigurationEmulator.Entities
+@using AzureAppConfigurationEmulator.Repositories
+@using AzureAppConfigurationEmulator.Services
+
+<PageTitle>Configuration explorer</PageTitle>
+
+<div class="flex flex-col">
+    <AzureToolbar>
+        <AzureToolbarButton Label="Create" OnClick="@HandleCreateClick"/>
+        <AzureToolbarButton Label="Refresh" OnClick="@HandleRefreshClick"/>
+
+        <AzureToolbarDivider/>
+
+        <AzureToolbarButton IsDisabled="true" Label="Manage view"/>
+        <AzureToolbarButton IsDisabled="true" Label="Collapse"/>
+        <AzureToolbarButton IsDisabled="true" Label="Expand"/>
+        <AzureToolbarButton Label="Values" OnClick="@HandleValuesClick"/>
+
+        <AzureToolbarDivider/>
+
+        <AzureToolbarButton IsDisabled="true" Label="Edit"/>
+        <AzureToolbarButton IsDisabled="@(SelectedConfigurationSettings is { Count: 0 })" Label="Delete" OnClick="@HandleDeleteClick"/>
+    </AzureToolbar>
+
+    <div class="p-5">
+        <div class="flex flex-row mb-6">
+            <div class="mt-1">Filter all key-values:</div>
+
+            <AzureFilterChip Key="Keys" Value="Select key"/>
+            <AzureFilterChip Key="Labels" Value="Select label"/>
+            <AzureFilterChip Key="Date" Value="Select date"/>
+        </div>
+
+        <div class="max-w-[300px] mb-6">
+            <AzureTextField @bind-Value="@SearchQuery" Placeholder="Search displayed key-values"/>
+        </div>
+
+        <div>Loaded @FilteredConfigurationSettings.Count() key-values with @FilteredConfigurationSettings.Select(setting => setting.Key).Distinct().Count() unique keys.</div>
+    </div>
+
+    <div class="mx-5">
+        <ConfigurationSettingTable @bind-SelectedConfigurationSettings="@SelectedConfigurationSettings" ConfigurationSettings="@FilteredConfigurationSettings" IsValuesHidden="@IsValuesHidden"/>
+    </div>
+</div>
+
+<ConfigurationSettingCreateDialog Id="ConfigurationSettingCreateDialog" OnCreate="@HandleConfigurationSettingCreate"/>
+
+@code {
+    private ICollection<ConfigurationSetting> ConfigurationSettings { get; } = [];
+
+    private IEnumerable<ConfigurationSetting> FilteredConfigurationSettings => ConfigurationSettings.Where(setting => string.IsNullOrEmpty(SearchQuery) || setting.Key.Contains(SearchQuery) || setting.Label?.Contains(SearchQuery) == true || setting.Value?.Contains(SearchQuery) == true).ToList();
+
+    private bool IsValuesHidden { get; set; } = true;
+
+    private string? SearchQuery { get; set; }
+
+    private ICollection<ConfigurationSetting> SelectedConfigurationSettings { get; set; } = [];
+
+    protected override async Task OnInitializedAsync()
+    {
+        await foreach (var setting in ConfigurationSettingRepository.Get())
+        {
+            if (setting is not FeatureFlagConfigurationSetting)
+            {
+                ConfigurationSettings.Add(setting);
+                StateHasChanged();
+            }
+        }
+    }
+
+    private async Task HandleConfigurationSettingCreate(ConfigurationSetting setting)
+    {
+        await ConfigurationSettingRepository.AddAsync(setting);
+        
+        ConfigurationSettings.Add(setting);
+        StateHasChanged();
+    }
+
+    private async Task HandleCreateClick(MouseEventArgs args)
+    {
+        await DialogService.ShowAsync("ConfigurationSettingCreateDialog");
+    }
+
+    private async Task HandleDeleteClick(MouseEventArgs args)
+    {
+        foreach (var setting in SelectedConfigurationSettings.ToList())
+        {
+            await ConfigurationSettingRepository.RemoveAsync(setting);
+
+            if (ConfigurationSettings.Remove(setting) && SelectedConfigurationSettings.Remove(setting))
+            {
+                StateHasChanged();
+            }
+        }
+    }
+
+    private async Task HandleRefreshClick(MouseEventArgs args)
+    {
+        ConfigurationSettings.Clear();
+        StateHasChanged();
+
+        await foreach (var setting in ConfigurationSettingRepository.Get())
+        {
+            if (setting is not FeatureFlagConfigurationSetting)
+            {
+                ConfigurationSettings.Add(setting);
+                StateHasChanged();
+            }
+        }
+    }
+
+    private void HandleValuesClick(MouseEventArgs args)
+    {
+        IsValuesHidden = !IsValuesHidden;
+        StateHasChanged();
+    }
+
+}

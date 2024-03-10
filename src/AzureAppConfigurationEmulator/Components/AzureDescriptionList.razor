@@ -1,0 +1,11 @@
+<dl>
+    @foreach (var (key, value) in Descriptions)
+    {
+        <dt class="leading-5 pt-1 px-1.5">@key</dt>
+        <dd class="leading-5 pb-2 pt-1 px-1.5">@value</dd>
+    }
+</dl>
+
+@code {
+    [EditorRequired, Parameter] public IDictionary<string, string> Descriptions { get; set; } = null!;
+}

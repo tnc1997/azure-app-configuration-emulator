@@ -1,0 +1,77 @@
+@typeparam TItem
+
+<table class="border-collapse table-fixed w-full">
+    <thead>
+    <tr class="border-b border-b-alto h-[32px] dark:border-b-masala">
+        <th class="text-center w-[24px]" scope="col">
+            <div class="flex items-center justify-center">
+                @if (Items.Any())
+                {
+                    <AzureCheckbox Checked="@(SelectedItems.Count == Items.Count())" OnChange="@HandleSelectedItemsChange"/>
+                }
+            </div>
+        </th>
+
+        @HeaderContent
+    </tr>
+    </thead>
+
+    <tbody>
+    @foreach (var item in Items)
+    {
+        <tr class="border-b border-b-alto h-[32px] hover:bg-concrete dark:border-b-masala dark:hover:bg-shark">
+            <td class="text-center w-[24px]">
+                <div class="flex items-center justify-center">
+                    <AzureCheckbox Checked="@SelectedItems.Contains(item)" OnChange="@(args => HandleSelectedItemChange(args, item))"/>
+                </div>
+            </td>
+
+            @RowTemplate(item)
+        </tr>
+    }
+    </tbody>
+</table>
+
+@code {
+    [EditorRequired, Parameter] public RenderFragment HeaderContent { get; set; } = null!;
+
+    [Parameter] public IEnumerable<TItem> Items { get; set; } = [];
+
+    [EditorRequired, Parameter] public RenderFragment<TItem> RowTemplate { get; set; } = null!;
+
+    [Parameter] public ICollection<TItem> SelectedItems { get; set; } = [];
+    
+    [Parameter] public EventCallback<ICollection<TItem>> SelectedItemsChanged { get; set; }
+
+    private async Task HandleSelectedItemChange(ChangeEventArgs args, TItem item)
+    {
+        if (args is { Value: true })
+        {
+            SelectedItems.Add(item);
+        }
+        else
+        {
+            SelectedItems.Remove(item);
+        }
+
+        await SelectedItemsChanged.InvokeAsync(SelectedItems);
+    }
+
+    private async Task HandleSelectedItemsChange(ChangeEventArgs args)
+    {
+        if (args is { Value: true })
+        {
+            foreach (var value in Items)
+            {
+                SelectedItems.Add(value);
+            }
+        }
+        else
+        {
+            SelectedItems.Clear();
+        }
+
+        await SelectedItemsChanged.InvokeAsync(SelectedItems);
+    }
+
+}

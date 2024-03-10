@@ -12,12 +12,15 @@ namespace AzureAppConfigurationEmulator.Repositories;
 
 public partial class ConfigurationSettingRepository(
     IDbCommandFactory commandFactory,
+    IConfigurationSettingFactory configurationSettingFactory,
     IDbConnectionFactory connectionFactory,
     ILogger<ConfigurationSettingRepository> logger,
     IDbParameterFactory parameterFactory) : IConfigurationSettingRepository
 {
     private IDbCommandFactory CommandFactory { get; } = commandFactory;
 
+    private IConfigurationSettingFactory ConfigurationSettingFactory { get; } = configurationSettingFactory;
+    
     private IDbConnectionFactory ConnectionFactory { get; } = connectionFactory;
 
     private ILogger<ConfigurationSettingRepository> Logger { get; } = logger;
@@ -114,15 +117,15 @@ public partial class ConfigurationSettingRepository(
 
         await foreach (var reader in ExecuteReader(text, parameters, cancellationToken))
         {
-            yield return new ConfigurationSetting(
+            yield return ConfigurationSettingFactory.Create(
                 reader.GetString(0),
                 reader.GetString(1),
+                DateTimeOffset.Parse(reader.GetString(5), styles: DateTimeStyles.AssumeUniversal),
+                reader.GetBoolean(6),
                 reader.IsDBNull(2) ? null : reader.GetString(2),
                 reader.IsDBNull(3) ? null : reader.GetString(3),
                 reader.IsDBNull(4) ? null : reader.GetString(4),
-                DateTimeOffset.Parse(reader.GetString(5), styles: DateTimeStyles.AssumeUniversal),
-                reader.GetBoolean(6),
-                reader.IsDBNull(7) ? null : JsonSerializer.Deserialize<IDictionary<string, object?>>(reader.GetString(7)));
+                reader.IsDBNull(7) ? null : JsonSerializer.Deserialize<IReadOnlyDictionary<string, object?>>(reader.GetString(7)));
         }
     }
 

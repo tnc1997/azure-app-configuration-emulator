@@ -1,0 +1,35 @@
+<div class="flex flex-col gap-1 w-full">
+    @if (!string.IsNullOrEmpty(Label))
+    {
+        <label for="@Id">
+            @Label
+
+            @if (IsRequired)
+            {
+                <span class="text-alizarin-crimson"> *</span>
+            }
+        </label>
+    }
+
+    <input @bind:get="@Value" @bind:set="@(value => ValueChanged.InvokeAsync(value))" class="bg-white border border-storm-dust h-[24px] pb-1.5 pt-1 px-2 rounded-sm w-full placeholder:text-storm-dust dark:bg-cod-grey dark:border-star-dust dark:placeholder:text-star-dust invalid:border-alizarin-crimson" disabled="@IsDisabled" id="@Id" placeholder="@Placeholder" readonly="@IsReadOnly" required="@IsRequired" type="@Type"/>
+</div>
+
+@code {
+    [Parameter] public string Id { get; set; } = Guid.NewGuid().ToString();
+
+    [Parameter] public bool IsDisabled { get; set; }
+
+    [Parameter] public bool IsReadOnly { get; set; }
+
+    [Parameter] public bool IsRequired { get; set; }
+
+    [Parameter] public string? Label { get; set; }
+
+    [Parameter] public string? Placeholder { get; set; }
+
+    [Parameter] public string Type { get; set; } = "text";
+
+    [Parameter] public string? Value { get; set; }
+
+    [Parameter] public EventCallback<string?> ValueChanged { get; set; }
+}

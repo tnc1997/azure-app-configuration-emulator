@@ -1,3 +1,5 @@
+using AzureAppConfigurationEmulator.Constants;
+
 namespace AzureAppConfigurationEmulator.Results;
 
 public class KeySetResult(IEnumerable<string> keys, DateTimeOffset? mementoDatetime = default) :
@@ -22,7 +24,7 @@ public class KeySetResult(IEnumerable<string> keys, DateTimeOffset? mementoDatet
         await httpContext.Response.WriteAsJsonAsync(Value, options: default, ContentType);
     }
 
-    public string? ContentType => "application/vnd.microsoft.appconfig.keyset+json";
+    public string? ContentType => MediaType.KeySet;
 
     public int? StatusCode => StatusCodes.Status200OK;
 

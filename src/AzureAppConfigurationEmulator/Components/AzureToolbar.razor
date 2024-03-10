@@ -1,0 +1,7 @@
+<ul class="border-b border-b-alto flex flex-row mx-5 dark:border-b-masala" role="toolbar">
+    @ChildContent
+</ul>
+
+@code {
+    [Parameter] public RenderFragment? ChildContent { get; set; }
+}

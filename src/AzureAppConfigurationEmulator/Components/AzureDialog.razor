@@ -1,0 +1,27 @@
+<CascadingValue Value="this">
+    <dialog class="bg-white h-full max-h-full max-w-full mr-0 text-mine-shaft w-[585px] dark:bg-cod-grey dark:text-desert-storm" id="@Id">
+        <div class="flex flex-col h-full w-full">
+            <header class="px-5 py-2">
+                @HeaderContent
+            </header>
+
+            <div class="flex-1 p-5">
+                @ChildContent
+            </div>
+
+            <footer class="border-t border-t-alto p-5 dark:border-t-masala">
+                @FooterContent
+            </footer>
+        </div>
+    </dialog>
+</CascadingValue>
+
+@code {
+    [Parameter] public RenderFragment? ChildContent { get; set; }
+
+    [Parameter] public RenderFragment? FooterContent { get; set; }
+
+    [Parameter] public RenderFragment? HeaderContent { get; set; }
+
+    [Parameter] public string Id { get; set; } = Guid.NewGuid().ToString();
+}

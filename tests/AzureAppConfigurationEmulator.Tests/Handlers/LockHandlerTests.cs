@@ -24,7 +24,7 @@ public class LockHandlerTests
         // Arrange
         var settings = new List<ConfigurationSetting>
         {
-            new("TestEtag", "TestKey", null, null, null, DateTimeOffset.UtcNow, false, null)
+            new("TestEtag", "TestKey", DateTimeOffset.UtcNow, false)
         };
         Repository.Get(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<DateTimeOffset?>(), Arg.Any<CancellationToken>()).Returns(settings.ToAsyncEnumerable());
 
@@ -42,7 +42,7 @@ public class LockHandlerTests
         // Arrange
         var settings = new List<ConfigurationSetting>
         {
-            new("TestEtag", "TestKey", null, null, null, DateTimeOffset.UtcNow, false, null)
+            new("TestEtag", "TestKey", DateTimeOffset.UtcNow, false)
         };
         Repository.Get(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<DateTimeOffset?>(), Arg.Any<CancellationToken>()).Returns(settings.ToAsyncEnumerable());
 
@@ -59,7 +59,7 @@ public class LockHandlerTests
         // Arrange
         var settings = new List<ConfigurationSetting>
         {
-            new("TestEtag", "TestKey", null, null, null, DateTimeOffset.UtcNow, false, null)
+            new("TestEtag", "TestKey", DateTimeOffset.UtcNow, false)
         };
         Repository.Get(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<DateTimeOffset?>(), Arg.Any<CancellationToken>()).Returns(settings.ToAsyncEnumerable());
 
@@ -91,7 +91,7 @@ public class LockHandlerTests
         // Arrange
         var settings = new List<ConfigurationSetting>
         {
-            new("TestEtag", "TestKey", null, null, null, DateTimeOffset.UtcNow, false, null)
+            new("TestEtag", "TestKey", DateTimeOffset.UtcNow, false)
         };
         Repository.Get(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<DateTimeOffset?>(), Arg.Any<CancellationToken>()).Returns(settings.ToAsyncEnumerable());
 
@@ -108,7 +108,7 @@ public class LockHandlerTests
         // Arrange
         var settings = new List<ConfigurationSetting>
         {
-            new("TestEtag", "TestKey", null, null, null, DateTimeOffset.UtcNow, false, null)
+            new("TestEtag", "TestKey", DateTimeOffset.UtcNow, false)
         };
         Repository.Get(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<DateTimeOffset?>(), Arg.Any<CancellationToken>()).Returns(settings.ToAsyncEnumerable());
 
@@ -125,7 +125,7 @@ public class LockHandlerTests
         // Arrange
         var settings = new List<ConfigurationSetting>
         {
-            new("TestEtag", "TestKey", null, null, null, DateTimeOffset.UtcNow, false, null)
+            new("TestEtag", "TestKey", DateTimeOffset.UtcNow, false)
         };
         Repository.Get(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<DateTimeOffset?>(), Arg.Any<CancellationToken>()).Returns(settings.ToAsyncEnumerable());
 
@@ -143,7 +143,7 @@ public class LockHandlerTests
         // Arrange
         var settings = new List<ConfigurationSetting>
         {
-            new("TestEtag", "TestKey", null, null, null, DateTimeOffset.UtcNow, false, null)
+            new("TestEtag", "TestKey", DateTimeOffset.UtcNow, false)
         };
         Repository.Get(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<DateTimeOffset?>(), Arg.Any<CancellationToken>()).Returns(settings.ToAsyncEnumerable());
 
@@ -160,7 +160,7 @@ public class LockHandlerTests
         // Arrange
         var settings = new List<ConfigurationSetting>
         {
-            new("TestEtag", "TestKey", null, null, null, DateTimeOffset.UtcNow, false, null)
+            new("TestEtag", "TestKey", DateTimeOffset.UtcNow, false)
         };
         Repository.Get(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<DateTimeOffset?>(), Arg.Any<CancellationToken>()).Returns(settings.ToAsyncEnumerable());
 
@@ -192,7 +192,7 @@ public class LockHandlerTests
         // Arrange
         var settings = new List<ConfigurationSetting>
         {
-            new("TestEtag", "TestKey", null, null, null, DateTimeOffset.UtcNow, false, null)
+            new("TestEtag", "TestKey", DateTimeOffset.UtcNow, false)
         };
         Repository.Get(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<DateTimeOffset?>(), Arg.Any<CancellationToken>()).Returns(settings.ToAsyncEnumerable());
 
@@ -209,7 +209,7 @@ public class LockHandlerTests
         // Arrange
         var settings = new List<ConfigurationSetting>
         {
-            new("TestEtag", "TestKey", null, null, null, DateTimeOffset.UtcNow, false, null)
+            new("TestEtag", "TestKey", DateTimeOffset.UtcNow, false)
         };
         Repository.Get(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<DateTimeOffset?>(), Arg.Any<CancellationToken>()).Returns(settings.ToAsyncEnumerable());
 
