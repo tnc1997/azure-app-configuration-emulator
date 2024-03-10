@@ -1,10 +1,10 @@
 @typeparam TItem
 
-<table class="border-collapse table-fixed w-full">
+<table class="w-full border-collapse table-fixed">
     <thead>
     <tr class="border-b border-b-alto h-[32px] dark:border-b-masala">
         <th class="text-center w-[24px]" scope="col">
-            <div class="flex items-center justify-center">
+            <div class="flex justify-center items-center">
                 @if (Items.Any())
                 {
                     <AzureCheckbox Checked="@(SelectedItems.Count == Items.Count())" OnChange="@HandleSelectedItemsChange"/>
@@ -19,9 +19,9 @@
     <tbody>
     @foreach (var item in Items)
     {
-        <tr class="border-b border-b-alto h-[32px] hover:bg-concrete dark:border-b-masala dark:hover:bg-shark">
+        <tr class="border-b border-b-alto h-[32px] dark:border-b-masala dark:hover:bg-shark hover:bg-concrete">
             <td class="text-center w-[24px]">
-                <div class="flex items-center justify-center">
+                <div class="flex justify-center items-center">
                     <AzureCheckbox Checked="@SelectedItems.Contains(item)" OnChange="@(args => HandleSelectedItemChange(args, item))"/>
                 </div>
             </td>

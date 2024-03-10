@@ -3,7 +3,7 @@
 @using AzureAppConfigurationEmulator.Services
 
 <div class="flex flex-row">
-    <div class="flex flex-1 flex-col">
+    <div class="flex flex-col flex-1">
         <h2 class="font-semibold text-[24px]">@Title</h2>
 
         @if (!string.IsNullOrEmpty(Subtitle))
@@ -12,7 +12,7 @@
         }
     </div>
 
-    <button class="h-[32px] w-[32px] hover:bg-alizarin-crimson hover:text-white" @onclick="HandleCloseClick">🗙</button>
+    <button class="hover:text-white h-[32px] w-[32px] hover:bg-alizarin-crimson" @onclick="HandleCloseClick">🗙</button>
 </div>
 
 @code {

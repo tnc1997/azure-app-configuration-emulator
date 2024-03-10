@@ -1,22 +1,22 @@
 ﻿@inherits LayoutComponentBase
 @using System.Net
 
-<div class="bg-merlin flex flex-row h-[40px] items-center dark:bg-shark">
+<div class="flex flex-row items-center bg-merlin h-[40px] dark:bg-shark">
     <div class="h-[48px] w-[48px]"></div>
 
-    <h1 class="font-semibold px-5 text-white text-xl">Emulator for Azure App Configuration</h1>
+    <h1 class="px-5 text-xl font-semibold text-white">Emulator for Azure App Configuration</h1>
 </div>
 
-<div class="flex flex-row pt-2 px-4 text-lg">
+<div class="flex flex-row px-4 pt-2 text-lg">
     <div class="px-1">Home</div>
 </div>
 
 <div class="flex flex-col">
-    <header class="flex flex-row-wrap px-5 py-2">
-        <div class="h-[28px] mr-2.5 w-[28px]"></div>
+    <header class="flex py-2 px-5 flex-row-wrap">
+        <div class="mr-2.5 h-[28px] w-[28px]"></div>
 
         <div>
-            <h2 class="font-semibold mr-4 text-[24px]">@Dns.GetHostName()</h2>
+            <h2 class="mr-4 font-semibold text-[24px]">@Dns.GetHostName()</h2>
 
             <div class="text-sm text-storm-dust dark:text-star-dust">App Configuration</div>
         </div>
@@ -31,8 +31,8 @@
     </div>
 </div>
 
-<div class="bg-black bottom-0 fixed left-0 hidden px-5 py-2.5 text-white w-full z-[1000] dark:bg-white dark:text-black" id="blazor-error-ui">
+<div class="hidden fixed bottom-0 left-0 py-2.5 px-5 w-full text-white bg-black dark:text-black dark:bg-white z-[1000]" id="blazor-error-ui">
     An unhandled error has occurred.
     <a href="" class="reload">Reload</a>
-    <a class="absolute cursor-pointer right-3 top-2 dismiss">🗙</a>
+    <a class="absolute top-2 right-3 cursor-pointer dismiss">🗙</a>
 </div>

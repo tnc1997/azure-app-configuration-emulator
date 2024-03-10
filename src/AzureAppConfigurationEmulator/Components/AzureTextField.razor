@@ -11,7 +11,7 @@
         </label>
     }
 
-    <input @bind:get="@Value" @bind:set="@(value => ValueChanged.InvokeAsync(value))" class="bg-white border border-storm-dust h-[24px] pb-1.5 pt-1 px-2 rounded-sm w-full placeholder:text-storm-dust dark:bg-cod-grey dark:border-star-dust dark:placeholder:text-star-dust invalid:border-alizarin-crimson" disabled="@IsDisabled" id="@Id" placeholder="@Placeholder" readonly="@IsReadOnly" required="@IsRequired" type="@Type"/>
+    <input @bind:get="@Value" @bind:set="@(value => ValueChanged.InvokeAsync(value))" class="px-2 pt-1 pb-1.5 w-full bg-white rounded-sm border border-storm-dust h-[24px] placeholder:text-storm-dust invalid:border-alizarin-crimson dark:bg-cod-grey dark:border-star-dust dark:placeholder:text-star-dust" disabled="@IsDisabled" id="@Id" placeholder="@Placeholder" readonly="@IsReadOnly" required="@IsRequired" type="@Type"/>
 </div>
 
 @code {
