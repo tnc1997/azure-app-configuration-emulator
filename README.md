@@ -14,7 +14,21 @@ docker run -e ASPNETCORE_HTTP_PORTS=8080 -e ASPNETCORE_HTTPS_PORTS=8081 -p 8080:
 
 The emulator supports HMAC authentication but does not support Microsoft Entra ID authentication.
 
-The credential and secret can be overriden using the environment variables `Authentication__Schemes__Hmac__Credential` and `Authentication__Schemes__Hmac__Secret` respectively.
+The credential and secret can be overridden using the environment variables `Authentication__Schemes__Hmac__Credential` and `Authentication__Schemes__Hmac__Secret` respectively.
+
+```yaml
+services:
+  azure-app-configuration-emulator:
+    build:
+      context: https://github.com/tnc1997/azure-app-configuration-emulator.git
+      dockerfile: ./src/AzureAppConfigurationEmulator/Dockerfile
+    environment:
+      - ASPNETCORE_HTTP_PORTS=8080
+      - Authentication__Schemes__Hmac__Credential=xyz
+      - Authentication__Schemes__Hmac__Secret=c2VjcmV0
+    ports:
+      - "8080:8080"
+```
 
 ### Postman
 
@@ -98,7 +112,7 @@ The emulator is compatible with the following operations:
 
 The emulator integrates with OpenTelemetry to provide metrics and traces.
 
-The endpoint for the [OpenTelemetry Protocol (OTLP) Exporter](https://opentelemetry.io/docs/specs/otel/protocol/exporter) can be overriden using the environment variable `OTEL_EXPORTER_OTLP_ENDPOINT`.
+The endpoint for the [OpenTelemetry Protocol (OTLP) Exporter](https://opentelemetry.io/docs/specs/otel/protocol/exporter) can be overridden using the environment variable `OTEL_EXPORTER_OTLP_ENDPOINT`.
 
 ```yaml
 services:
