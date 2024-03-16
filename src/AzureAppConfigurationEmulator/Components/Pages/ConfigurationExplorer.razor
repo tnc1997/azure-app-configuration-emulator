@@ -75,7 +75,7 @@
 
     private async Task HandleConfigurationSettingCreate(ConfigurationSetting setting)
     {
-        await ConfigurationSettingRepository.AddAsync(setting);
+        await ConfigurationSettingRepository.Add(setting);
         
         ConfigurationSettings.Add(setting);
         StateHasChanged();
@@ -90,7 +90,7 @@
     {
         foreach (var setting in SelectedConfigurationSettings.ToList())
         {
-            await ConfigurationSettingRepository.RemoveAsync(setting);
+            await ConfigurationSettingRepository.Remove(setting);
 
             if (ConfigurationSettings.Remove(setting) && SelectedConfigurationSettings.Remove(setting))
             {

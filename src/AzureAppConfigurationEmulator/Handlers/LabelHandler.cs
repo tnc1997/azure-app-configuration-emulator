@@ -15,6 +15,10 @@ public class LabelHandler
         [FromHeader(Name = "Accept-Datetime")] DateTimeOffset? acceptDatetime = default,
         CancellationToken cancellationToken = default)
     {
+        using var activity = Telemetry.ActivitySource.StartActivity($"{nameof(LabelHandler)}.{nameof(List)}");
+        activity?.SetTag(Telemetry.QueryName, name);
+        activity?.SetTag(Telemetry.HeaderAcceptDatetime, acceptDatetime);
+
         if (name != LabelFilter.Any)
         {
             if (new Regex(@"(?=.*(?<!\\),)(?=.*\*)").IsMatch(name))

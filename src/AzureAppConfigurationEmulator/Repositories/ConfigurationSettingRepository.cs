@@ -27,10 +27,19 @@ public partial class ConfigurationSettingRepository(
     
     private IDbParameterFactory ParameterFactory { get; } = parameterFactory;
 
-    public async Task AddAsync(
+    public async Task Add(
         ConfigurationSetting setting,
         CancellationToken cancellationToken = default)
     {
+        using var activity = Telemetry.ActivitySource.StartActivity($"{nameof(ConfigurationSettingRepository)}.{nameof(Add)}");
+        activity?.SetTag(Telemetry.ConfigurationSettingEtag, setting.Etag);
+        activity?.SetTag(Telemetry.ConfigurationSettingKey, setting.Key);
+        activity?.SetTag(Telemetry.ConfigurationSettingLabel, setting.Label);
+        activity?.SetTag(Telemetry.ConfigurationSettingContentType, setting.ContentType);
+        activity?.SetTag(Telemetry.ConfigurationSettingValue, setting.Value);
+        activity?.SetTag(Telemetry.ConfigurationSettingLastModified, setting.LastModified);
+        activity?.SetTag(Telemetry.ConfigurationSettingLocked, setting.Locked);
+
         const string text = "INSERT INTO configuration_settings (etag, key, label, content_type, value, last_modified, locked, tags) VALUES ($etag, $key, $label, $content_type, $value, $last_modified, $locked, $tags)";
 
         var parameters = new List<DbParameter>
@@ -45,7 +54,7 @@ public partial class ConfigurationSettingRepository(
             ParameterFactory.Create("$tags", setting.Tags)
         };
 
-        await ExecuteNonQueryAsync(text, parameters, cancellationToken);
+        await ExecuteNonQuery(text, parameters, cancellationToken);
     }
 
     public async IAsyncEnumerable<ConfigurationSetting> Get(
@@ -54,6 +63,8 @@ public partial class ConfigurationSettingRepository(
         DateTimeOffset? moment = default,
         [EnumeratorCancellation] CancellationToken cancellationToken = default)
     {
+        using var activity = Telemetry.ActivitySource.StartActivity($"{nameof(ConfigurationSettingRepository)}.{nameof(Get)}");
+
         var text = $"SELECT etag, key, label, content_type, value, last_modified, locked, tags FROM {(moment is not null ? "configuration_settings_history" : "configuration_settings")}";
 
         var parameters = new List<DbParameter>();
@@ -129,10 +140,19 @@ public partial class ConfigurationSettingRepository(
         }
     }
 
-    public async Task RemoveAsync(
+    public async Task Remove(
         ConfigurationSetting setting,
         CancellationToken cancellationToken = default)
     {
+        using var activity = Telemetry.ActivitySource.StartActivity($"{nameof(ConfigurationSettingRepository)}.{nameof(Remove)}");
+        activity?.SetTag(Telemetry.ConfigurationSettingEtag, setting.Etag);
+        activity?.SetTag(Telemetry.ConfigurationSettingKey, setting.Key);
+        activity?.SetTag(Telemetry.ConfigurationSettingLabel, setting.Label);
+        activity?.SetTag(Telemetry.ConfigurationSettingContentType, setting.ContentType);
+        activity?.SetTag(Telemetry.ConfigurationSettingValue, setting.Value);
+        activity?.SetTag(Telemetry.ConfigurationSettingLastModified, setting.LastModified);
+        activity?.SetTag(Telemetry.ConfigurationSettingLocked, setting.Locked);
+
         var text = "DELETE FROM configuration_settings";
 
         var parameters = new List<DbParameter> { ParameterFactory.Create("$key", setting.Key) };
@@ -155,13 +175,22 @@ public partial class ConfigurationSettingRepository(
             text += $" WHERE {string.Join(" AND ", outers)}";
         }
 
-        await ExecuteNonQueryAsync(text, parameters, cancellationToken);
+        await ExecuteNonQuery(text, parameters, cancellationToken);
     }
 
-    public async Task UpdateAsync(
+    public async Task Update(
         ConfigurationSetting setting,
         CancellationToken cancellationToken = default)
     {
+        using var activity = Telemetry.ActivitySource.StartActivity($"{nameof(ConfigurationSettingRepository)}.{nameof(Update)}");
+        activity?.SetTag(Telemetry.ConfigurationSettingEtag, setting.Etag);
+        activity?.SetTag(Telemetry.ConfigurationSettingKey, setting.Key);
+        activity?.SetTag(Telemetry.ConfigurationSettingLabel, setting.Label);
+        activity?.SetTag(Telemetry.ConfigurationSettingContentType, setting.ContentType);
+        activity?.SetTag(Telemetry.ConfigurationSettingValue, setting.Value);
+        activity?.SetTag(Telemetry.ConfigurationSettingLastModified, setting.LastModified);
+        activity?.SetTag(Telemetry.ConfigurationSettingLocked, setting.Locked);
+
         var text = "UPDATE configuration_settings SET etag = $etag, content_type = $content_type, value = $value, last_modified = $last_modified, locked = $locked, tags = $tags";
 
         var parameters = new List<DbParameter>
@@ -193,7 +222,7 @@ public partial class ConfigurationSettingRepository(
             text += $" WHERE {string.Join(" AND ", outers)}";
         }
 
-        await ExecuteNonQueryAsync(text, parameters, cancellationToken);
+        await ExecuteNonQuery(text, parameters, cancellationToken);
     }
 
     [GeneratedRegex(@"^(.*)(?<!\\)\*$")]
@@ -202,23 +231,25 @@ public partial class ConfigurationSettingRepository(
     [GeneratedRegex(@"(?<!\\),")]
     private static partial Regex UnescapedCommaRegex();
 
-    private async Task ExecuteNonQueryAsync(
+    private async Task ExecuteNonQuery(
         string text,
         IEnumerable<DbParameter> parameters,
         CancellationToken cancellationToken = default)
     {
-        using (Logger.BeginScope(new Dictionary<string, object?> { { "CommandText", text } }))
-        {
-            Logger.LogDebug("Creating the connection.");
-            await using var connection = ConnectionFactory.Create();
-            await connection.OpenAsync(cancellationToken);
+        using var activity = Telemetry.ActivitySource.StartActivity($"{nameof(ConfigurationSettingRepository)}.{nameof(ExecuteNonQuery)}");
+        activity?.SetTag(Telemetry.DatabaseStatement, text);
 
-            Logger.LogDebug("Creating the command.");
-            await using var command = CommandFactory.Create(connection, text, parameters);
+        Logger.LogDebug("Creating a connection.");
+        await using var connection = ConnectionFactory.Create();
 
-            Logger.LogDebug("Executing the command.");
-            await command.ExecuteNonQueryAsync(cancellationToken);
-        }
+        Logger.LogDebug("Opening the connection.");
+        await connection.OpenAsync(cancellationToken);
+
+        Logger.LogDebug("Creating a command.");
+        await using var command = CommandFactory.Create(connection, text, parameters);
+
+        Logger.LogDebug("Executing the command.");
+        await command.ExecuteNonQueryAsync(cancellationToken);
     }
 
     private async IAsyncEnumerable<DbDataReader> ExecuteReader(
@@ -226,21 +257,25 @@ public partial class ConfigurationSettingRepository(
         IEnumerable<DbParameter> parameters,
         [EnumeratorCancellation] CancellationToken cancellationToken = default)
     {
-        using (Logger.BeginScope(new Dictionary<string, object?> { { "CommandText", text } }))
+        using var activity = Telemetry.ActivitySource.StartActivity($"{nameof(ConfigurationSettingRepository)}.{nameof(ExecuteReader)}");
+        activity?.SetTag(Telemetry.DatabaseStatement, text);
+
+        Logger.LogDebug("Creating a connection.");
+        await using var connection = ConnectionFactory.Create();
+
+        Logger.LogDebug("Opening the connection.");
+        await connection.OpenAsync(cancellationToken);
+
+        Logger.LogDebug("Creating a command.");
+        await using var command = CommandFactory.Create(connection, text, parameters);
+
+        Logger.LogDebug("Executing the command.");
+        await using var reader = await command.ExecuteReaderAsync(cancellationToken);
+
+        Logger.LogDebug("Reading the results.");
+        while (await reader.ReadAsync(cancellationToken))
         {
-            Logger.LogDebug("Creating the connection.");
-            await using var connection = ConnectionFactory.Create();
-            await connection.OpenAsync(cancellationToken);
-
-            Logger.LogDebug("Creating the command.");
-            await using var command = CommandFactory.Create(connection, text, parameters);
-
-            Logger.LogDebug("Executing the command.");
-            await using var reader = await command.ExecuteReaderAsync(cancellationToken);
-            while (await reader.ReadAsync(cancellationToken))
-            {
-                yield return reader;
-            }
+            yield return reader;
         }
     }
 }

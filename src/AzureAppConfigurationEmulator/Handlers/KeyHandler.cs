@@ -15,6 +15,10 @@ public class KeyHandler
         [FromHeader(Name = "Accept-Datetime")] DateTimeOffset? acceptDatetime = default,
         CancellationToken cancellationToken = default)
     {
+        using var activity = Telemetry.ActivitySource.StartActivity($"{nameof(KeyHandler)}.{nameof(List)}");
+        activity?.SetTag(Telemetry.QueryName, name);
+        activity?.SetTag(Telemetry.HeaderAcceptDatetime, acceptDatetime);
+
         if (name != KeyFilter.Any)
         {
             if (new Regex(@"(?=.*(?<!\\),)(?=.*\*)").IsMatch(name))

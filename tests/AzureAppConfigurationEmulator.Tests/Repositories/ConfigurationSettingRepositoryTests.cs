@@ -67,7 +67,7 @@ public class ConfigurationSettingRepositoryTests
         var setting = new ConfigurationSetting("TestEtag", "TestKey", DateTimeOffset.UtcNow, false, null, null, null, null);
 
         // Act
-        await Repository.AddAsync(setting);
+        await Repository.Add(setting);
 
         // Assert
         CommandFactory
@@ -86,7 +86,7 @@ public class ConfigurationSettingRepositoryTests
         var setting = new ConfigurationSetting("TestEtag", "TestKey", DateTimeOffset.UtcNow, false, null, contentType, null, null);
 
         // Act
-        await Repository.AddAsync(setting);
+        await Repository.Add(setting);
 
         // Assert
         ParameterFactory
@@ -104,7 +104,7 @@ public class ConfigurationSettingRepositoryTests
         var setting = new ConfigurationSetting(etag, "TestKey", DateTimeOffset.UtcNow, false, null, null, null, null);
 
         // Act
-        await Repository.AddAsync(setting);
+        await Repository.Add(setting);
 
         // Assert
         ParameterFactory
@@ -122,7 +122,7 @@ public class ConfigurationSettingRepositoryTests
         var setting = new ConfigurationSetting("TestEtag", key, DateTimeOffset.UtcNow, false, null, null, null, null);
 
         // Act
-        await Repository.AddAsync(setting);
+        await Repository.Add(setting);
 
         // Assert
         ParameterFactory
@@ -140,7 +140,7 @@ public class ConfigurationSettingRepositoryTests
         var setting = new ConfigurationSetting("TestEtag", "TestKey", DateTimeOffset.UtcNow, false, label, null, null, null);
 
         // Act
-        await Repository.AddAsync(setting);
+        await Repository.Add(setting);
 
         // Assert
         ParameterFactory
@@ -158,7 +158,7 @@ public class ConfigurationSettingRepositoryTests
         var setting = new ConfigurationSetting("TestEtag", "TestKey", lastModified, false, null, null, null, null);
 
         // Act
-        await Repository.AddAsync(setting);
+        await Repository.Add(setting);
 
         // Assert
         ParameterFactory
@@ -176,7 +176,7 @@ public class ConfigurationSettingRepositoryTests
         var setting = new ConfigurationSetting("TestEtag", "TestKey", DateTimeOffset.UtcNow, locked, null, null, null, null);
 
         // Act
-        await Repository.AddAsync(setting);
+        await Repository.Add(setting);
 
         // Assert
         ParameterFactory
@@ -194,7 +194,7 @@ public class ConfigurationSettingRepositoryTests
         var setting = new ConfigurationSetting("TestEtag", "TestKey", DateTimeOffset.UtcNow, false, null, null, null, tags);
 
         // Act
-        await Repository.AddAsync(setting);
+        await Repository.Add(setting);
 
         // Assert
         ParameterFactory
@@ -212,7 +212,7 @@ public class ConfigurationSettingRepositoryTests
         var setting = new ConfigurationSetting("TestEtag", "TestKey", DateTimeOffset.UtcNow, false, null, null, value, null);
 
         // Act
-        await Repository.AddAsync(setting);
+        await Repository.Add(setting);
 
         // Assert
         ParameterFactory
@@ -300,7 +300,7 @@ public class ConfigurationSettingRepositoryTests
         var setting = new ConfigurationSetting("TestEtag", key, DateTimeOffset.UtcNow, false, label, null, null, null);
 
         // Act
-        await Repository.RemoveAsync(setting);
+        await Repository.Remove(setting);
 
         // Assert
         CommandFactory
@@ -319,7 +319,7 @@ public class ConfigurationSettingRepositoryTests
         var setting = new ConfigurationSetting("TestEtag", key, DateTimeOffset.UtcNow, false, null, null, null, null);
 
         // Act
-        await Repository.RemoveAsync(setting);
+        await Repository.Remove(setting);
 
         // Assert
         ParameterFactory
@@ -337,7 +337,7 @@ public class ConfigurationSettingRepositoryTests
         var setting = new ConfigurationSetting("TestEtag", "TestKey", DateTimeOffset.UtcNow, false, label, null, null, null);
 
         // Act
-        await Repository.RemoveAsync(setting);
+        await Repository.Remove(setting);
 
         // Assert
         if (label is not null)
@@ -366,7 +366,7 @@ public class ConfigurationSettingRepositoryTests
         var setting = new ConfigurationSetting("TestEtag", key, DateTimeOffset.UtcNow, false, label, null, null, null);
 
         // Act
-        await Repository.UpdateAsync(setting);
+        await Repository.Update(setting);
 
         // Assert
         CommandFactory
@@ -385,7 +385,7 @@ public class ConfigurationSettingRepositoryTests
         var setting = new ConfigurationSetting("TestEtag", "TestKey", DateTimeOffset.UtcNow, false, null, contentType, null, null);
 
         // Act
-        await Repository.UpdateAsync(setting);
+        await Repository.Update(setting);
 
         // Assert
         ParameterFactory
@@ -403,7 +403,7 @@ public class ConfigurationSettingRepositoryTests
         var setting = new ConfigurationSetting(etag, "TestKey", DateTimeOffset.UtcNow, false, null, null, null, null);
 
         // Act
-        await Repository.UpdateAsync(setting);
+        await Repository.Update(setting);
 
         // Assert
         ParameterFactory
@@ -421,7 +421,7 @@ public class ConfigurationSettingRepositoryTests
         var setting = new ConfigurationSetting("TestEtag", key, DateTimeOffset.UtcNow, false, null, null, null, null);
 
         // Act
-        await Repository.UpdateAsync(setting);
+        await Repository.Update(setting);
 
         // Assert
         ParameterFactory
@@ -439,7 +439,7 @@ public class ConfigurationSettingRepositoryTests
         var setting = new ConfigurationSetting("TestEtag", "TestKey", DateTimeOffset.UtcNow, false, label, null, null, null);
 
         // Act
-        await Repository.UpdateAsync(setting);
+        await Repository.Update(setting);
 
         // Assert
         if (label is not null)
@@ -468,7 +468,7 @@ public class ConfigurationSettingRepositoryTests
         var setting = new ConfigurationSetting("TestEtag", "TestKey", lastModified, false, null, null, null, null);
 
         // Act
-        await Repository.UpdateAsync(setting);
+        await Repository.Update(setting);
 
         // Assert
         ParameterFactory
@@ -486,7 +486,7 @@ public class ConfigurationSettingRepositoryTests
         var setting = new ConfigurationSetting("TestEtag", "TestKey", DateTimeOffset.UtcNow, locked, null, null, null, null);
 
         // Act
-        await Repository.UpdateAsync(setting);
+        await Repository.Update(setting);
 
         // Assert
         ParameterFactory
@@ -504,7 +504,7 @@ public class ConfigurationSettingRepositoryTests
         var setting = new ConfigurationSetting("TestEtag", "TestKey", DateTimeOffset.UtcNow, false, null, null, null, tags);
 
         // Act
-        await Repository.UpdateAsync(setting);
+        await Repository.Update(setting);
 
         // Assert
         ParameterFactory
@@ -522,7 +522,7 @@ public class ConfigurationSettingRepositoryTests
         var setting = new ConfigurationSetting("TestEtag", "TestKey", DateTimeOffset.UtcNow, false, null, null, value, null);
 
         // Act
-        await Repository.UpdateAsync(setting);
+        await Repository.Update(setting);
 
         // Assert
         ParameterFactory

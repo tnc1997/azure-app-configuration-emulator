@@ -51,78 +51,75 @@ public class HmacHandler(IOptionsMonitor<HmacOptions> options, ILoggerFactory lo
             parameter => parameter[(parameter.IndexOf('=') + 1)..],
             StringComparer.OrdinalIgnoreCase);
 
-        using (Logger.BeginScope(parameters))
+        foreach (var parameter in RequiredParameters)
         {
-            foreach (var parameter in RequiredParameters)
+            Logger.LogDebug("Checking if the parameters contains the parameter '{Parameter}'.", parameter);
+            if (!parameters.ContainsKey(parameter))
             {
-                Logger.LogDebug("Checking if the parameters contains the parameter '{Parameter}'.", parameter);
-                if (!parameters.ContainsKey(parameter))
-                {
-                    return AuthenticateResult.Fail($"{parameter} parameter is required");
-                }
+                return AuthenticateResult.Fail($"{parameter} parameter is required");
             }
-
-            foreach (var (header, headers) in RequiredSignedHeaders)
-            {
-                Logger.LogDebug("Checking if the signed headers parameter contains the header '{Header}'.", header);
-                if (!parameters[AuthenticationParameters.SignedHeaders].Split(';').Intersect(headers, StringComparer.OrdinalIgnoreCase).Any())
-                {
-                    return AuthenticateResult.Fail($"Required signing request header '{header}' not found");
-                }
-            }
-
-            foreach (var header in parameters[AuthenticationParameters.SignedHeaders].Split(';'))
-            {
-                Logger.LogDebug("Checking if the request headers contains the signed header '{Header}'.", header);
-                if (!Request.Headers.ContainsKey(header))
-                {
-                    return AuthenticateResult.Fail($"Required signing request header '{header}' not found");
-                }
-            }
-
-            Logger.LogDebug($"Checking if the request headers contains the header '{HeaderNames.Date}'.");
-            if (!DateTimeOffset.TryParse(Request.Headers[HeaderNames.XMsDate], out var date) && !DateTimeOffset.TryParse(Request.Headers[HeaderNames.Date], out date))
-            {
-                return AuthenticateResult.Fail("Invalid access token date");
-            }
-
-            Logger.LogDebug("Checking if the date '{Date}' is more than 15 minutes away from now.", date);
-            if (DateTimeOffset.UtcNow - date > TimeSpan.FromMinutes(15))
-            {
-                return AuthenticateResult.Fail("The access token has expired");
-            }
-
-            Logger.LogDebug("Checking if the credential is valid.");
-            if (!parameters[AuthenticationParameters.Credential].Equals(Options.Credential, StringComparison.Ordinal))
-            {
-                return AuthenticateResult.Fail("Invalid credential");
-            }
-
-            Logger.LogDebug("Checking if the signature is valid.");
-            if (!parameters[AuthenticationParameters.Signature].Equals(GetSignature(parameters[AuthenticationParameters.SignedHeaders]), StringComparison.Ordinal) && !parameters[AuthenticationParameters.Signature].Equals(GetSignature(parameters[AuthenticationParameters.SignedHeaders], false), StringComparison.Ordinal))
-            {
-                return AuthenticateResult.Fail("Invalid signature");
-            }
-
-            try
-            {
-                Logger.LogDebug("Enabling buffering of the request body.");
-                Request.EnableBuffering();
-
-                Logger.LogDebug("Checking if the content hash is valid.");
-                if (!Request.Headers[HeaderNames.XMsContentSha256].ToString().Equals(await ComputeContentHashAsync(Request.Body), StringComparison.Ordinal))
-                {
-                    return AuthenticateResult.Fail("Invalid request content hash");
-                }
-            }
-            finally
-            {
-                Logger.LogDebug("Resetting the request body position.");
-                Request.Body.Position = 0;
-            }
-
-            return AuthenticateResult.Success(new AuthenticationTicket(new ClaimsPrincipal(new ClaimsIdentity(Scheme.Name)), Scheme.Name));
         }
+
+        foreach (var (header, headers) in RequiredSignedHeaders)
+        {
+            Logger.LogDebug("Checking if the signed headers parameter contains the header '{Header}'.", header);
+            if (!parameters[AuthenticationParameters.SignedHeaders].Split(';').Intersect(headers, StringComparer.OrdinalIgnoreCase).Any())
+            {
+                return AuthenticateResult.Fail($"Required signing request header '{header}' not found");
+            }
+        }
+
+        foreach (var header in parameters[AuthenticationParameters.SignedHeaders].Split(';'))
+        {
+            Logger.LogDebug("Checking if the request headers contains the signed header '{Header}'.", header);
+            if (!Request.Headers.ContainsKey(header))
+            {
+                return AuthenticateResult.Fail($"Required signing request header '{header}' not found");
+            }
+        }
+
+        Logger.LogDebug($"Checking if the request headers contains the header '{HeaderNames.Date}'.");
+        if (!DateTimeOffset.TryParse(Request.Headers[HeaderNames.XMsDate], out var date) && !DateTimeOffset.TryParse(Request.Headers[HeaderNames.Date], out date))
+        {
+            return AuthenticateResult.Fail("Invalid access token date");
+        }
+
+        Logger.LogDebug("Checking if the date '{Date}' is more than 15 minutes away from now.", date);
+        if (DateTimeOffset.UtcNow - date > TimeSpan.FromMinutes(15))
+        {
+            return AuthenticateResult.Fail("The access token has expired");
+        }
+
+        Logger.LogDebug("Checking if the credential is valid.");
+        if (!parameters[AuthenticationParameters.Credential].Equals(Options.Credential, StringComparison.Ordinal))
+        {
+            return AuthenticateResult.Fail("Invalid credential");
+        }
+
+        Logger.LogDebug("Checking if the signature is valid.");
+        if (!parameters[AuthenticationParameters.Signature].Equals(GetSignature(parameters[AuthenticationParameters.SignedHeaders]), StringComparison.Ordinal) && !parameters[AuthenticationParameters.Signature].Equals(GetSignature(parameters[AuthenticationParameters.SignedHeaders], false), StringComparison.Ordinal))
+        {
+            return AuthenticateResult.Fail("Invalid signature");
+        }
+
+        try
+        {
+            Logger.LogDebug("Enabling buffering of the request body.");
+            Request.EnableBuffering();
+
+            Logger.LogDebug("Checking if the content hash is valid.");
+            if (!Request.Headers[HeaderNames.XMsContentSha256].ToString().Equals(await ComputeContentHashAsync(Request.Body), StringComparison.Ordinal))
+            {
+                return AuthenticateResult.Fail("Invalid request content hash");
+            }
+        }
+        finally
+        {
+            Logger.LogDebug("Resetting the request body position.");
+            Request.Body.Position = 0;
+        }
+
+        return AuthenticateResult.Success(new AuthenticationTicket(new ClaimsPrincipal(new ClaimsIdentity(Scheme.Name)), Scheme.Name));
     }
 
     protected override async Task HandleChallengeAsync(AuthenticationProperties properties)
