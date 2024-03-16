@@ -1,4 +1,5 @@
 using System.Text.Json;
+using AzureAppConfigurationEmulator;
 using AzureAppConfigurationEmulator.Authentication;
 using AzureAppConfigurationEmulator.Components;
 using AzureAppConfigurationEmulator.Extensions;
@@ -6,12 +7,38 @@ using AzureAppConfigurationEmulator.Factories;
 using AzureAppConfigurationEmulator.Handlers;
 using AzureAppConfigurationEmulator.Repositories;
 using AzureAppConfigurationEmulator.Services;
+using OpenTelemetry.Logs;
+using OpenTelemetry.Metrics;
+using OpenTelemetry.Resources;
+using OpenTelemetry.Trace;
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Logging.AddOpenTelemetry(options =>
+{
+    options.AddOtlpExporter();
+});
 
 builder.Services.AddAuthentication().AddHmac();
 
 builder.Services.AddAuthorization();
+
+builder.Services.AddOpenTelemetry()
+    .ConfigureResource(resource =>
+    {
+        resource.AddService(builder.Environment.ApplicationName);
+    })
+    .WithMetrics(metrics =>
+    {
+        metrics.AddAspNetCoreInstrumentation();
+        metrics.AddOtlpExporter();
+    })
+    .WithTracing(tracing =>
+    {
+        tracing.AddAspNetCoreInstrumentation();
+        tracing.AddSource(Telemetry.ActivitySource.Name);
+        tracing.AddOtlpExporter();
+    });
 
 builder.Services.AddRazorComponents().AddInteractiveServerComponents();
 

@@ -16,8 +16,14 @@ public class LockHandler
         [FromHeader(Name = "If-None-Match")] string? ifNoneMatch = default,
         CancellationToken cancellationToken = default)
     {
+        using var activity = Telemetry.ActivitySource.StartActivity($"{nameof(LockHandler)}.{nameof(Lock)}");
+        activity?.SetTag(Telemetry.RouteKey, key);
+        activity?.SetTag(Telemetry.QueryLabel, label);
+
         ifMatch = ifMatch?.TrimStart('"').TrimEnd('"');
+        activity?.SetTag(Telemetry.HeaderIfMatch, ifMatch);
         ifNoneMatch = ifNoneMatch?.TrimStart('"').TrimEnd('"');
+        activity?.SetTag(Telemetry.HeaderIfNoneMatch, ifNoneMatch);
 
         var setting = await repository.Get(key, label).SingleOrDefaultAsync(cancellationToken);
 
@@ -38,7 +44,7 @@ public class LockHandler
 
         setting = setting with { Locked = true };
 
-        await repository.UpdateAsync(setting, cancellationToken);
+        await repository.Update(setting, cancellationToken);
 
         return new KeyValueResult(setting);
 
@@ -52,8 +58,14 @@ public class LockHandler
         [FromHeader(Name = "If-None-Match")] string? ifNoneMatch = default,
         CancellationToken cancellationToken = default)
     {
+        using var activity = Telemetry.ActivitySource.StartActivity($"{nameof(LockHandler)}.{nameof(Unlock)}");
+        activity?.SetTag(Telemetry.RouteKey, key);
+        activity?.SetTag(Telemetry.QueryLabel, label);
+
         ifMatch = ifMatch?.TrimStart('"').TrimEnd('"');
+        activity?.SetTag(Telemetry.HeaderIfMatch, ifMatch);
         ifNoneMatch = ifNoneMatch?.TrimStart('"').TrimEnd('"');
+        activity?.SetTag(Telemetry.HeaderIfNoneMatch, ifNoneMatch);
 
         var setting = await repository.Get(key, label).SingleOrDefaultAsync(cancellationToken);
 
@@ -74,7 +86,7 @@ public class LockHandler
 
         setting = setting with { Locked = false };
 
-        await repository.UpdateAsync(setting, cancellationToken);
+        await repository.Update(setting, cancellationToken);
 
         return new KeyValueResult(setting);
     }

@@ -20,9 +20,15 @@ public class KeyValueHandler
         [FromHeader(Name = "If-None-Match")] string? ifNoneMatch = default,
         CancellationToken cancellationToken = default)
     {
+        using var activity = Telemetry.ActivitySource.StartActivity($"{nameof(KeyValueHandler)}.{nameof(Delete)}");
+        activity?.SetTag(Telemetry.QueryLabel, label);
+
         ifMatch = ifMatch?.TrimStart('"').TrimEnd('"');
+        activity?.SetTag(Telemetry.HeaderIfMatch, ifMatch);
         ifNoneMatch = ifNoneMatch?.TrimStart('"').TrimEnd('"');
+        activity?.SetTag(Telemetry.HeaderIfNoneMatch, ifNoneMatch);
         key = Uri.UnescapeDataString(key);
+        activity?.SetTag(Telemetry.RouteKey, key);
 
         var setting = await repository.Get(key, label, cancellationToken: cancellationToken).SingleOrDefaultAsync(cancellationToken);
 
@@ -56,7 +62,7 @@ public class KeyValueHandler
             return new PreconditionFailedResult();
         }
 
-        await repository.RemoveAsync(setting, cancellationToken);
+        await repository.Remove(setting, cancellationToken);
 
         return new KeyValueResult(setting);
     }
@@ -70,9 +76,16 @@ public class KeyValueHandler
         [FromHeader(Name = "If-None-Match")] string? ifNoneMatch = default,
         CancellationToken cancellationToken = default)
     {
+        using var activity = Telemetry.ActivitySource.StartActivity($"{nameof(KeyValueHandler)}.{nameof(Get)}");
+        activity?.SetTag(Telemetry.QueryLabel, label);
+        activity?.SetTag(Telemetry.HeaderAcceptDatetime, acceptDatetime);
+
         ifMatch = ifMatch?.TrimStart('"').TrimEnd('"');
+        activity?.SetTag(Telemetry.HeaderIfMatch, ifMatch);
         ifNoneMatch = ifNoneMatch?.TrimStart('"').TrimEnd('"');
+        activity?.SetTag(Telemetry.HeaderIfNoneMatch, ifNoneMatch);
         key = Uri.UnescapeDataString(key);
+        activity?.SetTag(Telemetry.RouteKey, key);
 
         var setting = await repository.Get(key, label, acceptDatetime, cancellationToken).SingleOrDefaultAsync(cancellationToken);
 
@@ -101,6 +114,11 @@ public class KeyValueHandler
         [FromHeader(Name = "Accept-Datetime")] DateTimeOffset? acceptDatetime = default,
         CancellationToken cancellationToken = default)
     {
+        using var activity = Telemetry.ActivitySource.StartActivity($"{nameof(KeyValueHandler)}.{nameof(List)}");
+        activity?.SetTag(Telemetry.QueryKey, key);
+        activity?.SetTag(Telemetry.QueryLabel, label);
+        activity?.SetTag(Telemetry.HeaderAcceptDatetime, acceptDatetime);
+
         if (key != KeyFilter.Any)
         {
             if (new Regex(@"(?=.*(?<!\\),)(?=.*\*)").IsMatch(key))
@@ -141,9 +159,15 @@ public class KeyValueHandler
         [FromHeader(Name = "If-None-Match")] string? ifNoneMatch = default,
         CancellationToken cancellationToken = default)
     {
+        using var activity = Telemetry.ActivitySource.StartActivity($"{nameof(KeyValueHandler)}.{nameof(Set)}");
+        activity?.SetTag(Telemetry.QueryLabel, label);
+
         ifMatch = ifMatch?.TrimStart('"').TrimEnd('"');
+        activity?.SetTag(Telemetry.HeaderIfMatch, ifMatch);
         ifNoneMatch = ifNoneMatch?.TrimStart('"').TrimEnd('"');
+        activity?.SetTag(Telemetry.HeaderIfNoneMatch, ifNoneMatch);
         key = Uri.UnescapeDataString(key);
+        activity?.SetTag(Telemetry.RouteKey, key);
 
         var date = DateTimeOffset.UtcNow;
 
@@ -171,7 +195,7 @@ public class KeyValueHandler
                 input.Value,
                 input.Tags);
 
-            await repository.AddAsync(setting, cancellationToken);
+            await repository.Add(setting, cancellationToken);
 
             return new KeyValueResult(setting);
         }
@@ -200,7 +224,7 @@ public class KeyValueHandler
             Tags = input.Tags
         };
 
-        await repository.UpdateAsync(setting, cancellationToken);
+        await repository.Update(setting, cancellationToken);
 
         return new KeyValueResult(setting);
     }
