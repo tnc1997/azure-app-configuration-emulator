@@ -1,0 +1,75 @@
+@inject IDialogService DialogService
+@rendermode InteractiveServer
+@using System.Security.Cryptography
+@using System.Text
+@using AzureAppConfigurationEmulator.Entities
+@using AzureAppConfigurationEmulator.Services
+
+<AzureDialog Id="@Id">
+    <HeaderContent>
+        <AzureDialogHeader Subtitle="Edit the key-value." Title="Edit"/>
+    </HeaderContent>
+
+    <ChildContent>
+        <div class="flex flex-col gap-4 pb-4">
+            <AzureTextField IsDisabled="true" Label="Key" Value="@ConfigurationSetting.Key"/>
+            <AzureTextField @bind-Value="Input.Value" Label="Value"/>
+            <AzureTextField IsDisabled="true" Label="Label" Placeholder="(No label)" Value="@ConfigurationSetting.Label"/>
+            <AzureTextField @bind-Value="Input.ContentType" Label="Content type"/>
+        </div>
+    </ChildContent>
+
+    <FooterContent>
+        <AzureDialogFooter>
+            <AzureButton Appearance="AzureButton.AzureAppearance.Primary" Label="Edit" OnClick="@HandleEditClick"/>
+        </AzureDialogFooter>
+    </FooterContent>
+</AzureDialog>
+
+@code {
+    [EditorRequired, Parameter] public ConfigurationSetting ConfigurationSetting { get; set; } = null!;
+
+    [Parameter] public string Id { get; set; } = Guid.NewGuid().ToString();
+
+    [Parameter] public EventCallback<ConfigurationSetting> OnEdit { get; set; }
+
+    private InputModel Input { get; } = new();
+
+    protected override void OnParametersSet()
+    {
+        if (Input.Value != ConfigurationSetting.Value)
+        {
+            Input.Value = ConfigurationSetting.Value;
+            StateHasChanged();
+        }
+
+        if (Input.ContentType != ConfigurationSetting.ContentType)
+        {
+            Input.ContentType = ConfigurationSetting.ContentType;
+            StateHasChanged();
+        }
+    }
+
+    private async Task HandleEditClick(MouseEventArgs args)
+    {
+        var date = DateTimeOffset.UtcNow;
+
+        await OnEdit.InvokeAsync(ConfigurationSetting with
+        {
+            Etag = Convert.ToBase64String(SHA256.HashData(Encoding.UTF8.GetBytes(date.UtcDateTime.ToString("yyyy-MM-dd HH:mm:ss")))),
+            ContentType = Input.ContentType,
+            Value = Input.Value,
+            LastModified = date
+        });
+
+        await DialogService.CloseAsync(Id);
+    }
+
+    private class InputModel
+    {
+        public string? Value { get; set; }
+
+        public string? ContentType { get; set; }
+    }
+
+}

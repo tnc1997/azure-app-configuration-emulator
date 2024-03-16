@@ -23,7 +23,7 @@
 
         <AzureToolbarDivider/>
 
-        <AzureToolbarButton IsDisabled="true" Label="Edit"/>
+        <AzureToolbarButton IsDisabled="@(SelectedConfigurationSettings is not { Count: 1 })" Label="Edit" OnClick="@HandleEditClick"/>
         <AzureToolbarButton IsDisabled="@(SelectedConfigurationSettings is { Count: 0 })" Label="Delete" OnClick="@HandleDeleteClick"/>
     </AzureToolbar>
 
@@ -48,7 +48,12 @@
     </div>
 </div>
 
-<ConfigurationSettingCreateDialog Id="ConfigurationSettingCreateDialog" OnCreate="@HandleConfigurationSettingCreate"/>
+<ConfigurationSettingCreateDialog Id="@nameof(ConfigurationSettingCreateDialog)" OnCreate="@HandleConfigurationSettingCreate"/>
+
+@if (SelectedConfigurationSettings is { Count: 1 })
+{
+    <ConfigurationSettingEditDialog ConfigurationSetting="@SelectedConfigurationSettings.Single()" Id="@nameof(ConfigurationSettingEditDialog)" OnEdit="@HandleConfigurationSettingEdit"/>
+}
 
 @code {
     private ICollection<ConfigurationSetting> ConfigurationSettings { get; } = [];
@@ -81,9 +86,26 @@
         StateHasChanged();
     }
 
+    private async Task HandleConfigurationSettingEdit(ConfigurationSetting setting)
+    {
+        await ConfigurationSettingRepository.Update(setting);
+
+        ConfigurationSettings.Remove(SelectedConfigurationSettings.Single());
+        ConfigurationSettings.Add(setting);
+        StateHasChanged();
+
+        SelectedConfigurationSettings.Clear();
+        StateHasChanged();
+    }
+
     private async Task HandleCreateClick(MouseEventArgs args)
     {
-        await DialogService.ShowAsync("ConfigurationSettingCreateDialog");
+        await DialogService.ShowAsync(nameof(ConfigurationSettingCreateDialog));
+    }
+
+    private async Task HandleEditClick(MouseEventArgs args)
+    {
+        await DialogService.ShowAsync(nameof(ConfigurationSettingEditDialog));
     }
 
     private async Task HandleDeleteClick(MouseEventArgs args)
