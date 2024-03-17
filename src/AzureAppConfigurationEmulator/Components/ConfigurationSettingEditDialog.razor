@@ -1,11 +1,10 @@
 @inject IDialogService DialogService
-@rendermode InteractiveServer
 @using System.Security.Cryptography
 @using System.Text
 @using AzureAppConfigurationEmulator.Entities
 @using AzureAppConfigurationEmulator.Services
 
-<AzureDialog Id="@Id">
+<AzureDialog>
     <HeaderContent>
         <AzureDialogHeader Subtitle="Edit the key-value." Title="Edit"/>
     </HeaderContent>
@@ -29,9 +28,7 @@
 @code {
     [EditorRequired, Parameter] public ConfigurationSetting ConfigurationSetting { get; set; } = null!;
 
-    [Parameter] public string Id { get; set; } = Guid.NewGuid().ToString();
-
-    [Parameter] public EventCallback<ConfigurationSetting> OnEdit { get; set; }
+    [CascadingParameter] public IDialogReference DialogReference { get; set; } = null!;
 
     private InputModel Input { get; } = new();
 
@@ -54,15 +51,15 @@
     {
         var date = DateTimeOffset.UtcNow;
 
-        await OnEdit.InvokeAsync(ConfigurationSetting with
+        var setting = ConfigurationSetting with
         {
             Etag = Convert.ToBase64String(SHA256.HashData(Encoding.UTF8.GetBytes(date.UtcDateTime.ToString("yyyy-MM-dd HH:mm:ss")))),
             ContentType = Input.ContentType,
             Value = Input.Value,
             LastModified = date
-        });
+        };
 
-        await DialogService.CloseAsync(Id);
+        await DialogService.Close(DialogReference, new DialogResult(setting));
     }
 
     private class InputModel

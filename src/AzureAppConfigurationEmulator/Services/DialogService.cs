@@ -1,41 +1,62 @@
-using Microsoft.JSInterop;
+using Microsoft.AspNetCore.Components;
 
 namespace AzureAppConfigurationEmulator.Services;
 
-public class DialogService(IJSRuntime js) : IAsyncDisposable, IDialogService
+public class DialogReference(Type type, IDictionary<string, object?>? parameters = null) : IDialogReference
 {
-    private Lazy<ValueTask<IJSObjectReference>> Module { get; } = new(() => js.InvokeAsync<IJSObjectReference>("import", "./scripts/dialog.js"));
+    public Task<ElementReference> Element => ElementTaskCompletionSource.Task;
 
-    public async ValueTask DisposeAsync()
+    public IDictionary<string, object?>? Parameters { get; } = parameters;
+
+    public Task<IDialogResult?> Result => ResultTaskCompletionSource.Task;
+
+    public Type Type { get; } = type;
+
+    private TaskCompletionSource<ElementReference> ElementTaskCompletionSource { get; } = new();
+
+    private TaskCompletionSource<IDialogResult?> ResultTaskCompletionSource { get; } = new();
+
+    public bool TrySetElement(ElementReference element)
     {
-        if (Module.IsValueCreated)
-        {
-            var module = await Module.Value;
+        return ElementTaskCompletionSource.TrySetResult(element);
+    }
 
-            await module.DisposeAsync();
+    public bool TrySetResult(IDialogResult? result = null)
+    {
+        return ResultTaskCompletionSource.TrySetResult(result);
+    }
+}
+
+public class DialogResult(object? data = null) : IDialogResult
+{
+    public object? Data { get; } = data;
+}
+
+public class DialogService : IDialogService
+{
+    public event Func<IDialogReference, IDialogResult?, Task>? OnDialogClosed;
+
+    public event Func<IDialogReference, Task>? OnDialogShown;
+
+    public async Task Close(IDialogReference reference, IDialogResult? result = null)
+    {
+        if (OnDialogClosed is not null)
+        {
+            await OnDialogClosed.Invoke(reference, result);
+        }
+        
+        reference.TrySetResult(result);
+    }
+
+    public async Task<IDialogReference> Show<TComponent>(IDictionary<string, object?>? parameters = null)
+    {
+        var reference = new DialogReference(typeof(TComponent), parameters);
+
+        if (OnDialogShown is not null)
+        {
+            await OnDialogShown.Invoke(reference);
         }
 
-        GC.SuppressFinalize(this);
-    }
-
-    public async Task CloseAsync(string id)
-    {
-        var module = await Module.Value;
-
-        await module.InvokeVoidAsync("close", id);
-    }
-
-    public async Task CloseAsync<TResult>(string id, TResult result)
-    {
-        var module = await Module.Value;
-
-        await module.InvokeVoidAsync("close", id, result);
-    }
-
-    public async Task ShowAsync(string id)
-    {
-        var module = await Module.Value;
-
-        await module.InvokeVoidAsync("show", id);
+        return reference;
     }
 }
