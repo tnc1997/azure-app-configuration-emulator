@@ -2,7 +2,6 @@
 @inject IConfigurationSettingRepository ConfigurationSettingRepository
 @inject IDialogService DialogService
 @page "/kvs"
-@rendermode InteractiveServer
 @using AzureAppConfigurationEmulator.Entities
 @using AzureAppConfigurationEmulator.Repositories
 @using AzureAppConfigurationEmulator.Services
@@ -48,13 +47,6 @@
     </div>
 </div>
 
-<ConfigurationSettingCreateDialog Id="@nameof(ConfigurationSettingCreateDialog)" OnCreate="@HandleConfigurationSettingCreate"/>
-
-@if (SelectedConfigurationSettings is { Count: 1 })
-{
-    <ConfigurationSettingEditDialog ConfigurationSetting="@SelectedConfigurationSettings.Single()" Id="@nameof(ConfigurationSettingEditDialog)" OnEdit="@HandleConfigurationSettingEdit"/>
-}
-
 @code {
     private ICollection<ConfigurationSetting> ConfigurationSettings { get; } = [];
 
@@ -78,34 +70,42 @@
         }
     }
 
-    private async Task HandleConfigurationSettingCreate(ConfigurationSetting setting)
-    {
-        await ConfigurationSettingRepository.Add(setting);
-        
-        ConfigurationSettings.Add(setting);
-        StateHasChanged();
-    }
-
-    private async Task HandleConfigurationSettingEdit(ConfigurationSetting setting)
-    {
-        await ConfigurationSettingRepository.Update(setting);
-
-        ConfigurationSettings.Remove(SelectedConfigurationSettings.Single());
-        ConfigurationSettings.Add(setting);
-        StateHasChanged();
-
-        SelectedConfigurationSettings.Clear();
-        StateHasChanged();
-    }
-
     private async Task HandleCreateClick(MouseEventArgs args)
     {
-        await DialogService.ShowAsync(nameof(ConfigurationSettingCreateDialog));
+        var reference = await DialogService.Show<ConfigurationSettingCreateDialog>();
+        var result = await reference.Result;
+        if (result is { Data: ConfigurationSetting setting })
+        {
+            await ConfigurationSettingRepository.Add(setting);
+
+            ConfigurationSettings.Add(setting);
+            StateHasChanged();
+        }
     }
 
     private async Task HandleEditClick(MouseEventArgs args)
     {
-        await DialogService.ShowAsync(nameof(ConfigurationSettingEditDialog));
+        var parameters = new Dictionary<string, object?>
+        {
+            {
+                nameof(ConfigurationSettingEditDialog.ConfigurationSetting),
+                SelectedConfigurationSettings.Single()
+            }
+        };
+
+        var reference = await DialogService.Show<ConfigurationSettingEditDialog>(parameters);
+        var result = await reference.Result;
+        if (result is { Data: ConfigurationSetting setting })
+        {
+            await ConfigurationSettingRepository.Update(setting);
+
+            ConfigurationSettings.Remove(SelectedConfigurationSettings.Single());
+            ConfigurationSettings.Add(setting);
+            StateHasChanged();
+
+            SelectedConfigurationSettings.Clear();
+            StateHasChanged();
+        }
     }
 
     private async Task HandleDeleteClick(MouseEventArgs args)

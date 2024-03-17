@@ -1,27 +1,38 @@
-<CascadingValue Value="this">
-    <dialog class="mr-0 max-w-full h-full max-h-full bg-white text-mine-shaft w-[585px] dark:bg-cod-grey dark:text-desert-storm" id="@Id">
-        <div class="flex flex-col w-full h-full">
-            <header class="py-2 px-5">
-                @HeaderContent
-            </header>
+@using AzureAppConfigurationEmulator.Services
 
-            <div class="flex-1 p-5">
-                @ChildContent
-            </div>
+<dialog class="mr-0 max-w-full h-full max-h-full bg-white text-mine-shaft w-[585px] dark:bg-cod-grey dark:text-desert-storm" @ref="@ElementReference">
+    <div class="flex flex-col w-full h-full">
+        <header class="py-2 px-5">
+            @HeaderContent
+        </header>
 
-            <footer class="p-5 border-t border-t-alto dark:border-t-masala">
-                @FooterContent
-            </footer>
+        <div class="flex-1 p-5">
+            @ChildContent
         </div>
-    </dialog>
-</CascadingValue>
+
+        <footer class="p-5 border-t border-t-alto dark:border-t-masala">
+            @FooterContent
+        </footer>
+    </div>
+</dialog>
 
 @code {
     [Parameter] public RenderFragment? ChildContent { get; set; }
+
+    [CascadingParameter] public IDialogReference DialogReference { get; set; } = null!;
 
     [Parameter] public RenderFragment? FooterContent { get; set; }
 
     [Parameter] public RenderFragment? HeaderContent { get; set; }
 
-    [Parameter] public string Id { get; set; } = Guid.NewGuid().ToString();
+    private ElementReference ElementReference { get; set; }
+
+    protected override void OnAfterRender(bool firstRender)
+    {
+        if (firstRender)
+        {
+            DialogReference.TrySetElement(ElementReference);
+        }
+    }
+
 }

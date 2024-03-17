@@ -1,11 +1,9 @@
 @inject IConfigurationSettingFactory ConfigurationSettingFactory
 @inject IDialogService DialogService
-@rendermode InteractiveServer
-@using AzureAppConfigurationEmulator.Entities
 @using AzureAppConfigurationEmulator.Factories
 @using AzureAppConfigurationEmulator.Services
 
-<AzureDialog Id="@Id">
+<AzureDialog>
     <HeaderContent>
         <AzureDialogHeader Subtitle="Create a new key-value." Title="Create"/>
     </HeaderContent>
@@ -27,9 +25,7 @@
 </AzureDialog>
 
 @code {
-    [Parameter] public string Id { get; set; } = Guid.NewGuid().ToString();
-    
-    [Parameter] public EventCallback<ConfigurationSetting> OnCreate { get; set; }
+    [CascadingParameter] public IDialogReference DialogReference { get; set; } = null!;
 
     private bool IsDisabled => string.IsNullOrEmpty(Input.Key);
 
@@ -39,9 +35,9 @@
     {
         if (!string.IsNullOrEmpty(Input.Key))
         {
-            await OnCreate.InvokeAsync(ConfigurationSettingFactory.Create(Input.Key, Input.Label, Input.ContentType, Input.Value));
+            var setting = ConfigurationSettingFactory.Create(Input.Key, Input.Label, Input.ContentType, Input.Value);
 
-            await DialogService.CloseAsync(Id);
+            await DialogService.Close(DialogReference, new DialogResult(setting));
         }
     }
 

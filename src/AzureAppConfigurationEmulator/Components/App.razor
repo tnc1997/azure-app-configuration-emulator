@@ -8,11 +8,11 @@
     <link rel="stylesheet" href="app.css"/>
     @* <link rel="stylesheet" href="AzureAppConfigurationEmulator.styles.css"/> *@
     <link rel="icon" type="image/png" href="favicon.png"/>
-    <HeadOutlet/>
+    <HeadOutlet @rendermode="@InteractiveServer"/>
 </head>
 
 <body class="text-base bg-white text-mine-shaft dark:bg-cod-grey dark:text-desert-storm">
-<Routes/>
+<Routes @rendermode="@InteractiveServer"/>
 <script src="_framework/blazor.web.js"></script>
 </body>
 
