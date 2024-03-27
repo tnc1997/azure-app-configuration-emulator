@@ -1,11 +1,15 @@
 using System.Text.Json;
-using AzureAppConfigurationEmulator;
-using AzureAppConfigurationEmulator.Authentication;
+using AzureAppConfigurationEmulator.Authentication.Hmac;
+using AzureAppConfigurationEmulator.Common;
+using AzureAppConfigurationEmulator.Common.Abstractions;
 using AzureAppConfigurationEmulator.Components;
+using AzureAppConfigurationEmulator.ConfigurationSettings;
+using AzureAppConfigurationEmulator.Data.Abstractions;
+using AzureAppConfigurationEmulator.Data.Sqlite;
 using AzureAppConfigurationEmulator.Extensions;
-using AzureAppConfigurationEmulator.Factories;
-using AzureAppConfigurationEmulator.Handlers;
-using AzureAppConfigurationEmulator.Repositories;
+using AzureAppConfigurationEmulator.Keys;
+using AzureAppConfigurationEmulator.Labels;
+using AzureAppConfigurationEmulator.Locks;
 using AzureAppConfigurationEmulator.Services;
 using OpenTelemetry.Logs;
 using OpenTelemetry.Metrics;
@@ -46,9 +50,9 @@ builder.Services.AddScoped<IDialogService, DialogService>();
 
 builder.Services.AddSingleton<IConfigurationSettingFactory, ConfigurationSettingFactory>();
 builder.Services.AddSingleton<IConfigurationSettingRepository, ConfigurationSettingRepository>();
-builder.Services.AddSingleton<IDbCommandFactory, DbCommandFactory>();
-builder.Services.AddSingleton<IDbConnectionFactory, DbConnectionFactory>();
-builder.Services.AddSingleton<IDbParameterFactory, DbParameterFactory>();
+builder.Services.AddSingleton<IDbCommandFactory, SqliteDbCommandFactory>();
+builder.Services.AddSingleton<IDbConnectionFactory, SqliteDbConnectionFactory>();
+builder.Services.AddSingleton<IDbParameterFactory, SqliteDbParameterFactory>();
 
 builder.Services.ConfigureHttpJsonOptions(options =>
 {
@@ -75,10 +79,10 @@ app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
 
-app.MapGet("/kv/{**key}", KeyValueHandler.Get).RequireAuthorization();
-app.MapGet("/kv", KeyValueHandler.List).RequireAuthorization();
-app.MapPut("/kv/{**key}", KeyValueHandler.Set).RequireAuthorization();
-app.MapDelete("/kv/{**key}", KeyValueHandler.Delete).RequireAuthorization();
+app.MapGet("/kv/{**key}", ConfigurationSettingHandler.Get).RequireAuthorization();
+app.MapGet("/kv", ConfigurationSettingHandler.List).RequireAuthorization();
+app.MapPut("/kv/{**key}", ConfigurationSettingHandler.Set).RequireAuthorization();
+app.MapDelete("/kv/{**key}", ConfigurationSettingHandler.Delete).RequireAuthorization();
 app.MapGet("/keys", KeyHandler.List).RequireAuthorization();
 app.MapGet("/labels", LabelHandler.List).RequireAuthorization();
 app.MapPut("/locks/{**key}", LockHandler.Lock).RequireAuthorization();

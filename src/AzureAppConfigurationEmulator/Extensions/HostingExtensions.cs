@@ -1,5 +1,5 @@
 using System.Security.Cryptography.X509Certificates;
-using AzureAppConfigurationEmulator.Factories;
+using AzureAppConfigurationEmulator.Data.Abstractions;
 
 namespace AzureAppConfigurationEmulator.Extensions;
 
