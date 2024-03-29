@@ -122,8 +122,8 @@ services:
       dockerfile: ./src/AzureAppConfigurationEmulator/Dockerfile
     environment:
       - ASPNETCORE_HTTP_PORTS=8080
-      - Messaging__EventGridTopics__xyz__Credential__Key=a2V5
-      - Messaging__EventGridTopics__xyz__Endpoint=https://contoso.uksouth-1.eventgrid.azure.net/api/events
+      - Messaging__EventGridTopics__Contoso__Credential__Key=a2V5
+      - Messaging__EventGridTopics__Contoso__Endpoint=https://contoso.uksouth-1.eventgrid.azure.net/api/events
     ports:
       - "8080:8080"
 ```
