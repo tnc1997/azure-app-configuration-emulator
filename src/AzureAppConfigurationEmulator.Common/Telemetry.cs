@@ -15,6 +15,10 @@ public static class Telemetry
     public const string HeaderAcceptDatetime = $"{Namespace}.header.accept_datetime";
     public const string HeaderIfMatch = $"{Namespace}.header.if_match";
     public const string HeaderIfNoneMatch = $"{Namespace}.header.if_none_match";
+    public const string MessagingEventId = $"{Namespace}.messaging.event.id";
+    public const string MessagingEventSubject = $"{Namespace}.messaging.event.subject";
+    public const string MessagingEventTime = $"{Namespace}.messaging.event.time";
+    public const string MessagingEventType = $"{Namespace}.messaging.event.type";
     public const string QueryKey = $"{Namespace}.query.key";
     public const string QueryLabel = $"{Namespace}.query.label";
     public const string QueryName = $"{Namespace}.query.name";

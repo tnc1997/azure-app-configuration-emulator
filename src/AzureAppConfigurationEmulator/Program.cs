@@ -1,16 +1,21 @@
 using System.Text.Json;
+using Azure.Messaging.EventGrid;
 using AzureAppConfigurationEmulator.Authentication.Hmac;
 using AzureAppConfigurationEmulator.Common;
 using AzureAppConfigurationEmulator.Common.Abstractions;
 using AzureAppConfigurationEmulator.Components;
 using AzureAppConfigurationEmulator.ConfigurationSettings;
+using AzureAppConfigurationEmulator.ConfigurationSettings.Messaging.EventGrid;
 using AzureAppConfigurationEmulator.Data.Abstractions;
 using AzureAppConfigurationEmulator.Data.Sqlite;
 using AzureAppConfigurationEmulator.Extensions;
 using AzureAppConfigurationEmulator.Keys;
 using AzureAppConfigurationEmulator.Labels;
 using AzureAppConfigurationEmulator.Locks;
+using AzureAppConfigurationEmulator.Messaging.EventGrid.Abstractions;
+using AzureAppConfigurationEmulator.Messaging.EventGrid.HttpContext;
 using AzureAppConfigurationEmulator.Services;
+using Microsoft.Extensions.Azure;
 using OpenTelemetry.Logs;
 using OpenTelemetry.Metrics;
 using OpenTelemetry.Resources;
@@ -26,6 +31,16 @@ builder.Logging.AddOpenTelemetry(options =>
 builder.Services.AddAuthentication().AddHmac();
 
 builder.Services.AddAuthorization();
+
+builder.Services.AddAzureClients(factory =>
+{
+    foreach (var section in builder.Configuration.GetSection("Messaging").GetSection("EventGridTopics").GetChildren())
+    {
+        factory.AddEventGridPublisherClient(section).WithName(section.Key);
+    }
+});
+
+builder.Services.AddHttpContextAccessor();
 
 builder.Services.AddOpenTelemetry()
     .ConfigureResource(resource =>
@@ -49,10 +64,11 @@ builder.Services.AddRazorComponents().AddInteractiveServerComponents();
 builder.Services.AddScoped<IDialogService, DialogService>();
 
 builder.Services.AddSingleton<IConfigurationSettingFactory, ConfigurationSettingFactory>();
-builder.Services.AddSingleton<IConfigurationSettingRepository, ConfigurationSettingRepository>();
+builder.Services.AddSingleton(ConfigurationSettingRepositoryImplementationFactory);
 builder.Services.AddSingleton<IDbCommandFactory, SqliteDbCommandFactory>();
 builder.Services.AddSingleton<IDbConnectionFactory, SqliteDbConnectionFactory>();
 builder.Services.AddSingleton<IDbParameterFactory, SqliteDbParameterFactory>();
+builder.Services.AddSingleton<IEventGridEventFactory, HttpContextEventGridEventFactory>();
 
 builder.Services.ConfigureHttpJsonOptions(options =>
 {
@@ -91,3 +107,23 @@ app.MapDelete("/locks/{**key}", LockHandler.Unlock).RequireAuthorization();
 app.InitializeDatabase();
 
 app.Run();
+
+IConfigurationSettingRepository ConfigurationSettingRepositoryImplementationFactory(IServiceProvider provider)
+{
+    IConfigurationSettingRepository repository = new ConfigurationSettingRepository(
+        provider.GetRequiredService<IDbCommandFactory>(),
+        provider.GetRequiredService<IConfigurationSettingFactory>(),
+        provider.GetRequiredService<IDbConnectionFactory>(),
+        provider.GetRequiredService<ILogger<ConfigurationSettingRepository>>(),
+        provider.GetRequiredService<IDbParameterFactory>());
+
+    foreach (var section in builder.Configuration.GetSection("Messaging").GetSection("EventGridTopics").GetChildren())
+    {
+        repository = new EventGridMessagingConfigurationSettingRepository(
+            repository,
+            provider.GetRequiredService<IEventGridEventFactory>(),
+            provider.GetRequiredService<IAzureClientFactory<EventGridPublisherClient>>().CreateClient(section.Key));
+    }
+
+    return repository;
+}
