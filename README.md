@@ -108,6 +108,26 @@ The emulator is compatible with the following operations:
 | List (Select Fields)     | ❌ |
 | List (Time-Based Access) | ❌ |
 
+## Messaging
+
+The emulator integrates with Azure Event Grid to publish events using the [Event Grid event schema](https://learn.microsoft.com/en-us/azure/event-grid/custom-topics#event-grid-event-schema) when configuration settings are deleted or modified.
+
+The endpoint and key for the [Event Grid Topic](https://learn.microsoft.com/en-us/azure/event-grid/custom-topics) can be set using the environment variables `Messaging__EventGridTopics__xyz__Endpoint` and `Messaging__EventGridTopics__xyz__Credential__Key` respectively where `xyz` is an arbitrary name.
+
+```yaml
+services:
+  azure-app-configuration-emulator:
+    build:
+      context: https://github.com/tnc1997/azure-app-configuration-emulator.git
+      dockerfile: ./src/AzureAppConfigurationEmulator/Dockerfile
+    environment:
+      - ASPNETCORE_HTTP_PORTS=8080
+      - Messaging__EventGridTopics__Contoso__Credential__Key=a2V5
+      - Messaging__EventGridTopics__Contoso__Endpoint=https://contoso.uksouth-1.eventgrid.azure.net/api/events
+    ports:
+      - "8080:8080"
+```
+
 ## Observability
 
 The emulator integrates with OpenTelemetry to provide metrics and traces.
