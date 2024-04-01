@@ -1,21 +1,17 @@
-<button class="@BackgroundClasses @BorderClasses @ColorClasses font-semibold h-[24px] px-5 rounded-sm" disabled="@IsDisabled" @onclick="OnClick" type="@Type">
-    @Label
+<button @attributes="@AdditionalAttributes" class="@BackgroundClasses @BorderClasses @ColorClasses font-semibold h-[24px] px-5 rounded-sm">
+    @ChildContent
 </button>
 
 @code {
+    [Parameter(CaptureUnmatchedValues = true)] public IDictionary<string, object>? AdditionalAttributes { get; set; }
+
     [Parameter] public AzureAppearance Appearance { get; set; } = AzureAppearance.Default;
 
-    [Parameter] public bool IsDisabled { get; set; }
-
-    [EditorRequired, Parameter] public string Label { get; set; } = null!;
-
-    [Parameter] public EventCallback<MouseEventArgs> OnClick { get; set; }
-
-    [Parameter] public string? Type { get; set; }
+    [Parameter] public RenderFragment? ChildContent { get; set; }
 
     private string BackgroundClasses => Appearance switch
     {
-        AzureAppearance.Default => "bg-white hover:bg-concrete disabled:bg-concrete dark:bg-cod-grey dark:hover:bg-shark dark:disabled:bg-shark",
+        AzureAppearance.Default => "bg-white hover:bg-concrete active:bg-gallery disabled:bg-concrete dark:bg-cod-grey dark:hover:bg-shark dark:active:bg-tuatara dark:disabled:bg-shark",
         AzureAppearance.Primary => "bg-lochmara hover:bg-science-blue active:bg-venice-blue disabled:bg-concrete dark:bg-lochmara dark:hover:bg-dodger-blue dark:active:bg-jordy-blue dark:disabled:bg-shark",
         _ => throw new ArgumentOutOfRangeException()
     };
@@ -34,6 +30,10 @@
         _ => throw new ArgumentOutOfRangeException()
     };
 
-    public enum AzureAppearance { Default, Primary }
+    public enum AzureAppearance
+    {
+        Default,
+        Primary
+    }
 
 }

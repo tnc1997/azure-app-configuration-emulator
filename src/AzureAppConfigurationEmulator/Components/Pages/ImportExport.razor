@@ -96,7 +96,7 @@
                 </label>
 
                 <div>
-                    <AzureButton Appearance="AzureButton.AzureAppearance.Primary" Label="@(Model.Operation switch { Operation.Export => "Export", Operation.Import => "Import", _ => throw new ArgumentOutOfRangeException() })" Type="submit"/>
+                    <AzureButton Appearance="AzureButton.AzureAppearance.Primary" type="submit">@(Model.Operation switch { Operation.Export => "Export", Operation.Import => "Import", _ => throw new ArgumentOutOfRangeException() })</AzureButton>
                 </div>
             }
         </EditForm>
