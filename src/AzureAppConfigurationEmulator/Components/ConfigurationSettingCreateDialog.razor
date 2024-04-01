@@ -19,15 +19,13 @@
 
     <FooterContent>
         <AzureDialogFooter>
-            <AzureButton Appearance="AzureButton.AzureAppearance.Primary" IsDisabled="@IsDisabled" Label="Create" OnClick="@HandleCreateClick"/>
+            <AzureButton Appearance="AzureButton.AzureAppearance.Primary" disabled="@string.IsNullOrEmpty(Input.Key)" @onclick="@HandleCreateClick">Create</AzureButton>
         </AzureDialogFooter>
     </FooterContent>
 </AzureDialog>
 
 @code {
     [CascadingParameter] public IDialogReference DialogReference { get; set; } = null!;
-
-    private bool IsDisabled => string.IsNullOrEmpty(Input.Key);
 
     private InputModel Input { get; } = new();
 
