@@ -1,0 +1,245 @@
+@inject IConfigurationSettingFactory ConfigurationSettingFactory
+@inject IConfigurationSettingRepository ConfigurationSettingRepository
+@page "/kvdata"
+@using System.Security.Cryptography
+@using System.Text
+@using System.Text.Json
+@using AzureAppConfigurationEmulator.Common.Abstractions
+@using AzureAppConfigurationEmulator.Common.Constants
+
+<PageTitle>Import/export</PageTitle>
+
+<div class="flex flex-col">
+    <AzureToolbar>
+        <div class="h-[36px]"></div>
+    </AzureToolbar>
+
+    <div class="p-5">
+        <EditForm class="flex flex-col gap-4 items-stretch pb-4" Model="Model" OnSubmit="@HandleSubmit">
+            <AzureInputRadioGroup @bind-Value="@Model!.Operation" name="@nameof(Model.Operation)">
+                <AzureInputRadioLabel>
+                    <AzureInputRadio checked="@(Model.Operation is Operation.Import)" Value="@Operation.Import"/>
+                    <div>Import</div>
+                </AzureInputRadioLabel>
+
+                <AzureInputRadioLabel>
+                    <AzureInputRadio checked="@(Model.Operation is Operation.Export)" disabled Value="@Operation.Export"/>
+                    <div>Export</div>
+                </AzureInputRadioLabel>
+            </AzureInputRadioGroup>
+
+            <label class="flex flex-col gap-1">
+                <div>Source service</div>
+                <AzureInputSelect @bind-Value="@Model!.SourceService" name="@nameof(Model.SourceService)">
+                    <option checked="@(Model.SourceService is null)" hidden value="">Please select a source service</option>
+                    <option checked="@(Model.SourceService is SourceService.AzureAppConfiguration)" disabled value="@SourceService.AzureAppConfiguration">App Configuration</option>
+                    <option checked="@(Model.SourceService is SourceService.AzureAppService)" disabled value="@SourceService.AzureAppService">App Service</option>
+                    <option checked="@(Model.SourceService is SourceService.ConfigurationFile)" value="@SourceService.ConfigurationFile">Configuration file</option>
+                </AzureInputSelect>
+            </label>
+
+            @if (Model?.SourceService is not null)
+            {
+                <label class="flex flex-col gap-1">
+                    <div>File type</div>
+                    <AzureInputSelect @bind-Value="@Model.FileType" name="@nameof(Model.FileType)">
+                        <option checked="@(Model.FileType is null)" hidden value="">Please select a file type</option>
+                        <option checked="@(Model.FileType is ".json")" value=".json">Json</option>
+                        <option checked="@(Model.FileType is ".yaml,.yml")" disabled value=".yaml,.yml">Yaml</option>
+                        <option checked="@(Model.FileType is ".properties")" disabled value=".properties">Properties</option>
+                    </AzureInputSelect>
+                </label>
+            }
+
+            @if (Model?.FileType is not null)
+            {
+                <label class="flex flex-col gap-1">
+                    <div>Source file</div>
+                    <AzureInputFile accept="@Model.FileType" name="@nameof(Model.SourceFile)" OnChange="args => Model.SourceFile = args.File"/>
+                </label>
+            }
+
+            @if (Model?.SourceFile is not null)
+            {
+                <label class="flex flex-col gap-1">
+                    <div>Separator</div>
+                    <AzureInputSelect @bind-Value="@Model.Separator" name="@nameof(Model.Separator)">
+                        <option checked="@(Model.Separator is null)" value="">(No separator)</option>
+                        <option checked="@(Model.Separator is ".")" value=".">&#46;</option>
+                        <option checked="@(Model.Separator is ",")" value=",">&#44;</option>
+                        <option checked="@(Model.Separator is ":")" value=":">&#58;</option>
+                        <option checked="@(Model.Separator is ";")" value=";">&#59;</option>
+                        <option checked="@(Model.Separator is "/")" value="/">&#47;</option>
+                        <option checked="@(Model.Separator is "-")" value="-">&#45;</option>
+                        <option checked="@(Model.Separator is "_")" value="_">&#95;</option>
+                        <option checked="@(Model.Separator is "__")" value="__">&#95;&#95;</option>
+                    </AzureInputSelect>
+                </label>
+
+                <label class="flex flex-col gap-1">
+                    <div>Prefix</div>
+                    <AzureInputText @bind-Value="Model.Prefix" name="@nameof(Model.Prefix)" placeholder="(No prefix)"/>
+                </label>
+
+                <label class="flex flex-col gap-1">
+                    <div>Label</div>
+                    <AzureInputText @bind-Value="Model.Label" name="@nameof(Model.Label)" placeholder="(No label)"/>
+                </label>
+
+                <label class="flex flex-col gap-1">
+                    <div>Content type</div>
+                    <AzureInputSelect @bind-Value="@Model.ContentType" name="@nameof(Model.ContentType)">
+                        <option checked="@(Model.ContentType is null)" value="">(No content type)</option>
+                        <option checked="@(Model.ContentType is MediaType.SecretReference)" value="@MediaType.SecretReference">Key Vault Reference (@MediaType.SecretReference)</option>
+                        <option checked="@(Model.ContentType is MediaType.Json)" value="@MediaType.Json">JSON (@MediaType.Json)</option>
+                    </AzureInputSelect>
+                </label>
+
+                <div>
+                    <AzureButton Appearance="AzureButton.AzureAppearance.Primary" Label="@(Model.Operation switch { Operation.Export => "Export", Operation.Import => "Import", _ => throw new ArgumentOutOfRangeException() })" Type="submit"/>
+                </div>
+            }
+        </EditForm>
+    </div>
+</div>
+
+@code {
+    [SupplyParameterFromForm] public InputModel? Model { get; set; }
+
+    protected override void OnInitialized()
+    {
+        Model ??= new InputModel();
+    }
+
+    private static IEnumerable<KeyValuePair<string, object?>> FlattenJsonElement(JsonElement element, string? prefix = null, string? separator = null)
+    {
+        switch (element.ValueKind)
+        {
+            case JsonValueKind.Object:
+                foreach (var property in element.EnumerateObject())
+                {
+                    foreach (var pair in FlattenJsonElement(property.Value, !string.IsNullOrEmpty(prefix) ? $"{prefix}{separator}{property.Name}" : property.Name, separator))
+                    {
+                        yield return pair;
+                    }
+                }
+
+                break;
+            case JsonValueKind.Array:
+                var index = 0;
+
+                foreach (var inner in element.EnumerateArray())
+                {
+                    foreach (var pair in FlattenJsonElement(inner, !string.IsNullOrEmpty(prefix) ? $"{prefix}{separator}{index}" : index.ToString(), separator))
+                    {
+                        yield return pair;
+                    }
+
+                    index += 1;
+                }
+
+                break;
+            case JsonValueKind.String:
+                if (!string.IsNullOrEmpty(prefix))
+                {
+                    yield return new KeyValuePair<string, object?>(prefix, element.GetString());
+                }
+
+                break;
+            case JsonValueKind.Number:
+                if (!string.IsNullOrEmpty(prefix))
+                {
+                    yield return new KeyValuePair<string, object?>(prefix, element.GetDouble());
+                }
+
+                break;
+            case JsonValueKind.True:
+            case JsonValueKind.False:
+                if (!string.IsNullOrEmpty(prefix))
+                {
+                    yield return new KeyValuePair<string, object?>(prefix, element.GetBoolean());
+                }
+
+                break;
+            case JsonValueKind.Undefined:
+            case JsonValueKind.Null:
+                if (!string.IsNullOrEmpty(prefix))
+                {
+                    yield return new KeyValuePair<string, object?>(prefix, null);
+                }
+
+                break;
+            default:
+                throw new ArgumentOutOfRangeException();
+        }
+    }
+
+    private async Task HandleSubmit()
+    {
+        if (Model is { SourceFile: { } file })
+        {
+            await using var stream = file.OpenReadStream();
+
+            using var document = await JsonDocument.ParseAsync(stream);
+            
+            foreach (var (key, value) in FlattenJsonElement(document.RootElement, Model.Prefix, Model.Separator))
+            {
+                if (await ConfigurationSettingRepository.Get(key, Model.Label ?? LabelFilter.Null).SingleOrDefaultAsync() is { } setting)
+                {
+                    var date = DateTimeOffset.UtcNow;
+
+                    setting = setting with
+                    {
+                        Etag = Convert.ToBase64String(SHA256.HashData(Encoding.UTF8.GetBytes(date.UtcDateTime.ToString("yyyy-MM-dd HH:mm:ss")))),
+                        ContentType = Model.ContentType,
+                        Value = value?.ToString(),
+                        LastModified = date
+                    };
+
+                    await ConfigurationSettingRepository.Update(setting);
+                }
+                else
+                {
+                    setting = ConfigurationSettingFactory.Create(key, Model.Label, Model.ContentType, value?.ToString());
+
+                    await ConfigurationSettingRepository.Add(setting);
+                }
+            }
+
+            Model = new InputModel();
+        }
+    }
+
+    public class InputModel
+    {
+        public string? ContentType { get; set; }
+
+        public string? FileType { get; set; }
+
+        public string? Label { get; set; }
+
+        public Operation Operation { get; set; } = Operation.Import;
+
+        public string? Prefix { get; set; }
+
+        public string? Separator { get; set; }
+
+        public IBrowserFile? SourceFile { get; set; }
+
+        public SourceService? SourceService { get; set; }
+    }
+
+    public enum Operation
+    {
+        Export,
+        Import
+    }
+
+    public enum SourceService
+    {
+        AzureAppConfiguration,
+        AzureAppService,
+        ConfigurationFile
+    }
+
+}
