@@ -88,11 +88,11 @@
 
                 <label class="flex flex-col gap-1">
                     <div>Content type</div>
-                    <InputSelect @bind-Value="@Model.ContentType" class="px-1 pt-0 pb-0.5 w-full bg-white rounded-sm border cursor-pointer disabled:cursor-default border-storm-dust h-[24px] invalid:border-alizarin-crimson dark:bg-cod-grey dark:border-star-dust dark:disabled:bg-shark dark:disabled:border-natural-grey dark:disabled:text-natural-grey disabled:bg-concrete disabled:border-star-dust disabled:text-star-dust" name="@nameof(Model.ContentType)">
+                    <AzureInputSelect @bind-Value="@Model.ContentType" name="@nameof(Model.ContentType)">
                         <option checked="@(Model.ContentType is null)" value="">(No content type)</option>
                         <option checked="@(Model.ContentType is MediaType.SecretReference)" value="@MediaType.SecretReference">Key Vault Reference (@MediaType.SecretReference)</option>
                         <option checked="@(Model.ContentType is MediaType.Json)" value="@MediaType.Json">JSON (@MediaType.Json)</option>
-                    </InputSelect>
+                    </AzureInputSelect>
                 </label>
 
                 <div>
