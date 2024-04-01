@@ -1,0 +1,9 @@
+<label @attributes="@AdditionalAttributes" class="px-2.5 pt-0 pb-0.5 bg-white rounded-full cursor-pointer has-[:disabled]:cursor-default has-[:disabled]:bg-white has-[:disabled]:dark:bg-cod-grey has-[:checked]:bg-lochmara has-[:checked]:hover:bg-science-blue has-[:checked]:active:bg-venice-blue has-[:checked:disabled]:bg-concrete has-[:checked:disabled]:hover:bg-concrete has-[:checked:disabled]:active:bg-concrete has-[:checked]:dark:bg-lochmara has-[:checked]:dark:hover:bg-dodger-blue has-[:checked]:dark:active:bg-jordy-blue has-[:checked:disabled]:dark:bg-shark has-[:checked:disabled]:hover:dark:bg-shark has-[:checked:disabled]:dark:active:bg-shark text-mine-shaft has-[:disabled]:text-star-dust has-[:disabled]:dark:text-natural-grey has-[:checked]:text-white has-[:checked:disabled]:text-star-dust has-[:checked]:dark:text-mine-shaft has-[:checked:disabled]:dark:text-natural-grey dark:bg-cod-grey dark:hover:bg-shark dark:active:bg-tuatara dark:text-desert-storm hover:bg-concrete active:bg-gallery">
+    @ChildContent
+</label>
+
+@code {
+    [Parameter(CaptureUnmatchedValues = true)] public IDictionary<string, object>? AdditionalAttributes { get; set; }
+
+    [Parameter] public RenderFragment? ChildContent { get; set; }
+}

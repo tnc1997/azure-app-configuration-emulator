@@ -11,6 +11,8 @@ public static class MediaType
 
     public const string FeatureFlag = "application/vnd.microsoft.appconfig.ff+json";
 
+    public const string Json = "application/json";
+
     public const string Keys = "application/vnd.microsoft.appconfig.keyset+json";
 
     public const string Labels = "application/vnd.microsoft.appconfig.labelset+json";

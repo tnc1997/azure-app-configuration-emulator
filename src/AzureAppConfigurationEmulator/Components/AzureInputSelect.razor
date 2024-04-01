@@ -1,0 +1,18 @@
+@typeparam TValue
+@using System.Linq.Expressions
+
+<InputSelect @attributes="@AdditionalAttributes" class="px-1 pt-0 pb-0.5 w-full bg-white rounded-sm border cursor-pointer disabled:cursor-default border-storm-dust h-[24px] invalid:border-alizarin-crimson dark:bg-cod-grey dark:border-star-dust dark:disabled:bg-shark dark:disabled:border-natural-grey dark:disabled:text-natural-grey disabled:bg-concrete disabled:border-star-dust disabled:text-star-dust" Value="@Value" ValueChanged="@ValueChanged" ValueExpression="@ValueExpression">
+    @ChildContent
+</InputSelect>
+
+@code {
+    [Parameter(CaptureUnmatchedValues = true)] public IReadOnlyDictionary<string, object>? AdditionalAttributes { get; set; }
+    
+    [Parameter] public RenderFragment? ChildContent { get; set; }
+
+    [Parameter] public TValue? Value { get; set; }
+
+    [Parameter] public EventCallback<TValue> ValueChanged { get; set; }
+
+    [Parameter] public Expression<Func<TValue>>? ValueExpression { get; set; }
+}

@@ -1,4 +1,4 @@
-<button class="@BackgroundClasses @BorderClasses @ColorClasses font-semibold h-[24px] px-5 rounded-sm" disabled="@IsDisabled" @onclick="OnClick">
+<button class="@BackgroundClasses @BorderClasses @ColorClasses font-semibold h-[24px] px-5 rounded-sm" disabled="@IsDisabled" @onclick="OnClick" type="@Type">
     @Label
 </button>
 
@@ -10,6 +10,8 @@
     [EditorRequired, Parameter] public string Label { get; set; } = null!;
 
     [Parameter] public EventCallback<MouseEventArgs> OnClick { get; set; }
+
+    [Parameter] public string? Type { get; set; }
 
     private string BackgroundClasses => Appearance switch
     {
