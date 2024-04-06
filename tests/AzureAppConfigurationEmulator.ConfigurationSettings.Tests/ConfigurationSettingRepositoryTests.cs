@@ -190,7 +190,7 @@ public class ConfigurationSettingRepositoryTests
     public async Task Add_TagsParameter_ConfigurationSetting()
     {
         // Arrange
-        var tags = new Dictionary<string, object?> { { "TestKey", "TestValue" } };
+        var tags = new Dictionary<string, string> { { "TestKey", "TestValue" } };
         var setting = new ConfigurationSetting("TestEtag", "TestKey", DateTimeOffset.UtcNow, false, null, null, null, tags);
 
         // Act
@@ -500,7 +500,7 @@ public class ConfigurationSettingRepositoryTests
     public async Task Update_TagsParameter_ConfigurationSetting()
     {
         // Arrange
-        var tags = new Dictionary<string, object?> { { "TestKey", "TestValue" } };
+        var tags = new Dictionary<string, string> { { "TestKey", "TestValue" } };
         var setting = new ConfigurationSetting("TestEtag", "TestKey", DateTimeOffset.UtcNow, false, null, null, null, tags);
 
         // Act

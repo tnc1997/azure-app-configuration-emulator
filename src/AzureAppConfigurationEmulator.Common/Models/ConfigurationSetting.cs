@@ -11,7 +11,7 @@ public record ConfigurationSetting(
     string? Label = null,
     string? ContentType = null,
     string? Value = null,
-    IReadOnlyDictionary<string, object?>? Tags = null);
+    IReadOnlyDictionary<string, string>? Tags = null);
 
 /// <summary>
 /// https://github.com/Azure/azure-sdk-for-net/blob/main/sdk/appconfiguration/Azure.Data.AppConfiguration/src/Models/FeatureFlagConfigurationSetting.cs
@@ -29,7 +29,7 @@ public record FeatureFlagConfigurationSetting(
     string? DisplayName = null,
     string? Label = null,
     string? ContentType = null,
-    IReadOnlyDictionary<string, object?>? Tags = null)
+    IReadOnlyDictionary<string, string>? Tags = null)
     : ConfigurationSetting(
         Etag,
         Key,
@@ -45,4 +45,4 @@ public record FeatureFlagConfigurationSetting(
 /// </summary>
 public record FeatureFlagFilter(
     string Name,
-    IReadOnlyDictionary<string, object?>? Parameters);
+    IReadOnlyDictionary<string, object>? Parameters);

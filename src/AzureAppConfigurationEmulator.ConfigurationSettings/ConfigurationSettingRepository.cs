@@ -129,7 +129,7 @@ public partial class ConfigurationSettingRepository(
                 reader.IsDBNull(2) ? null : reader.GetString(2),
                 reader.IsDBNull(3) ? null : reader.GetString(3),
                 reader.IsDBNull(4) ? null : reader.GetString(4),
-                reader.IsDBNull(7) ? null : JsonSerializer.Deserialize<IReadOnlyDictionary<string, object?>>(reader.GetString(7)));
+                reader.IsDBNull(7) ? null : JsonSerializer.Deserialize<IReadOnlyDictionary<string, string>>(reader.GetString(7)));
         }
     }
 

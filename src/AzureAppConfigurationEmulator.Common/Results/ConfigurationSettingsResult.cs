@@ -4,18 +4,19 @@ using Microsoft.AspNetCore.Http;
 
 namespace AzureAppConfigurationEmulator.Common.Results;
 
-public class ConfigurationSettingsResult(IEnumerable<ConfigurationSetting> settings, DateTimeOffset? mementoDatetime = default) :
+public class ConfigurationSettingsResult(
+    IEnumerable<ConfigurationSetting> settings,
+    DateTimeOffset? mementoDatetime = default) :
     IResult,
     IContentTypeHttpResult,
     IStatusCodeHttpResult,
-    IValueHttpResult,
-    IValueHttpResult<ConfigurationSettings>
+    IValueHttpResult
 {
     public async Task ExecuteAsync(HttpContext httpContext)
     {
-        if (MementoDatetime.HasValue)
+        if (mementoDatetime.HasValue)
         {
-            httpContext.Response.Headers["Memento-Datetime"] = MementoDatetime.Value.ToString("R");
+            httpContext.Response.Headers["Memento-Datetime"] = mementoDatetime.Value.ToString("R");
         }
 
         if (StatusCode.HasValue)
@@ -30,11 +31,18 @@ public class ConfigurationSettingsResult(IEnumerable<ConfigurationSetting> setti
 
     public int? StatusCode => StatusCodes.Status200OK;
 
-    object IValueHttpResult.Value => Value;
-
-    public ConfigurationSettings Value { get; } = new(settings);
-
-    private DateTimeOffset? MementoDatetime { get; } = mementoDatetime;
+    public object Value => new
+    {
+        items = settings.Select(setting => new
+        {
+            etag = setting.Etag,
+            key = setting.Key,
+            label = setting.Label,
+            content_type = setting.ContentType,
+            value = setting.Value,
+            tags = setting.Tags ?? new Dictionary<string, string>(),
+            locked = setting.Locked,
+            last_modified = setting.LastModified.ToString("O")
+        })
+    };
 }
-
-public record ConfigurationSettings(IEnumerable<ConfigurationSetting> Items);

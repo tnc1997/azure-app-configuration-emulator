@@ -3,18 +3,19 @@ using Microsoft.AspNetCore.Http;
 
 namespace AzureAppConfigurationEmulator.Labels;
 
-public class LabelsResult(IEnumerable<string?> labels, DateTimeOffset? mementoDatetime = default) :
+public class LabelsResult(
+    IEnumerable<string?> labels,
+    DateTimeOffset? mementoDatetime = default) :
     IResult,
     IContentTypeHttpResult,
     IStatusCodeHttpResult,
-    IValueHttpResult,
-    IValueHttpResult<Labels>
+    IValueHttpResult
 {
     public async Task ExecuteAsync(HttpContext httpContext)
     {
-        if (MementoDatetime.HasValue)
+        if (mementoDatetime.HasValue)
         {
-            httpContext.Response.Headers["Memento-Datetime"] = MementoDatetime.Value.ToString("R");
+            httpContext.Response.Headers["Memento-Datetime"] = mementoDatetime.Value.ToString("R");
         }
 
         if (StatusCode.HasValue)
@@ -29,13 +30,5 @@ public class LabelsResult(IEnumerable<string?> labels, DateTimeOffset? mementoDa
 
     public int? StatusCode => StatusCodes.Status200OK;
 
-    object IValueHttpResult.Value => Value;
-
-    public Labels Value { get; } = new(labels.Select(label => new Label(label)));
-
-    private DateTimeOffset? MementoDatetime { get; } = mementoDatetime;
+    public object Value => new { items = labels.Select(label => new { name = label }) };
 }
-
-public record Labels(IEnumerable<Label> Items);
-
-public record Label(string? Name);

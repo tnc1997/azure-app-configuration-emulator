@@ -3,18 +3,19 @@ using Microsoft.AspNetCore.Http;
 
 namespace AzureAppConfigurationEmulator.Keys;
 
-public class KeysResult(IEnumerable<string> keys, DateTimeOffset? mementoDatetime = default) :
+public class KeysResult(
+    IEnumerable<string> keys,
+    DateTimeOffset? mementoDatetime = default) :
     IResult,
     IContentTypeHttpResult,
     IStatusCodeHttpResult,
-    IValueHttpResult,
-    IValueHttpResult<Keys>
+    IValueHttpResult
 {
     public async Task ExecuteAsync(HttpContext httpContext)
     {
-        if (MementoDatetime.HasValue)
+        if (mementoDatetime.HasValue)
         {
-            httpContext.Response.Headers["Memento-Datetime"] = MementoDatetime.Value.ToString("R");
+            httpContext.Response.Headers["Memento-Datetime"] = mementoDatetime.Value.ToString("R");
         }
 
         if (StatusCode.HasValue)
@@ -29,13 +30,5 @@ public class KeysResult(IEnumerable<string> keys, DateTimeOffset? mementoDatetim
 
     public int? StatusCode => StatusCodes.Status200OK;
 
-    object IValueHttpResult.Value => Value;
-
-    public Keys Value { get; } = new(keys.Select(key => new Key(key)));
-
-    private DateTimeOffset? MementoDatetime { get; } = mementoDatetime;
+    public object Value => new { items = keys.Select(key => new { name = key }) };
 }
-
-public record Keys(IEnumerable<Key> Items);
-
-public record Key(string Name);

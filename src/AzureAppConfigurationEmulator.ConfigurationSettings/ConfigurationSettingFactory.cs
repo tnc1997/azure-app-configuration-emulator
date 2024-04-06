@@ -15,7 +15,7 @@ public class ConfigurationSettingFactory : IConfigurationSettingFactory
         string? label = null,
         string? contentType = null,
         string? value = null,
-        IReadOnlyDictionary<string, object?>? tags = null)
+        IReadOnlyDictionary<string, string>? tags = null)
     {
         var date = DateTimeOffset.UtcNow;
 
@@ -42,7 +42,7 @@ public class ConfigurationSettingFactory : IConfigurationSettingFactory
         string? label = null,
         string? contentType = null,
         string? value = null,
-        IReadOnlyDictionary<string, object?>? tags = null)
+        IReadOnlyDictionary<string, string>? tags = null)
     {
         if (!string.IsNullOrEmpty(contentType) && !string.IsNullOrEmpty(value))
         {
@@ -61,7 +61,7 @@ public class ConfigurationSettingFactory : IConfigurationSettingFactory
                                     new FeatureFlagFilter(
                                         clientFilter.GetProperty("name").GetString()!,
                                         clientFilter.TryGetProperty("properties", out var properties)
-                                            ? properties.Deserialize<IReadOnlyDictionary<string, object?>>()
+                                            ? properties.Deserialize<IReadOnlyDictionary<string, object>>()
                                             : null))
                                 .ToList()
                             : [],

@@ -231,5 +231,5 @@ public class ConfigurationSettingHandler
         return new ConfigurationSettingResult(setting);
     }
 
-    public record SetInput(string? Value, string? ContentType, IReadOnlyDictionary<string, object?>? Tags);
+    public record SetInput(string? Value, string? ContentType, IReadOnlyDictionary<string, string>? Tags);
 }
