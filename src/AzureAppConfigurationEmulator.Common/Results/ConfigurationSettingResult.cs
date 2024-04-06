@@ -4,21 +4,22 @@ using Microsoft.AspNetCore.Http;
 
 namespace AzureAppConfigurationEmulator.Common.Results;
 
-public class ConfigurationSettingResult(ConfigurationSetting setting, DateTimeOffset? mementoDatetime = default) :
+public class ConfigurationSettingResult(
+    ConfigurationSetting setting,
+    DateTimeOffset? mementoDatetime = default) :
     IResult,
     IContentTypeHttpResult,
     IStatusCodeHttpResult,
-    IValueHttpResult,
-    IValueHttpResult<ConfigurationSetting>
+    IValueHttpResult
 {
     public async Task ExecuteAsync(HttpContext httpContext)
     {
-        httpContext.Response.Headers.ETag = Value.Etag;
-        httpContext.Response.Headers.LastModified = Value.LastModified.ToString("R");
+        httpContext.Response.Headers.ETag = setting.Etag;
+        httpContext.Response.Headers.LastModified = setting.LastModified.ToString("R");
 
-        if (MementoDatetime.HasValue)
+        if (mementoDatetime.HasValue)
         {
-            httpContext.Response.Headers["Memento-Datetime"] = MementoDatetime.Value.ToString("R");
+            httpContext.Response.Headers["Memento-Datetime"] = mementoDatetime.Value.ToString("R");
         }
 
         if (StatusCode.HasValue)
@@ -33,9 +34,15 @@ public class ConfigurationSettingResult(ConfigurationSetting setting, DateTimeOf
 
     public int? StatusCode => StatusCodes.Status200OK;
 
-    object IValueHttpResult.Value => Value;
-
-    public ConfigurationSetting Value { get; } = setting;
-
-    private DateTimeOffset? MementoDatetime { get; } = mementoDatetime;
+    public object Value => new
+    {
+        etag = setting.Etag,
+        key = setting.Key,
+        label = setting.Label,
+        content_type = setting.ContentType,
+        value = setting.Value,
+        tags = setting.Tags ?? new Dictionary<string, string>(),
+        locked = setting.Locked,
+        last_modified = setting.LastModified.ToString("O")
+    };
 }

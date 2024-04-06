@@ -9,7 +9,7 @@ public interface IConfigurationSettingFactory
         string? label = null,
         string? contentType = null,
         string? value = null,
-        IReadOnlyDictionary<string, object?>? tags = null);
+        IReadOnlyDictionary<string, string>? tags = null);
 
     public ConfigurationSetting Create(
         string etag,
@@ -19,5 +19,5 @@ public interface IConfigurationSettingFactory
         string? label = null,
         string? contentType = null,
         string? value = null,
-        IReadOnlyDictionary<string, object?>? tags = null);
+        IReadOnlyDictionary<string, string>? tags = null);
 }

@@ -1,4 +1,3 @@
-using System.Text.Json;
 using Azure.Messaging.EventGrid;
 using AzureAppConfigurationEmulator.Authentication.Hmac;
 using AzureAppConfigurationEmulator.Common;
@@ -69,11 +68,6 @@ builder.Services.AddSingleton<IDbCommandFactory, SqliteDbCommandFactory>();
 builder.Services.AddSingleton<IDbConnectionFactory, SqliteDbConnectionFactory>();
 builder.Services.AddSingleton<IDbParameterFactory, SqliteDbParameterFactory>();
 builder.Services.AddSingleton<IEventGridEventFactory, HttpContextEventGridEventFactory>();
-
-builder.Services.ConfigureHttpJsonOptions(options =>
-{
-    options.SerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.SnakeCaseLower;
-});
 
 builder.WebHost.ConfigureKestrel();
 
