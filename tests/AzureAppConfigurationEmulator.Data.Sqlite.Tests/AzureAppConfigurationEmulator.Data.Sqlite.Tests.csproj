@@ -23,6 +23,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\src\AzureAppConfigurationEmulator.Common\AzureAppConfigurationEmulator.Common.csproj"/>
     <ProjectReference Include="..\..\src\AzureAppConfigurationEmulator.Data.Sqlite\AzureAppConfigurationEmulator.Data.Sqlite.csproj"/>
   </ItemGroup>
 
