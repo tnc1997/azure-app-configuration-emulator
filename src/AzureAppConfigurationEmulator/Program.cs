@@ -1,6 +1,5 @@
 using Azure.Messaging.EventGrid;
 using AzureAppConfigurationEmulator.Authentication.Hmac;
-using AzureAppConfigurationEmulator.Common;
 using AzureAppConfigurationEmulator.Common.Abstractions;
 using AzureAppConfigurationEmulator.Components;
 using AzureAppConfigurationEmulator.ConfigurationSettings;
@@ -54,7 +53,8 @@ builder.Services.AddOpenTelemetry()
     .WithTracing(tracing =>
     {
         tracing.AddAspNetCoreInstrumentation();
-        tracing.AddSource(Telemetry.ActivitySource.Name);
+        tracing.AddSource(AzureAppConfigurationEmulator.Authentication.Hmac.Telemetry.ActivitySource.Name);
+        tracing.AddSource(AzureAppConfigurationEmulator.Common.Telemetry.ActivitySource.Name);
         tracing.AddOtlpExporter();
     });
 

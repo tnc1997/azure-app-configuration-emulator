@@ -4,12 +4,10 @@
 
 @code {
     [Parameter(CaptureUnmatchedValues = true)] public IDictionary<string, object>? AdditionalAttributes { get; set; }
-    
-    [Parameter] public RenderFragment? ChildContent { get; set; }
 
     [Parameter] public string? Value { get; set; }
 
-    [Parameter] public EventCallback<string> ValueChanged { get; set; }
+    [Parameter] public EventCallback<string?> ValueChanged { get; set; }
 
-    [Parameter] public Expression<Func<string>>? ValueExpression { get; set; }
+    [Parameter] public Expression<Func<string?>>? ValueExpression { get; set; }
 }
