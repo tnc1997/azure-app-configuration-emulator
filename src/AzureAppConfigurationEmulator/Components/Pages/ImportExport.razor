@@ -263,14 +263,11 @@
                             {
                                 var date = DateTimeOffset.UtcNow;
 
-                                destinationSetting = destinationSetting with
-                                {
-                                    Etag = Convert.ToBase64String(SHA256.HashData(Encoding.UTF8.GetBytes(date.UtcDateTime.ToString("yyyy-MM-dd HH:mm:ss")))),
-                                    ContentType = sourceSetting.ContentType,
-                                    Value = sourceSetting.Value,
-                                    LastModified = date,
-                                    Tags = sourceSetting.Tags
-                                };
+                                destinationSetting.Etag = Convert.ToBase64String(SHA256.HashData(Encoding.UTF8.GetBytes(date.UtcDateTime.ToString("yyyy-MM-dd HH:mm:ss"))));
+                                destinationSetting.LastModified = date;
+                                destinationSetting.ContentType = sourceSetting.ContentType;
+                                destinationSetting.Value = sourceSetting.Value;
+                                destinationSetting.Tags = sourceSetting.Tags;
 
                                 await ConfigurationSettingRepository.Update(destinationSetting);
                             }
@@ -289,35 +286,32 @@
                     case ImportExportSourceServiceInputSelect.SourceService.ConfigurationFile:
                     {
                         await using var stream = Model.SourceFile!.OpenReadStream();
-                        
+
                         using var document = await JsonDocument.ParseAsync(stream);
-                        
+
                         foreach (var (sourceKey, sourceValue) in FlattenJsonElement(document.RootElement, Model.Prefix, Model.Separator))
                         {
                             if (await ConfigurationSettingRepository.Get(sourceKey, Model.Label ?? LabelFilter.Null).SingleOrDefaultAsync() is { } destinationSetting)
                             {
                                 var date = DateTimeOffset.UtcNow;
-                        
-                                destinationSetting = destinationSetting with
-                                {
-                                    Etag = Convert.ToBase64String(SHA256.HashData(Encoding.UTF8.GetBytes(date.UtcDateTime.ToString("yyyy-MM-dd HH:mm:ss")))),
-                                    ContentType = Model.ContentType,
-                                    Value = sourceValue?.ToString(),
-                                    LastModified = date
-                                };
-                        
+
+                                destinationSetting.Etag = Convert.ToBase64String(SHA256.HashData(Encoding.UTF8.GetBytes(date.UtcDateTime.ToString("yyyy-MM-dd HH:mm:ss"))));
+                                destinationSetting.LastModified = date;
+                                destinationSetting.ContentType = Model.ContentType;
+                                destinationSetting.Value = sourceValue?.ToString();
+
                                 await ConfigurationSettingRepository.Update(destinationSetting);
                             }
                             else
                             {
                                 destinationSetting = ConfigurationSettingFactory.Create(sourceKey, Model.Label, Model.ContentType, sourceValue?.ToString());
-                        
+
                                 await ConfigurationSettingRepository.Add(destinationSetting);
                             }
                         }
-                        
+
                         Model = new InputModel();
-                        
+
                         break;
                     }
                 }

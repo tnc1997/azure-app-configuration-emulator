@@ -217,19 +217,16 @@ public class ConfigurationSettingHandler
             return new PreconditionFailedResult();
         }
 
-        setting = setting with
-        {
-            Etag = Convert.ToBase64String(SHA256.HashData(Encoding.UTF8.GetBytes(date.UtcDateTime.ToString("yyyy-MM-dd HH:mm:ss")))),
-            ContentType = input.ContentType,
-            Value = input.Value,
-            LastModified = date,
-            Tags = input.Tags
-        };
+        setting.Etag = Convert.ToBase64String(SHA256.HashData(Encoding.UTF8.GetBytes(date.UtcDateTime.ToString("yyyy-MM-dd HH:mm:ss"))));
+        setting.LastModified = date;
+        setting.ContentType = input.ContentType;
+        setting.Value = input.Value;
+        setting.Tags = input.Tags;
 
         await repository.Update(setting, cancellationToken);
 
         return new ConfigurationSettingResult(setting);
     }
 
-    public record SetInput(string? Value, string? ContentType, IReadOnlyDictionary<string, string>? Tags);
+    public record SetInput(string? Value, string? ContentType, IDictionary<string, string>? Tags);
 }

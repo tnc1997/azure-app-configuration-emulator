@@ -1,3 +1,5 @@
+@using System.Security.Cryptography
+@using System.Text
 @using AzureAppConfigurationEmulator.Common.Models
 
 <AzureTable Items="@ConfigurationSettings" SelectedItems="@SelectedConfigurationSettings" SelectedItemsChanged="@SelectedConfigurationSettingsChanged" TItem="@FeatureFlagConfigurationSetting">
@@ -14,7 +16,7 @@
     <RowTemplate>
         <AzureTableDataCell>@context.Id</AzureTableDataCell>
         <AzureTableDataCell>@(!string.IsNullOrEmpty(context.Label) ? context.Label : "(No label)")</AzureTableDataCell>
-        <AzureTableDataCell>@context.Enabled</AzureTableDataCell>
+        <AzureTableDataCell><AzureInputToggle Value="@context.Enabled" ValueChanged="@(enabled => HandleEnabledChanged(context, enabled))" ValueExpression="@(() => context.Enabled)"/></AzureTableDataCell>
         <AzureTableDataCell>@context.ClientFilters.Count</AzureTableDataCell>
         <AzureTableDataCell>@context.Description</AzureTableDataCell>
         <AzureTableDataCell>@context.LastModified.ToString("G")</AzureTableDataCell>
@@ -25,7 +27,21 @@
 @code {
     [Parameter] public IEnumerable<FeatureFlagConfigurationSetting> ConfigurationSettings { get; set; } = [];
 
+    [Parameter] public EventCallback<FeatureFlagConfigurationSetting> OnConfigurationSettingChange { get; set; }
+
     [Parameter] public ICollection<FeatureFlagConfigurationSetting> SelectedConfigurationSettings { get; set; } = [];
 
     [Parameter] public EventCallback<ICollection<FeatureFlagConfigurationSetting>> SelectedConfigurationSettingsChanged { get; set; }
+
+    private async Task HandleEnabledChanged(FeatureFlagConfigurationSetting setting, bool enabled)
+    {
+        var date = DateTimeOffset.UtcNow;
+
+        setting.Enabled = enabled;
+        setting.Etag = Convert.ToBase64String(SHA256.HashData(Encoding.UTF8.GetBytes(date.UtcDateTime.ToString("yyyy-MM-dd HH:mm:ss"))));
+        setting.LastModified = date;
+
+        await OnConfigurationSettingChange.InvokeAsync(setting);
+    }
+
 }

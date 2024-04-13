@@ -1,3 +1,5 @@
+using System.Security.Cryptography;
+using System.Text;
 using AzureAppConfigurationEmulator.Common;
 using AzureAppConfigurationEmulator.Common.Abstractions;
 using AzureAppConfigurationEmulator.Common.Constants;
@@ -27,6 +29,8 @@ public class LockHandler
         ifNoneMatch = ifNoneMatch?.TrimStart('"').TrimEnd('"');
         activity?.SetTag(Telemetry.HeaderIfNoneMatch, ifNoneMatch);
 
+        var date = DateTimeOffset.UtcNow;
+
         var setting = await repository.Get(key, label).SingleOrDefaultAsync(cancellationToken);
 
         if (setting == null)
@@ -44,7 +48,9 @@ public class LockHandler
             return new PreconditionFailedResult();
         }
 
-        setting = setting with { Locked = true };
+        setting.Etag = Convert.ToBase64String(SHA256.HashData(Encoding.UTF8.GetBytes(date.UtcDateTime.ToString("yyyy-MM-dd HH:mm:ss"))));
+        setting.LastModified = date;
+        setting.Locked = true;
 
         await repository.Update(setting, cancellationToken);
 
@@ -69,6 +75,8 @@ public class LockHandler
         ifNoneMatch = ifNoneMatch?.TrimStart('"').TrimEnd('"');
         activity?.SetTag(Telemetry.HeaderIfNoneMatch, ifNoneMatch);
 
+        var date = DateTimeOffset.UtcNow;
+
         var setting = await repository.Get(key, label).SingleOrDefaultAsync(cancellationToken);
 
         if (setting == null)
@@ -86,7 +94,9 @@ public class LockHandler
             return new PreconditionFailedResult();
         }
 
-        setting = setting with { Locked = false };
+        setting.Etag = Convert.ToBase64String(SHA256.HashData(Encoding.UTF8.GetBytes(date.UtcDateTime.ToString("yyyy-MM-dd HH:mm:ss"))));
+        setting.LastModified = date;
+        setting.Locked = false;
 
         await repository.Update(setting, cancellationToken);
 

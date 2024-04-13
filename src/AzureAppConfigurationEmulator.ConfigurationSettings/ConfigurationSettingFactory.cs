@@ -1,7 +1,6 @@
 using System.Net.Mime;
 using System.Security.Cryptography;
 using System.Text;
-using System.Text.Json;
 using AzureAppConfigurationEmulator.Common.Abstractions;
 using AzureAppConfigurationEmulator.Common.Constants;
 using AzureAppConfigurationEmulator.Common.Models;
@@ -15,7 +14,7 @@ public class ConfigurationSettingFactory : IConfigurationSettingFactory
         string? label = null,
         string? contentType = null,
         string? value = null,
-        IReadOnlyDictionary<string, string>? tags = null)
+        IDictionary<string, string>? tags = null)
     {
         var date = DateTimeOffset.UtcNow;
 
@@ -42,44 +41,22 @@ public class ConfigurationSettingFactory : IConfigurationSettingFactory
         string? label = null,
         string? contentType = null,
         string? value = null,
-        IReadOnlyDictionary<string, string>? tags = null)
+        IDictionary<string, string>? tags = null)
     {
         if (!string.IsNullOrEmpty(contentType) && !string.IsNullOrEmpty(value))
         {
             switch (new ContentType(contentType).MediaType)
             {
                 case MediaType.FeatureFlag:
-                {
-                    using var document = JsonDocument.Parse(value);
-
                     return new FeatureFlagConfigurationSetting(
-                        document.RootElement.GetProperty("id").GetString()!,
-                        document.RootElement.GetProperty("enabled").GetBoolean(),
-                        document.RootElement.TryGetProperty("conditions", out var conditions) && conditions.TryGetProperty("client_filters", out var clientFilters)
-                            ? clientFilters.EnumerateArray()
-                                .Select(clientFilter =>
-                                    new FeatureFlagFilter(
-                                        clientFilter.GetProperty("name").GetString()!,
-                                        clientFilter.TryGetProperty("properties", out var properties)
-                                            ? properties.Deserialize<IReadOnlyDictionary<string, object>>()
-                                            : null))
-                                .ToList()
-                            : [],
                         etag,
                         key,
                         value,
                         lastModified,
                         locked,
-                        document.RootElement.TryGetProperty("description", out var description)
-                            ? description.GetString()
-                            : null,
-                        document.RootElement.TryGetProperty("display_name", out var displayName)
-                            ? displayName.GetString()
-                            : null,
                         label,
                         contentType,
                         tags);
-                }
             }
         }
 

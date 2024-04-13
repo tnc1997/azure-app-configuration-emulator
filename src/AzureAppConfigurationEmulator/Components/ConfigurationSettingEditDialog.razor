@@ -51,15 +51,12 @@
     {
         var date = DateTimeOffset.UtcNow;
 
-        var setting = ConfigurationSetting with
-        {
-            Etag = Convert.ToBase64String(SHA256.HashData(Encoding.UTF8.GetBytes(date.UtcDateTime.ToString("yyyy-MM-dd HH:mm:ss")))),
-            ContentType = Input.ContentType,
-            Value = Input.Value,
-            LastModified = date
-        };
+        ConfigurationSetting.Etag = Convert.ToBase64String(SHA256.HashData(Encoding.UTF8.GetBytes(date.UtcDateTime.ToString("yyyy-MM-dd HH:mm:ss"))));
+        ConfigurationSetting.LastModified = date;
+        ConfigurationSetting.ContentType = Input.ContentType;
+        ConfigurationSetting.Value = Input.Value;
 
-        await DialogService.Close(DialogReference, new DialogResult(setting));
+        await DialogService.Close(DialogReference, new DialogResult(ConfigurationSetting));
     }
 
     private class InputModel

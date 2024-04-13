@@ -37,7 +37,7 @@
     </div>
 
     <div class="mx-5">
-        <FeatureFlagConfigurationSettingTable @bind-SelectedConfigurationSettings="@SelectedConfigurationSettings" ConfigurationSettings="@FilteredConfigurationSettings"/>
+        <FeatureFlagConfigurationSettingTable @bind-SelectedConfigurationSettings="@SelectedConfigurationSettings" ConfigurationSettings="@FilteredConfigurationSettings" OnConfigurationSettingChange="@HandleConfigurationSettingChange"/>
     </div>
 </div>
 
@@ -60,6 +60,11 @@
                 StateHasChanged();
             }
         }
+    }
+
+    private async Task HandleConfigurationSettingChange(FeatureFlagConfigurationSetting setting)
+    {
+        await ConfigurationSettingRepository.Update(setting);
     }
 
     private async Task HandleDeleteClick(MouseEventArgs args)

@@ -86,7 +86,7 @@ public class ConfigurationSettingsResultTests
                     "TestKey",
                     DateTimeOffset.Parse("2023-10-01T00:00:00+00:00"),
                     false,
-                    Label: "TestLabel")
+                    label: "TestLabel")
             },
             "{\"items\":[{\"etag\":\"TestEtag\",\"key\":\"TestKey\",\"label\":\"TestLabel\",\"content_type\":null,\"value\":null,\"tags\":{},\"locked\":false,\"last_modified\":\"2023-10-01T00:00:00.0000000+00:00\"}]}"
         },
@@ -99,7 +99,7 @@ public class ConfigurationSettingsResultTests
                     "TestKey",
                     DateTimeOffset.Parse("2023-10-01T00:00:00+00:00"),
                     false,
-                    ContentType: "TestContentType")
+                    contentType: "TestContentType")
             },
             "{\"items\":[{\"etag\":\"TestEtag\",\"key\":\"TestKey\",\"label\":null,\"content_type\":\"TestContentType\",\"value\":null,\"tags\":{},\"locked\":false,\"last_modified\":\"2023-10-01T00:00:00.0000000+00:00\"}]}"
         },
@@ -112,7 +112,7 @@ public class ConfigurationSettingsResultTests
                     "TestKey",
                     DateTimeOffset.Parse("2023-10-01T00:00:00+00:00"),
                     false,
-                    Value: "TestValue")
+                    value: "TestValue")
             },
             "{\"items\":[{\"etag\":\"TestEtag\",\"key\":\"TestKey\",\"label\":null,\"content_type\":null,\"value\":\"TestValue\",\"tags\":{},\"locked\":false,\"last_modified\":\"2023-10-01T00:00:00.0000000+00:00\"}]}"
         },
@@ -125,7 +125,7 @@ public class ConfigurationSettingsResultTests
                     "TestKey",
                     DateTimeOffset.Parse("2023-10-01T00:00:00+00:00"),
                     false,
-                    Tags: new Dictionary<string, string> { { "TestKey", "TestValue" } })
+                    tags: new Dictionary<string, string> { { "TestKey", "TestValue" } })
             },
             "{\"items\":[{\"etag\":\"TestEtag\",\"key\":\"TestKey\",\"label\":null,\"content_type\":null,\"value\":null,\"tags\":{\"TestKey\":\"TestValue\"},\"locked\":false,\"last_modified\":\"2023-10-01T00:00:00.0000000+00:00\"}]}"
         },
@@ -171,13 +171,13 @@ public class ConfigurationSettingsResultTests
                     "TestKey1",
                     DateTimeOffset.Parse("2023-10-01T00:00:00+00:00"),
                     false,
-                    Label: "TestLabel"),
+                    label: "TestLabel"),
                 new(
                     "TestEtag",
                     "TestKey2",
                     DateTimeOffset.Parse("2023-10-01T00:00:00+00:00"),
                     false,
-                    Label: "TestLabel")
+                    label: "TestLabel")
             },
             "{\"items\":[{\"etag\":\"TestEtag\",\"key\":\"TestKey1\",\"label\":\"TestLabel\",\"content_type\":null,\"value\":null,\"tags\":{},\"locked\":false,\"last_modified\":\"2023-10-01T00:00:00.0000000+00:00\"},{\"etag\":\"TestEtag\",\"key\":\"TestKey2\",\"label\":\"TestLabel\",\"content_type\":null,\"value\":null,\"tags\":{},\"locked\":false,\"last_modified\":\"2023-10-01T00:00:00.0000000+00:00\"}]}"
         },
@@ -190,13 +190,13 @@ public class ConfigurationSettingsResultTests
                     "TestKey1",
                     DateTimeOffset.Parse("2023-10-01T00:00:00+00:00"),
                     false,
-                    ContentType: "TestContentType"),
+                    contentType: "TestContentType"),
                 new(
                     "TestEtag",
                     "TestKey2",
                     DateTimeOffset.Parse("2023-10-01T00:00:00+00:00"),
                     false,
-                    ContentType: "TestContentType")
+                    contentType: "TestContentType")
             },
             "{\"items\":[{\"etag\":\"TestEtag\",\"key\":\"TestKey1\",\"label\":null,\"content_type\":\"TestContentType\",\"value\":null,\"tags\":{},\"locked\":false,\"last_modified\":\"2023-10-01T00:00:00.0000000+00:00\"},{\"etag\":\"TestEtag\",\"key\":\"TestKey2\",\"label\":null,\"content_type\":\"TestContentType\",\"value\":null,\"tags\":{},\"locked\":false,\"last_modified\":\"2023-10-01T00:00:00.0000000+00:00\"}]}"
         },
@@ -209,13 +209,13 @@ public class ConfigurationSettingsResultTests
                     "TestKey1",
                     DateTimeOffset.Parse("2023-10-01T00:00:00+00:00"),
                     false,
-                    Value: "TestValue"),
+                    value: "TestValue"),
                 new(
                     "TestEtag",
                     "TestKey2",
                     DateTimeOffset.Parse("2023-10-01T00:00:00+00:00"),
                     false,
-                    Value: "TestValue")
+                    value: "TestValue")
             },
             "{\"items\":[{\"etag\":\"TestEtag\",\"key\":\"TestKey1\",\"label\":null,\"content_type\":null,\"value\":\"TestValue\",\"tags\":{},\"locked\":false,\"last_modified\":\"2023-10-01T00:00:00.0000000+00:00\"},{\"etag\":\"TestEtag\",\"key\":\"TestKey2\",\"label\":null,\"content_type\":null,\"value\":\"TestValue\",\"tags\":{},\"locked\":false,\"last_modified\":\"2023-10-01T00:00:00.0000000+00:00\"}]}"
         },
@@ -228,13 +228,13 @@ public class ConfigurationSettingsResultTests
                     "TestKey1",
                     DateTimeOffset.Parse("2023-10-01T00:00:00+00:00"),
                     false,
-                    Tags: new Dictionary<string, string> { { "TestKey", "TestValue" } }),
+                    tags: new Dictionary<string, string> { { "TestKey", "TestValue" } }),
                 new(
                     "TestEtag",
                     "TestKey2",
                     DateTimeOffset.Parse("2023-10-01T00:00:00+00:00"),
                     false,
-                    Tags: new Dictionary<string, string> { { "TestKey", "TestValue" } })
+                    tags: new Dictionary<string, string> { { "TestKey", "TestValue" } })
             },
             "{\"items\":[{\"etag\":\"TestEtag\",\"key\":\"TestKey1\",\"label\":null,\"content_type\":null,\"value\":null,\"tags\":{\"TestKey\":\"TestValue\"},\"locked\":false,\"last_modified\":\"2023-10-01T00:00:00.0000000+00:00\"},{\"etag\":\"TestEtag\",\"key\":\"TestKey2\",\"label\":null,\"content_type\":null,\"value\":null,\"tags\":{\"TestKey\":\"TestValue\"},\"locked\":false,\"last_modified\":\"2023-10-01T00:00:00.0000000+00:00\"}]}"
         },
