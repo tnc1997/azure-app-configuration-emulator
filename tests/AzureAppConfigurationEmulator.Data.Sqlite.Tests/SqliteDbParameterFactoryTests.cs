@@ -11,7 +11,7 @@ public class SqliteDbParameterFactoryTests
     {
         // Arrange
         var factory = new SqliteDbParameterFactory();
-        var setting = new ConfigurationSetting("TestEtag", "TestKey", DateTimeOffset.UtcNow, false, ContentType: contentType);
+        var setting = new ConfigurationSetting("TestEtag", "TestKey", DateTimeOffset.UtcNow, false, contentType: contentType);
 
         // Act
         var parameter = (SqliteParameter)factory.Create("TestName", setting.ContentType);
@@ -74,7 +74,7 @@ public class SqliteDbParameterFactoryTests
     {
         // Arrange
         var factory = new SqliteDbParameterFactory();
-        var setting = new ConfigurationSetting("TestEtag", "TestKey", DateTimeOffset.UtcNow, false, Label: label);
+        var setting = new ConfigurationSetting("TestEtag", "TestKey", DateTimeOffset.UtcNow, false, label: label);
 
         // Act
         var parameter = (SqliteParameter)factory.Create("TestName", setting.Label);
@@ -133,11 +133,11 @@ public class SqliteDbParameterFactoryTests
     }
 
     [TestCaseSource(nameof(Create_DbParameter_ConfigurationSettingTags_TestCases))]
-    public void Create_DbParameter_ConfigurationSettingTags(IReadOnlyDictionary<string, string>? tags, object expected)
+    public void Create_DbParameter_ConfigurationSettingTags(IDictionary<string, string>? tags, object expected)
     {
         // Arrange
         var factory = new SqliteDbParameterFactory();
-        var setting = new ConfigurationSetting("TestEtag", "TestKey", DateTimeOffset.UtcNow, false, Tags: tags);
+        var setting = new ConfigurationSetting("TestEtag", "TestKey", DateTimeOffset.UtcNow, false, tags: tags);
 
         // Act
         var parameter = (SqliteParameter)factory.Create("TestName", setting.Tags);
@@ -162,7 +162,7 @@ public class SqliteDbParameterFactoryTests
     {
         // Arrange
         var factory = new SqliteDbParameterFactory();
-        var setting = new ConfigurationSetting("TestEtag", "TestKey", DateTimeOffset.UtcNow, false, Value: value);
+        var setting = new ConfigurationSetting("TestEtag", "TestKey", DateTimeOffset.UtcNow, false, value: value);
 
         // Act
         var parameter = (SqliteParameter)factory.Create("TestName", setting.Value);

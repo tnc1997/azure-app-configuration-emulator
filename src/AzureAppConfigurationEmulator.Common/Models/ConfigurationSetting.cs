@@ -3,46 +3,29 @@ namespace AzureAppConfigurationEmulator.Common.Models;
 /// <summary>
 /// https://github.com/Azure/azure-sdk-for-net/blob/main/sdk/appconfiguration/Azure.Data.AppConfiguration/src/Models/ConfigurationSetting.cs
 /// </summary>
-public record ConfigurationSetting(
-    string Etag,
-    string Key,
-    DateTimeOffset LastModified,
-    bool Locked,
-    string? Label = null,
-    string? ContentType = null,
-    string? Value = null,
-    IReadOnlyDictionary<string, string>? Tags = null);
+public class ConfigurationSetting(
+    string etag,
+    string key,
+    DateTimeOffset lastModified,
+    bool locked,
+    string? label = null,
+    string? contentType = null,
+    string? value = null,
+    IDictionary<string, string>? tags = null)
+{
+    public string Etag { get; set; } = etag;
 
-/// <summary>
-/// https://github.com/Azure/azure-sdk-for-net/blob/main/sdk/appconfiguration/Azure.Data.AppConfiguration/src/Models/FeatureFlagConfigurationSetting.cs
-/// </summary>
-public record FeatureFlagConfigurationSetting(
-    string Id,
-    bool Enabled,
-    IReadOnlyCollection<FeatureFlagFilter> ClientFilters,
-    string Etag,
-    string Key,
-    string Value,
-    DateTimeOffset LastModified,
-    bool Locked,
-    string? Description = null,
-    string? DisplayName = null,
-    string? Label = null,
-    string? ContentType = null,
-    IReadOnlyDictionary<string, string>? Tags = null)
-    : ConfigurationSetting(
-        Etag,
-        Key,
-        LastModified,
-        Locked,
-        Label,
-        ContentType,
-        Value,
-        Tags);
+    public string Key { get; set; } = key;
 
-/// <summary>
-/// https://github.com/Azure/azure-sdk-for-net/blob/main/sdk/appconfiguration/Azure.Data.AppConfiguration/src/Models/FeatureFlagFilter.cs
-/// </summary>
-public record FeatureFlagFilter(
-    string Name,
-    IReadOnlyDictionary<string, object>? Parameters);
+    public string? Label { get; set; } = label;
+
+    public string? ContentType { get; set; } = contentType;
+
+    public virtual string? Value { get; set; } = value;
+
+    public DateTimeOffset LastModified { get; set; } = lastModified;
+
+    public bool Locked { get; set; } = locked;
+
+    public IDictionary<string, string>? Tags { get; set; } = tags;
+}
