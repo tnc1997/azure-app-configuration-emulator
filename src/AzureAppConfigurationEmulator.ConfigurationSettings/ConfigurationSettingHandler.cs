@@ -193,9 +193,9 @@ public class ConfigurationSettingHandler
                 date,
                 false,
                 label is LabelFilter.Null ? null : label,
-                input.ContentType,
-                input.Value,
-                input.Tags);
+                input.content_type,
+                input.value,
+                input.tags);
 
             await repository.Add(setting, cancellationToken);
 
@@ -219,14 +219,14 @@ public class ConfigurationSettingHandler
 
         setting.Etag = Convert.ToBase64String(SHA256.HashData(Encoding.UTF8.GetBytes(date.UtcDateTime.ToString("yyyy-MM-dd HH:mm:ss"))));
         setting.LastModified = date;
-        setting.ContentType = input.ContentType;
-        setting.Value = input.Value;
-        setting.Tags = input.Tags;
+        setting.ContentType = input.content_type;
+        setting.Value = input.value;
+        setting.Tags = input.tags;
 
         await repository.Update(setting, cancellationToken);
 
         return new ConfigurationSettingResult(setting);
     }
 
-    public record SetInput(string? Value, string? ContentType, IDictionary<string, string>? Tags);
+    public record SetInput(string? value, string? content_type, IDictionary<string, string>? tags);
 }
