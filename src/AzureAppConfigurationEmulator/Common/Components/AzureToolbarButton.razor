@@ -1,0 +1,17 @@
+@using Microsoft.AspNetCore.Components.Web
+
+<li class="h-[36px]">
+  <button class="flex flex-row items-center px-2 h-full enabled:hover:bg-concrete enabled:active:bg-gallery enabled:dark:hover:bg-shark enabled:dark:active:bg-tuatara disabled:text-star-dust disabled:dark:text-storm-dust" disabled="@IsDisabled" @onclick="OnClick">
+    <div class="h-[16px] w-[16px]"></div>
+
+    <div class="pl-2">@Label</div>
+  </button>
+</li>
+
+@code {
+    [Parameter] public bool IsDisabled { get; set; }
+
+    [EditorRequired, Parameter] public string Label { get; set; } = null!;
+
+    [Parameter] public EventCallback<MouseEventArgs> OnClick { get; set; }
+}

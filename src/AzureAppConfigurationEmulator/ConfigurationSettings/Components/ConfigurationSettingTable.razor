@@ -1,0 +1,29 @@
+@using AzureAppConfigurationEmulator.Common.Components
+
+<AzureTable Items="@ConfigurationSettings" SelectedItems="@SelectedConfigurationSettings" SelectedItemsChanged="@SelectedConfigurationSettingsChanged" TItem="@ConfigurationSetting">
+    <HeaderContent>
+        <AzureTableHeaderCell>Key</AzureTableHeaderCell>
+        <AzureTableHeaderCell>Value</AzureTableHeaderCell>
+        <AzureTableHeaderCell>Label</AzureTableHeaderCell>
+        <AzureTableHeaderCell>Last modified</AzureTableHeaderCell>
+        <AzureTableHeaderCell>Content type</AzureTableHeaderCell>
+    </HeaderContent>
+
+    <RowTemplate>
+        <AzureTableDataCell>@context.Key</AzureTableDataCell>
+        <AzureTableDataCell>@(IsValuesHidden ? "(Hidden value)" : context.Value)</AzureTableDataCell>
+        <AzureTableDataCell>@(!string.IsNullOrEmpty(context.Label) ? context.Label : "(No label)")</AzureTableDataCell>
+        <AzureTableDataCell>@context.LastModified.ToString("G")</AzureTableDataCell>
+        <AzureTableDataCell>@context.ContentType</AzureTableDataCell>
+    </RowTemplate>
+</AzureTable>
+
+@code {
+    [Parameter] public IEnumerable<ConfigurationSetting> ConfigurationSettings { get; set; } = [];
+
+    [Parameter] public bool IsValuesHidden { get; set; }
+
+    [Parameter] public ICollection<ConfigurationSetting> SelectedConfigurationSettings { get; set; } = [];
+
+    [Parameter] public EventCallback<ICollection<ConfigurationSetting>> SelectedConfigurationSettingsChanged { get; set; }
+}

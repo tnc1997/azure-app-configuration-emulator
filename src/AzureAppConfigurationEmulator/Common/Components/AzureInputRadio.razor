@@ -1,0 +1,10 @@
+@typeparam TValue
+@using Microsoft.AspNetCore.Components.Forms
+
+<InputRadio @attributes="@AdditionalAttributes" class="hidden" Value="@Value"/>
+
+@code {
+    [Parameter(CaptureUnmatchedValues = true)] public IDictionary<string, object>? AdditionalAttributes { get; set; }
+    
+    [Parameter] public TValue? Value { get; set; }
+}

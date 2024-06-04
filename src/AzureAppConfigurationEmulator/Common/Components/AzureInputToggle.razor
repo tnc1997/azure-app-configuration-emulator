@@ -1,0 +1,25 @@
+@using System.Linq.Expressions
+@using Microsoft.AspNetCore.Components.Forms
+@using Microsoft.AspNetCore.Components.Web
+
+<InputCheckbox @attributes="@AdditionalAttributes" class="hidden" Value="@Value" ValueChanged="@ValueChanged" ValueExpression="@ValueExpression"/>
+
+<div aria-checked="@Value.ToString().ToLower()" class="border border-storm-dust dark:border-star-dust aria-checked:border-lochmara aria-checked:bg-lochmara group cursor-pointer disabled:cursor-default relative p-1 rounded-full w-[44px] h-[20px] transition-all" @onclick="@HandleClick" role="checkbox">
+    <div class="bg-storm-dust dark:bg-star-dust group-aria-checked:bg-white group-aria-checked:dark:bg-cod-grey absolute rounded-full w-[10px] h-[10px] left-1 group-aria-checked:left-7 transition-all"></div>
+</div>
+
+@code {
+    [Parameter(CaptureUnmatchedValues = true)] public IDictionary<string, object>? AdditionalAttributes { get; set; }
+
+    [Parameter] public bool Value { get; set; }
+
+    [Parameter] public EventCallback<bool> ValueChanged { get; set; }
+
+    [Parameter] public Expression<Func<bool>>? ValueExpression { get; set; }
+
+    private async Task HandleClick(MouseEventArgs args)
+    {
+        await ValueChanged.InvokeAsync(!Value);
+    }
+
+}

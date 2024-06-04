@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "build:css": "tailwindcss --input ./Styles/app.css --minify --output ./wwwroot/app.css",
+    "build:css": "tailwindcss --input ./app.css --minify --output ./wwwroot/app.css",
     "format:css": "rustywind --write ."
   },
   "devDependencies": {

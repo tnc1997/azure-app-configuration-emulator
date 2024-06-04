@@ -1,0 +1,70 @@
+@inject IDialogService DialogService
+@using System.Security.Cryptography
+@using System.Text
+@using AzureAppConfigurationEmulator.Common
+@using AzureAppConfigurationEmulator.Common.Components
+@using Microsoft.AspNetCore.Components.Web
+
+<AzureDialog>
+    <HeaderContent>
+        <AzureDialogHeader Subtitle="Edit the key-value." Title="Edit"/>
+    </HeaderContent>
+
+    <ChildContent>
+        <div class="flex flex-col gap-4 pb-4">
+            <AzureTextField IsDisabled="true" Label="Key" Value="@ConfigurationSetting.Key"/>
+            <AzureTextField @bind-Value="Input.Value" Label="Value"/>
+            <AzureTextField IsDisabled="true" Label="Label" Placeholder="(No label)" Value="@ConfigurationSetting.Label"/>
+            <AzureTextField @bind-Value="Input.ContentType" Label="Content type"/>
+        </div>
+    </ChildContent>
+
+    <FooterContent>
+        <AzureDialogFooter>
+            <AzureButton Appearance="AzureButton.AzureAppearance.Primary" @onclick="@HandleEditClick">Edit</AzureButton>
+        </AzureDialogFooter>
+    </FooterContent>
+</AzureDialog>
+
+@code {
+    [EditorRequired, Parameter] public ConfigurationSetting ConfigurationSetting { get; set; } = null!;
+
+    [CascadingParameter] public IDialogReference DialogReference { get; set; } = null!;
+
+    private InputModel Input { get; } = new();
+
+    protected override void OnParametersSet()
+    {
+        if (Input.Value != ConfigurationSetting.Value)
+        {
+            Input.Value = ConfigurationSetting.Value;
+            StateHasChanged();
+        }
+
+        if (Input.ContentType != ConfigurationSetting.ContentType)
+        {
+            Input.ContentType = ConfigurationSetting.ContentType;
+            StateHasChanged();
+        }
+    }
+
+    private async Task HandleEditClick(MouseEventArgs args)
+    {
+        var date = DateTimeOffset.UtcNow;
+
+        ConfigurationSetting.Etag = Convert.ToBase64String(SHA256.HashData(Encoding.UTF8.GetBytes(date.UtcDateTime.ToString("yyyy-MM-dd HH:mm:ss"))));
+        ConfigurationSetting.LastModified = date;
+        ConfigurationSetting.ContentType = Input.ContentType;
+        ConfigurationSetting.Value = Input.Value;
+
+        await DialogService.Close(DialogReference, new DialogResult(ConfigurationSetting));
+    }
+
+    private class InputModel
+    {
+        public string? Value { get; set; }
+
+        public string? ContentType { get; set; }
+    }
+
+}

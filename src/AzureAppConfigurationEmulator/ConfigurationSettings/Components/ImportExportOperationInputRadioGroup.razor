@@ -1,0 +1,32 @@
+@using System.Linq.Expressions
+@using AzureAppConfigurationEmulator.Common.Components
+
+<AzureInputRadioGroup AdditionalAttributes="@AdditionalAttributes" TValue="@string" Value="@Value" ValueChanged="@ValueChanged" ValueExpression="@ValueExpression">
+    <AzureInputRadioLabel>
+        <AzureInputRadio checked="@(Value is Operation.Import)" Value="@Operation.Import"/>
+        <div>Import</div>
+    </AzureInputRadioLabel>
+
+    <AzureInputRadioLabel>
+        <AzureInputRadio checked="@(Value is Operation.Export)" disabled Value="@Operation.Export"/>
+        <div>Export</div>
+    </AzureInputRadioLabel>
+</AzureInputRadioGroup>
+
+@code {
+    [Parameter(CaptureUnmatchedValues = true)] public IDictionary<string, object>? AdditionalAttributes { get; set; }
+
+    [Parameter] public string? Value { get; set; }
+
+    [Parameter] public EventCallback<string?> ValueChanged { get; set; }
+
+    [Parameter] public Expression<Func<string?>>? ValueExpression { get; set; }
+
+    public static class Operation
+    {
+        public const string Export = nameof(Export);
+
+        public const string Import = nameof(Import);
+    }
+
+}
