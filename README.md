@@ -12,7 +12,9 @@ docker run -e ASPNETCORE_HTTP_PORTS=8080 -e ASPNETCORE_HTTPS_PORTS=8081 -p 8080:
 
 ## Authentication
 
-The emulator supports HMAC authentication but does not support Microsoft Entra ID authentication.
+The emulator supports HMAC authentication and Microsoft Entra ID authentication.
+
+### HMAC
 
 The credential and secret can be overridden using the environment variables `Authentication__Schemes__Hmac__Credential` and `Authentication__Schemes__Hmac__Secret` respectively.
 
@@ -30,7 +32,9 @@ services:
       - "8080:8080"
 ```
 
-### Postman
+#### Postman
+
+The authentication related headers can be generated using the following script:
 
 ```javascript
 const credential = "abcd";
@@ -46,6 +50,23 @@ const signature = CryptoJS.HmacSHA256(CryptoJS.enc.Utf8.parse(stringToSign), Cry
 pm.request.headers.upsert(`x-ms-date: ${date}`);
 pm.request.headers.upsert(`x-ms-content-sha256: ${contentHash}`);
 pm.request.headers.upsert(`Authorization: HMAC-SHA256 Credential=${credential}&SignedHeaders=${signedHeaders}&Signature=${signature}`);
+```
+
+### Microsoft Entra ID
+
+The metadata address can be set using the environment variable `Authentication__Schemes__MicrosoftEntraId__MetadataAddress`.
+
+```yaml
+services:
+  azure-app-configuration-emulator:
+    build:
+      context: https://github.com/tnc1997/azure-app-configuration-emulator.git
+      dockerfile: ./src/AzureAppConfigurationEmulator/Dockerfile
+    environment:
+      - ASPNETCORE_HTTP_PORTS=8080
+      - Authentication__Schemes__MicrosoftEntraId__MetadataAddress=https://login.microsoftonline.com/00000000-0000-0000-0000-000000000000/v2.0/.well-known/openid-configuration
+    ports:
+      - "8080:8080"
 ```
 
 ## Compatibility
