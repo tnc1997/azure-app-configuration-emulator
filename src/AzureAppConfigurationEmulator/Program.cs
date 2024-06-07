@@ -37,8 +37,6 @@ builder.Services.AddAuthentication(options =>
         options.TokenValidationParameters.ValidateAudience = true;
         options.TokenValidationParameters.ValidateIssuer = true;
 
-        options.TokenValidationParameters.ValidAudience = "https://azconfig.io";
-
         options.ForwardDefaultSelector = context =>
         {
             if (AuthenticationHeaderValue.TryParse(context.Request.Headers.Authorization, out var value))

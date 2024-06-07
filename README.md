@@ -16,7 +16,7 @@ The emulator supports HMAC authentication and Microsoft Entra ID authentication.
 
 ### HMAC
 
-The credential and secret can be overridden using the environment variables `Authentication__Schemes__Hmac__Credential` and `Authentication__Schemes__Hmac__Secret` respectively.
+The credential and secret may be overridden using the environment variables `Authentication__Schemes__Hmac__Credential` and `Authentication__Schemes__Hmac__Secret` respectively.
 
 ```yaml
 services:
@@ -34,7 +34,7 @@ services:
 
 #### Postman
 
-The authentication related headers can be generated using the following script:
+The authentication related headers may be generated using the following script:
 
 ```javascript
 const credential = "abcd";
@@ -54,7 +54,7 @@ pm.request.headers.upsert(`Authorization: HMAC-SHA256 Credential=${credential}&S
 
 ### Microsoft Entra ID
 
-The metadata address can be set using the environment variable `Authentication__Schemes__MicrosoftEntraId__MetadataAddress`.
+The metadata address must be set using the environment variable `Authentication__Schemes__MicrosoftEntraId__MetadataAddress` where `00000000-0000-0000-0000-000000000000` is the [tenant identifier](https://learn.microsoft.com/entra/fundamentals/how-to-find-tenant).
 
 ```yaml
 services:
@@ -65,6 +65,22 @@ services:
     environment:
       - ASPNETCORE_HTTP_PORTS=8080
       - Authentication__Schemes__MicrosoftEntraId__MetadataAddress=https://login.microsoftonline.com/00000000-0000-0000-0000-000000000000/v2.0/.well-known/openid-configuration
+    ports:
+      - "8080:8080"
+```
+
+The valid audience may be overriden using the environment variable `Authentication__Schemes__MicrosoftEntraId__ValidAudience`.
+
+```yaml
+services:
+  azure-app-configuration-emulator:
+    build:
+      context: https://github.com/tnc1997/azure-app-configuration-emulator.git
+      dockerfile: ./src/AzureAppConfigurationEmulator/Dockerfile
+    environment:
+      - ASPNETCORE_HTTP_PORTS=8080
+      - Authentication__Schemes__MicrosoftEntraId__MetadataAddress=https://login.microsoftonline.com/00000000-0000-0000-0000-000000000000/v2.0/.well-known/openid-configuration
+      - Authentication__Schemes__MicrosoftEntraId__ValidAudience=https://contoso.azconfig.io
     ports:
       - "8080:8080"
 ```
@@ -133,7 +149,7 @@ The emulator is compatible with the following operations:
 
 The emulator integrates with Azure Event Grid to publish events using the [Event Grid event schema](https://learn.microsoft.com/en-us/azure/event-grid/custom-topics#event-grid-event-schema) when configuration settings are deleted or modified.
 
-The endpoint and key for the [Event Grid Topic](https://learn.microsoft.com/en-us/azure/event-grid/custom-topics) can be set using the environment variables `Messaging__EventGridTopics__xyz__Endpoint` and `Messaging__EventGridTopics__xyz__Credential__Key` respectively where `xyz` is an arbitrary name.
+The endpoint and key for the [Event Grid Topic](https://learn.microsoft.com/en-us/azure/event-grid/custom-topics) may be set using the environment variables `Messaging__EventGridTopics__xyz__Endpoint` and `Messaging__EventGridTopics__xyz__Credential__Key` respectively where `xyz` is an arbitrary name.
 
 ```yaml
 services:
@@ -153,7 +169,7 @@ services:
 
 The emulator integrates with OpenTelemetry to provide metrics and traces.
 
-The endpoint for the [OpenTelemetry Protocol (OTLP) Exporter](https://opentelemetry.io/docs/specs/otel/protocol/exporter) can be overridden using the environment variable `OTEL_EXPORTER_OTLP_ENDPOINT`.
+The endpoint for the [OpenTelemetry Protocol (OTLP) Exporter](https://opentelemetry.io/docs/specs/otel/protocol/exporter) may be overridden using the environment variable `OTEL_EXPORTER_OTLP_ENDPOINT`.
 
 ```yaml
 services:
