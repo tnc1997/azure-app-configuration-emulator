@@ -85,6 +85,33 @@ services:
       - "8080:8080"
 ```
 
+#### HTTP
+
+The access token may be obtained using the following request:
+
+```http request
+POST /00000000-0000-0000-0000-000000000000/oauth2/v2.0/token HTTP/1.1
+Host: login.microsoftonline.com
+Content-Type: application/x-www-form-urlencoded
+Authorization: Basic Y2xpZW50X2lkOmNsaWVudF9zZWNyZXQ=
+
+grant_type = client_credentials &
+scope = https%3A%2F%2Fazconfig.io%2F.default
+```
+
+#### Postman
+
+The access token may be obtained using the following configuration:
+
+| Configuration    |                                                                                          |
+|------------------|------------------------------------------------------------------------------------------|
+| Auth Type        | OAuth 2.0                                                                                |
+| Grant Type       | Client Credentials                                                                       |
+| Access Token URL | https://login.microsoftonline.com/00000000-0000-0000-0000-000000000000/oauth2/v2.0/token |
+| Client ID        |                                                                                          |
+| Client Secret    |                                                                                          |
+| Scope            | https://azconfig.io/.default                                                             |
+
 ## Compatibility
 
 The emulator is compatible with the following operations:
