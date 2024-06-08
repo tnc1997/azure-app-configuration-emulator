@@ -5,9 +5,8 @@ Please note that Emulator for Azure App Configuration is unofficial and not endo
 ## Getting Started
 
 ```shell
-openssl req -x509 -out ./emulator.crt -keyout ./emulator.key -newkey rsa:2048 -nodes -sha256 -subj '/CN=localhost' -addext 'subjectAltName=DNS:localhost'
 docker build -f ./src/AzureAppConfigurationEmulator/Dockerfile -t azure-app-configuration-emulator .
-docker run -e ASPNETCORE_HTTP_PORTS=8080 -e ASPNETCORE_HTTPS_PORTS=8081 -p 8080:8080 -p 8081:8081 -v ./emulator.crt:/usr/local/share/azureappconfigurationemulator/emulator.crt:ro -v ./emulator.key:/usr/local/share/azureappconfigurationemulator/emulator.key:ro azure-app-configuration-emulator-data-potection-keys:/root/.aspnet/DataProtection-Keys azure-app-configuration-emulator
+docker run -p 8080:8080 azure-app-configuration-emulator
 ```
 
 ## Authentication
