@@ -301,3 +301,27 @@ services:
   opentelemetry-collector:
     image: otel/opentelemetry-collector-contrib
 ```
+
+## SSL / TLS
+
+The emulator may be configured to serve requests over HTTPS using a [self-signed certificate](https://wikipedia.org/wiki/self-signed_certificate).
+
+```shell
+openssl req -x509 -out ./emulator.crt -keyout ./emulator.key -newkey rsa:2048 -nodes -sha256 -subj '/CN=azure-app-configuration-emulator' -addext 'subjectAltName=DNS:azure-app-configuration-emulator'
+```
+
+The port for HTTPS must be set using the environment variable [`ASPNETCORE_HTTPS_PORTS`](https://learn.microsoft.com/aspnet/core/security/enforcing-ssl#port-configuration).
+
+```yaml
+services:
+  azure-app-configuration-emulator:
+    build:
+      context: https://github.com/tnc1997/azure-app-configuration-emulator.git
+      dockerfile: ./src/AzureAppConfigurationEmulator/Dockerfile
+    environment:
+      - ASPNETCORE_HTTP_PORTS=8080
+      - ASPNETCORE_HTTPS_PORTS=8081
+    volumes:
+      - ./emulator.crt:/usr/local/share/azureappconfigurationemulator/emulator.crt:ro
+      - ./emulator.key:/usr/local/share/azureappconfigurationemulator/emulator.key:ro
+```
