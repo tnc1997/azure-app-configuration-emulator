@@ -65,7 +65,7 @@ public class ConfigurationSettingResultTests
         var mementoDatetime = DateTimeOffset.UtcNow;
 
         // Act
-        await new ConfigurationSettingResult(setting, mementoDatetime).ExecuteAsync(HttpContext);
+        await new ConfigurationSettingResult(setting, mementoDatetime: mementoDatetime).ExecuteAsync(HttpContext);
 
         // Assert
         Assert.That(HttpContext.Response.Headers["Memento-Datetime"], Is.EqualTo(mementoDatetime.ToString("R")));
@@ -153,6 +153,69 @@ public class ConfigurationSettingResultTests
                 "TestValue",
                 new Dictionary<string, string> { { "TestKey", "TestValue" } }),
             "{\"etag\":\"TestEtag\",\"key\":\"TestKey\",\"label\":\"TestLabel\",\"content_type\":\"TestContentType\",\"value\":\"TestValue\",\"tags\":{\"TestKey\":\"TestValue\"},\"locked\":false,\"last_modified\":\"2023-10-01T00:00:00.0000000\\u002B00:00\"}"
+        }
+    ];
+
+    [TestCaseSource(nameof(ExecuteAsync_ResponseBody_Select_TestCases))]
+    public async Task ExecuteAsync_ResponseBody_Select(ConfigurationSetting setting, string? select, string expected)
+    {
+        // Arrange
+        using var stream = new MemoryStream();
+        var feature = new StreamResponseBodyFeature(stream);
+        HttpContext.Features.Set<IHttpResponseBodyFeature>(feature);
+
+        // Act
+        await new ConfigurationSettingResult(setting, select: select).ExecuteAsync(HttpContext);
+
+        // Assert
+        stream.Seek(0, SeekOrigin.Begin);
+        using var reader = new StreamReader(stream);
+        var actual = await reader.ReadToEndAsync();
+        Assert.That(actual, Is.EqualTo(expected));
+    }
+
+    // ReSharper disable once InconsistentNaming
+    private static object[] ExecuteAsync_ResponseBody_Select_TestCases =
+    [
+        new object?[]
+        {
+            new ConfigurationSetting(
+                "TestEtag",
+                "TestKey",
+                DateTimeOffset.Parse("2023-10-01T00:00:00+00:00"),
+                false),
+            "key",
+            "{\"key\":\"TestKey\"}"
+        },
+        new object?[]
+        {
+            new ConfigurationSetting(
+                "TestEtag",
+                "TestKey",
+                DateTimeOffset.Parse("2023-10-01T00:00:00+00:00"),
+                false),
+            "key,value",
+            "{\"key\":\"TestKey\",\"value\":null}"
+        },
+        new object?[]
+        {
+            new ConfigurationSetting(
+                "TestEtag",
+                "TestKey",
+                DateTimeOffset.Parse("2023-10-01T00:00:00+00:00"),
+                false),
+            "",
+            "{\"etag\":\"TestEtag\",\"key\":\"TestKey\",\"label\":null,\"content_type\":null,\"value\":null,\"tags\":{},\"locked\":false,\"last_modified\":\"2023-10-01T00:00:00.0000000\\u002B00:00\"}"
+        },
+        new object?[]
+        {
+            new ConfigurationSetting(
+                "TestEtag",
+                "TestKey",
+                DateTimeOffset.Parse("2023-10-01T00:00:00+00:00"),
+                false),
+            null,
+            "{\"etag\":\"TestEtag\",\"key\":\"TestKey\",\"label\":null,\"content_type\":null,\"value\":null,\"tags\":{},\"locked\":false,\"last_modified\":\"2023-10-01T00:00:00.0000000\\u002B00:00\"}"
         }
     ];
 

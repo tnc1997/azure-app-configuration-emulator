@@ -39,11 +39,6 @@ public class SelectJsonTypeInfoModifierTests
     [
         new object?[]
         {
-            Array.Empty<string>(),
-            Array.Empty<string>()
-        },
-        new object?[]
-        {
             new[] { nameof(ConfigurationSetting.Key) },
             new[] { nameof(ConfigurationSetting.Key) }
         },
@@ -51,6 +46,11 @@ public class SelectJsonTypeInfoModifierTests
         {
             new[] { nameof(ConfigurationSetting.Key), nameof(ConfigurationSetting.Value) },
             new[] { nameof(ConfigurationSetting.Key), nameof(ConfigurationSetting.Value) }
+        },
+        new object?[]
+        {
+            Array.Empty<string>(),
+            typeof(ConfigurationSetting).GetProperties().Select(property => property.Name).ToArray()
         },
         new object?[]
         {
