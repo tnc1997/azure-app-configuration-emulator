@@ -2,6 +2,7 @@ using Azure.Messaging.EventGrid;
 using AzureAppConfigurationEmulator;
 using AzureAppConfigurationEmulator.Authentication.Hmac;
 using AzureAppConfigurationEmulator.Common;
+using AzureAppConfigurationEmulator.Components;
 using AzureAppConfigurationEmulator.ConfigurationSettings;
 using AzureAppConfigurationEmulator.Data;
 using AzureAppConfigurationEmulator.Keys;

@@ -1,0 +1,63 @@
+﻿@inject IServer Server
+@page "/"
+@using Microsoft.AspNetCore.Hosting.Server
+@using Microsoft.AspNetCore.Hosting.Server.Features
+
+<PageTitle>Overview</PageTitle>
+
+<div class="flex flex-col">
+    <AzureToolbar>
+        <AzureToolbarButton IsDisabled="true" Label="Delete"/>
+
+        <AzureToolbarDivider/>
+
+        <AzureToolbarButton IsDisabled="true" Label="Feedback"/>
+    </AzureToolbar>
+
+    <div class="flex flex-col flex-1 px-5 pt-2.5 pb-5">
+        <div class="flex flex-col border-b border-b-alto dark:border-b-masala">
+            <div class="flex flex-row">
+                <button class="flex flex-row flex-1 items-center px-1 mr-1 mb-1 h-[28px] dark:hover:bg-shark dark:active:bg-tuatara hover:bg-concrete active:bg-gallery">
+                    <div class="mr-1 h-[12px] w-[12px]"></div>
+
+                    <div class="font-semibold">Essentials</div>
+                </button>
+
+                <div class="px-2.5 pt-1">JSON View</div>
+            </div>
+
+            <div class="flex flex-row">
+                @foreach (var descriptions in Descriptions)
+                {
+                <div class="flex-1">
+                    <AzureDescriptionList Descriptions="descriptions"/>
+                </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+
+    private IEnumerable<IDictionary<string, string>> Descriptions => new List<IDictionary<string, string>>
+    {
+        new Dictionary<string, string>
+        {
+            { "Resource group", "-" },
+            { "Status", "Succeeded" },
+            { "Location", "-" },
+            { "Subscription", "-" },
+            { "Subscription ID", "-" }
+        },
+        new Dictionary<string, string>
+        {
+            { "Endpoint", Server.Features.Get<IServerAddressesFeature>()?.Addresses.FirstOrDefault() ?? "-" },
+            { "Pricing tier", "-" },
+            { "Soft-delete", "Disabled" },
+            { "Purge protection", "Disabled" },
+            { "Geo-replication", "-" }
+        }
+    };
+
+}

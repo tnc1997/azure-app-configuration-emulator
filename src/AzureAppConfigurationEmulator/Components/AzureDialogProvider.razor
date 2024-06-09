@@ -1,0 +1,71 @@
+@implements IAsyncDisposable
+@implements IDisposable
+@inject IDialogService DialogService
+@inject IJSRuntime JS
+@using AzureAppConfigurationEmulator.Common
+
+@foreach (var reference in References)
+{
+    <CascadingValue Value="@reference">
+        <DynamicComponent Parameters="@reference.Parameters" Type="@reference.Type"/>
+    </CascadingValue>
+}
+
+@code {
+    private IJSObjectReference? Module { get; set; }
+
+    private ICollection<IDialogReference> References { get; } = [];
+
+    public void Dispose()
+    {
+        DialogService.OnDialogClosed -= HandleDialogClosed;
+
+        DialogService.OnDialogShown -= HandleDialogShown;
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        if (Module is not null)
+        {
+            await Module.DisposeAsync();
+        }
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            Module = await JS.InvokeAsync<IJSObjectReference>("import", "./Components/AzureDialogProvider.razor.js");
+        }
+    }
+
+    protected override void OnInitialized()
+    {
+        DialogService.OnDialogClosed += HandleDialogClosed;
+
+        DialogService.OnDialogShown += HandleDialogShown;
+    }
+
+    private async Task HandleDialogClosed(IDialogReference reference, IDialogResult? result)
+    {
+        if (Module is not null)
+        {
+            await Module.InvokeVoidAsync("close", await reference.Element, result);
+        }
+
+        References.Remove(reference);
+        StateHasChanged();
+    }
+
+    private async Task HandleDialogShown(IDialogReference reference)
+    {
+        References.Add(reference);
+        StateHasChanged();
+
+        if (Module is not null)
+        {
+            await Module.InvokeVoidAsync("show", await reference.Element);
+        }
+    }
+
+}

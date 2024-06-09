@@ -1,0 +1,33 @@
+<label class="flex flex-col gap-1 w-full">
+    @if (!string.IsNullOrEmpty(Label))
+    {
+        <div class="mb-1">
+            @Label
+
+            @if (IsRequired)
+            {
+                <span class="text-alizarin-crimson"> *</span>
+            }
+        </div>
+    }
+
+    <input @bind:get="@Value" @bind:set="@(value => ValueChanged.InvokeAsync(value))" class="px-2 pt-1 pb-1.5 w-full bg-white rounded-sm border border-storm-dust h-[24px] placeholder:text-storm-dust invalid:border-alizarin-crimson dark:bg-cod-grey dark:border-star-dust dark:placeholder:text-star-dust dark:disabled:bg-shark dark:disabled:border-natural-grey dark:disabled:text-natural-grey disabled:bg-concrete disabled:border-star-dust disabled:text-star-dust" disabled="@IsDisabled" placeholder="@Placeholder" readonly="@IsReadOnly" required="@IsRequired" type="@Type"/>
+</label>
+
+@code {
+    [Parameter] public bool IsDisabled { get; set; }
+
+    [Parameter] public bool IsReadOnly { get; set; }
+
+    [Parameter] public bool IsRequired { get; set; }
+
+    [Parameter] public string? Label { get; set; }
+
+    [Parameter] public string? Placeholder { get; set; }
+
+    [Parameter] public string Type { get; set; } = "text";
+
+    [Parameter] public string? Value { get; set; }
+
+    [Parameter] public EventCallback<string?> ValueChanged { get; set; }
+}

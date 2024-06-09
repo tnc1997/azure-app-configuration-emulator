@@ -1,0 +1,62 @@
+@inject IOptionsMonitor<HmacOptions> HmacOptionsMonitor
+@inject IServer Server
+@page "/keys"
+@using AzureAppConfigurationEmulator.Authentication.Hmac
+@using Microsoft.AspNetCore.Hosting.Server
+@using Microsoft.AspNetCore.Hosting.Server.Features
+@using Microsoft.Extensions.Options
+
+<PageTitle>Access keys</PageTitle>
+
+<div class="flex flex-col">
+    <AzureToolbar>
+        <AzureToolbarButton Label="Values" OnClick="@HandleValuesClick"/>
+    </AzureToolbar>
+
+    <div class="p-5">
+        <div class="max-w-[728px]">
+            <div class="mb-1 text-2xl font-semibold">Access keys</div>
+
+            <div class="flex flex-row gap-2 items-stretch mb-3 w-full h-[36px]" role="tablist">
+                <div class="flex items-center text-lg font-semibold border-b-2 cursor-pointer border-b-lochmara dark:hover:bg-shark dark:active:bg-tuatara hover:bg-concrete active:bg-gallery" role="tab">
+                    <div class="px-2">Read-write keys</div>
+                </div>
+            </div>
+
+            <div class="px-2">
+                <div class="pb-6">
+                    <div class="flex flex-col gap-4 pb-4">
+                        <AzureTextField IsReadOnly="true" Label="Endpoint" Value="@Endpoint"/>
+                    </div>
+                </div>
+
+                <div class="pb-6">
+                    <div class="mb-1 text-lg">Primary key</div>
+
+                    <div class="flex flex-col gap-4 pb-4">
+                        <AzureTextField IsReadOnly="true" Label="Id (credential)" Value="@(IsHidden ? new string('•', 99) : HmacOptions.Credential)"/>
+                        <AzureTextField IsReadOnly="true" Label="Secret" Value="@(IsHidden ? new string('•', 99) : HmacOptions.Secret)"/>
+                        <AzureTextField IsReadOnly="true" Label="Connection string" Value="@(IsHidden ? new string('•', 99) : ConnectionString)"/>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    private string ConnectionString => $"Endpoint={Endpoint};Id={HmacOptions.Credential};Secret={HmacOptions.Secret}";
+
+    private string? Endpoint => Server.Features.Get<IServerAddressesFeature>()?.Addresses.FirstOrDefault();
+
+    private HmacOptions HmacOptions => HmacOptionsMonitor.Get(HmacDefaults.AuthenticationScheme);
+
+    private bool IsHidden { get; set; } = true;
+
+    private void HandleValuesClick(MouseEventArgs args)
+    {
+        IsHidden = !IsHidden;
+        StateHasChanged();
+    }
+
+}

@@ -1,0 +1,15 @@
+<li class="nav-item">
+    <NavLink ActiveClass="bg-gallery hover:bg-alto dark:bg-tuatara dark:hover:bg-mine-shaft" class="flex flex-row py-2 px-5 nav-link dark:hover:bg-shark dark:active:bg-tuatara hover:bg-concrete active:bg-gallery" href="@Href" Match="@Match">
+        <div class="mr-2.5 h-[15px] w-[15px]"></div>
+
+        <div class="flex-1">@Label</div>
+    </NavLink>
+</li>
+
+@code {
+    [EditorRequired, Parameter] public string Href { get; set; } = null!;
+
+    [EditorRequired, Parameter] public string Label { get; set; } = null!;
+
+    [Parameter] public NavLinkMatch Match { get; set; } = NavLinkMatch.Prefix;
+}
