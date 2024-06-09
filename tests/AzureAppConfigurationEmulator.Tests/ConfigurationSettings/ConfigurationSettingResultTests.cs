@@ -99,7 +99,7 @@ public class ConfigurationSettingResultTests
                 "TestKey",
                 DateTimeOffset.Parse("2023-10-01T00:00:00+00:00"),
                 false),
-            "{\"etag\":\"TestEtag\",\"key\":\"TestKey\",\"label\":null,\"content_type\":null,\"value\":null,\"tags\":{},\"locked\":false,\"last_modified\":\"2023-10-01T00:00:00.0000000+00:00\"}"
+            "{\"etag\":\"TestEtag\",\"key\":\"TestKey\",\"label\":null,\"content_type\":null,\"value\":null,\"tags\":{},\"locked\":false,\"last_modified\":\"2023-10-01T00:00:00.0000000\\u002B00:00\"}"
         },
         new object?[]
         {
@@ -109,7 +109,7 @@ public class ConfigurationSettingResultTests
                 DateTimeOffset.Parse("2023-10-01T00:00:00+00:00"),
                 false,
                 label: "TestLabel"),
-            "{\"etag\":\"TestEtag\",\"key\":\"TestKey\",\"label\":\"TestLabel\",\"content_type\":null,\"value\":null,\"tags\":{},\"locked\":false,\"last_modified\":\"2023-10-01T00:00:00.0000000+00:00\"}"
+            "{\"etag\":\"TestEtag\",\"key\":\"TestKey\",\"label\":\"TestLabel\",\"content_type\":null,\"value\":null,\"tags\":{},\"locked\":false,\"last_modified\":\"2023-10-01T00:00:00.0000000\\u002B00:00\"}"
         },
         new object?[]
         {
@@ -119,7 +119,7 @@ public class ConfigurationSettingResultTests
                 DateTimeOffset.Parse("2023-10-01T00:00:00+00:00"),
                 false,
                 contentType: "TestContentType"),
-            "{\"etag\":\"TestEtag\",\"key\":\"TestKey\",\"label\":null,\"content_type\":\"TestContentType\",\"value\":null,\"tags\":{},\"locked\":false,\"last_modified\":\"2023-10-01T00:00:00.0000000+00:00\"}"
+            "{\"etag\":\"TestEtag\",\"key\":\"TestKey\",\"label\":null,\"content_type\":\"TestContentType\",\"value\":null,\"tags\":{},\"locked\":false,\"last_modified\":\"2023-10-01T00:00:00.0000000\\u002B00:00\"}"
         },
         new object?[]
         {
@@ -129,7 +129,7 @@ public class ConfigurationSettingResultTests
                 DateTimeOffset.Parse("2023-10-01T00:00:00+00:00"),
                 false,
                 value: "TestValue"),
-            "{\"etag\":\"TestEtag\",\"key\":\"TestKey\",\"label\":null,\"content_type\":null,\"value\":\"TestValue\",\"tags\":{},\"locked\":false,\"last_modified\":\"2023-10-01T00:00:00.0000000+00:00\"}"
+            "{\"etag\":\"TestEtag\",\"key\":\"TestKey\",\"label\":null,\"content_type\":null,\"value\":\"TestValue\",\"tags\":{},\"locked\":false,\"last_modified\":\"2023-10-01T00:00:00.0000000\\u002B00:00\"}"
         },
         new object?[]
         {
@@ -139,7 +139,7 @@ public class ConfigurationSettingResultTests
                 DateTimeOffset.Parse("2023-10-01T00:00:00+00:00"),
                 false,
                 tags: new Dictionary<string, string> { { "TestKey", "TestValue" } }),
-            "{\"etag\":\"TestEtag\",\"key\":\"TestKey\",\"label\":null,\"content_type\":null,\"value\":null,\"tags\":{\"TestKey\":\"TestValue\"},\"locked\":false,\"last_modified\":\"2023-10-01T00:00:00.0000000+00:00\"}"
+            "{\"etag\":\"TestEtag\",\"key\":\"TestKey\",\"label\":null,\"content_type\":null,\"value\":null,\"tags\":{\"TestKey\":\"TestValue\"},\"locked\":false,\"last_modified\":\"2023-10-01T00:00:00.0000000\\u002B00:00\"}"
         },
         new object?[]
         {
@@ -152,7 +152,7 @@ public class ConfigurationSettingResultTests
                 "TestContentType",
                 "TestValue",
                 new Dictionary<string, string> { { "TestKey", "TestValue" } }),
-            "{\"etag\":\"TestEtag\",\"key\":\"TestKey\",\"label\":\"TestLabel\",\"content_type\":\"TestContentType\",\"value\":\"TestValue\",\"tags\":{\"TestKey\":\"TestValue\"},\"locked\":false,\"last_modified\":\"2023-10-01T00:00:00.0000000+00:00\"}"
+            "{\"etag\":\"TestEtag\",\"key\":\"TestKey\",\"label\":\"TestLabel\",\"content_type\":\"TestContentType\",\"value\":\"TestValue\",\"tags\":{\"TestKey\":\"TestValue\"},\"locked\":false,\"last_modified\":\"2023-10-01T00:00:00.0000000\\u002B00:00\"}"
         }
     ];
 

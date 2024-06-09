@@ -74,7 +74,7 @@ public class ConfigurationSettingsResultTests
                     DateTimeOffset.Parse("2023-10-01T00:00:00+00:00"),
                     false)
             },
-            "{\"items\":[{\"etag\":\"TestEtag\",\"key\":\"TestKey\",\"label\":null,\"content_type\":null,\"value\":null,\"tags\":{},\"locked\":false,\"last_modified\":\"2023-10-01T00:00:00.0000000+00:00\"}]}"
+            "{\"items\":[{\"etag\":\"TestEtag\",\"key\":\"TestKey\",\"label\":null,\"content_type\":null,\"value\":null,\"tags\":{},\"locked\":false,\"last_modified\":\"2023-10-01T00:00:00.0000000\\u002B00:00\"}]}"
         },
         new object?[]
         {
@@ -87,7 +87,7 @@ public class ConfigurationSettingsResultTests
                     false,
                     label: "TestLabel")
             },
-            "{\"items\":[{\"etag\":\"TestEtag\",\"key\":\"TestKey\",\"label\":\"TestLabel\",\"content_type\":null,\"value\":null,\"tags\":{},\"locked\":false,\"last_modified\":\"2023-10-01T00:00:00.0000000+00:00\"}]}"
+            "{\"items\":[{\"etag\":\"TestEtag\",\"key\":\"TestKey\",\"label\":\"TestLabel\",\"content_type\":null,\"value\":null,\"tags\":{},\"locked\":false,\"last_modified\":\"2023-10-01T00:00:00.0000000\\u002B00:00\"}]}"
         },
         new object?[]
         {
@@ -100,7 +100,7 @@ public class ConfigurationSettingsResultTests
                     false,
                     contentType: "TestContentType")
             },
-            "{\"items\":[{\"etag\":\"TestEtag\",\"key\":\"TestKey\",\"label\":null,\"content_type\":\"TestContentType\",\"value\":null,\"tags\":{},\"locked\":false,\"last_modified\":\"2023-10-01T00:00:00.0000000+00:00\"}]}"
+            "{\"items\":[{\"etag\":\"TestEtag\",\"key\":\"TestKey\",\"label\":null,\"content_type\":\"TestContentType\",\"value\":null,\"tags\":{},\"locked\":false,\"last_modified\":\"2023-10-01T00:00:00.0000000\\u002B00:00\"}]}"
         },
         new object?[]
         {
@@ -113,7 +113,7 @@ public class ConfigurationSettingsResultTests
                     false,
                     value: "TestValue")
             },
-            "{\"items\":[{\"etag\":\"TestEtag\",\"key\":\"TestKey\",\"label\":null,\"content_type\":null,\"value\":\"TestValue\",\"tags\":{},\"locked\":false,\"last_modified\":\"2023-10-01T00:00:00.0000000+00:00\"}]}"
+            "{\"items\":[{\"etag\":\"TestEtag\",\"key\":\"TestKey\",\"label\":null,\"content_type\":null,\"value\":\"TestValue\",\"tags\":{},\"locked\":false,\"last_modified\":\"2023-10-01T00:00:00.0000000\\u002B00:00\"}]}"
         },
         new object?[]
         {
@@ -126,7 +126,7 @@ public class ConfigurationSettingsResultTests
                     false,
                     tags: new Dictionary<string, string> { { "TestKey", "TestValue" } })
             },
-            "{\"items\":[{\"etag\":\"TestEtag\",\"key\":\"TestKey\",\"label\":null,\"content_type\":null,\"value\":null,\"tags\":{\"TestKey\":\"TestValue\"},\"locked\":false,\"last_modified\":\"2023-10-01T00:00:00.0000000+00:00\"}]}"
+            "{\"items\":[{\"etag\":\"TestEtag\",\"key\":\"TestKey\",\"label\":null,\"content_type\":null,\"value\":null,\"tags\":{\"TestKey\":\"TestValue\"},\"locked\":false,\"last_modified\":\"2023-10-01T00:00:00.0000000\\u002B00:00\"}]}"
         },
         new object?[]
         {
@@ -142,7 +142,7 @@ public class ConfigurationSettingsResultTests
                     "TestValue",
                     new Dictionary<string, string> { { "TestKey", "TestValue" } })
             },
-            "{\"items\":[{\"etag\":\"TestEtag\",\"key\":\"TestKey\",\"label\":\"TestLabel\",\"content_type\":\"TestContentType\",\"value\":\"TestValue\",\"tags\":{\"TestKey\":\"TestValue\"},\"locked\":false,\"last_modified\":\"2023-10-01T00:00:00.0000000+00:00\"}]}"
+            "{\"items\":[{\"etag\":\"TestEtag\",\"key\":\"TestKey\",\"label\":\"TestLabel\",\"content_type\":\"TestContentType\",\"value\":\"TestValue\",\"tags\":{\"TestKey\":\"TestValue\"},\"locked\":false,\"last_modified\":\"2023-10-01T00:00:00.0000000\\u002B00:00\"}]}"
         },
         new object?[]
         {
@@ -159,7 +159,7 @@ public class ConfigurationSettingsResultTests
                     DateTimeOffset.Parse("2023-10-01T00:00:00+00:00"),
                     false)
             },
-            "{\"items\":[{\"etag\":\"TestEtag\",\"key\":\"TestKey1\",\"label\":null,\"content_type\":null,\"value\":null,\"tags\":{},\"locked\":false,\"last_modified\":\"2023-10-01T00:00:00.0000000+00:00\"},{\"etag\":\"TestEtag\",\"key\":\"TestKey2\",\"label\":null,\"content_type\":null,\"value\":null,\"tags\":{},\"locked\":false,\"last_modified\":\"2023-10-01T00:00:00.0000000+00:00\"}]}"
+            "{\"items\":[{\"etag\":\"TestEtag\",\"key\":\"TestKey1\",\"label\":null,\"content_type\":null,\"value\":null,\"tags\":{},\"locked\":false,\"last_modified\":\"2023-10-01T00:00:00.0000000\\u002B00:00\"},{\"etag\":\"TestEtag\",\"key\":\"TestKey2\",\"label\":null,\"content_type\":null,\"value\":null,\"tags\":{},\"locked\":false,\"last_modified\":\"2023-10-01T00:00:00.0000000\\u002B00:00\"}]}"
         },
         new object?[]
         {
@@ -178,7 +178,7 @@ public class ConfigurationSettingsResultTests
                     false,
                     label: "TestLabel")
             },
-            "{\"items\":[{\"etag\":\"TestEtag\",\"key\":\"TestKey1\",\"label\":\"TestLabel\",\"content_type\":null,\"value\":null,\"tags\":{},\"locked\":false,\"last_modified\":\"2023-10-01T00:00:00.0000000+00:00\"},{\"etag\":\"TestEtag\",\"key\":\"TestKey2\",\"label\":\"TestLabel\",\"content_type\":null,\"value\":null,\"tags\":{},\"locked\":false,\"last_modified\":\"2023-10-01T00:00:00.0000000+00:00\"}]}"
+            "{\"items\":[{\"etag\":\"TestEtag\",\"key\":\"TestKey1\",\"label\":\"TestLabel\",\"content_type\":null,\"value\":null,\"tags\":{},\"locked\":false,\"last_modified\":\"2023-10-01T00:00:00.0000000\\u002B00:00\"},{\"etag\":\"TestEtag\",\"key\":\"TestKey2\",\"label\":\"TestLabel\",\"content_type\":null,\"value\":null,\"tags\":{},\"locked\":false,\"last_modified\":\"2023-10-01T00:00:00.0000000\\u002B00:00\"}]}"
         },
         new object?[]
         {
@@ -197,7 +197,7 @@ public class ConfigurationSettingsResultTests
                     false,
                     contentType: "TestContentType")
             },
-            "{\"items\":[{\"etag\":\"TestEtag\",\"key\":\"TestKey1\",\"label\":null,\"content_type\":\"TestContentType\",\"value\":null,\"tags\":{},\"locked\":false,\"last_modified\":\"2023-10-01T00:00:00.0000000+00:00\"},{\"etag\":\"TestEtag\",\"key\":\"TestKey2\",\"label\":null,\"content_type\":\"TestContentType\",\"value\":null,\"tags\":{},\"locked\":false,\"last_modified\":\"2023-10-01T00:00:00.0000000+00:00\"}]}"
+            "{\"items\":[{\"etag\":\"TestEtag\",\"key\":\"TestKey1\",\"label\":null,\"content_type\":\"TestContentType\",\"value\":null,\"tags\":{},\"locked\":false,\"last_modified\":\"2023-10-01T00:00:00.0000000\\u002B00:00\"},{\"etag\":\"TestEtag\",\"key\":\"TestKey2\",\"label\":null,\"content_type\":\"TestContentType\",\"value\":null,\"tags\":{},\"locked\":false,\"last_modified\":\"2023-10-01T00:00:00.0000000\\u002B00:00\"}]}"
         },
         new object?[]
         {
@@ -216,7 +216,7 @@ public class ConfigurationSettingsResultTests
                     false,
                     value: "TestValue")
             },
-            "{\"items\":[{\"etag\":\"TestEtag\",\"key\":\"TestKey1\",\"label\":null,\"content_type\":null,\"value\":\"TestValue\",\"tags\":{},\"locked\":false,\"last_modified\":\"2023-10-01T00:00:00.0000000+00:00\"},{\"etag\":\"TestEtag\",\"key\":\"TestKey2\",\"label\":null,\"content_type\":null,\"value\":\"TestValue\",\"tags\":{},\"locked\":false,\"last_modified\":\"2023-10-01T00:00:00.0000000+00:00\"}]}"
+            "{\"items\":[{\"etag\":\"TestEtag\",\"key\":\"TestKey1\",\"label\":null,\"content_type\":null,\"value\":\"TestValue\",\"tags\":{},\"locked\":false,\"last_modified\":\"2023-10-01T00:00:00.0000000\\u002B00:00\"},{\"etag\":\"TestEtag\",\"key\":\"TestKey2\",\"label\":null,\"content_type\":null,\"value\":\"TestValue\",\"tags\":{},\"locked\":false,\"last_modified\":\"2023-10-01T00:00:00.0000000\\u002B00:00\"}]}"
         },
         new object?[]
         {
@@ -235,7 +235,7 @@ public class ConfigurationSettingsResultTests
                     false,
                     tags: new Dictionary<string, string> { { "TestKey", "TestValue" } })
             },
-            "{\"items\":[{\"etag\":\"TestEtag\",\"key\":\"TestKey1\",\"label\":null,\"content_type\":null,\"value\":null,\"tags\":{\"TestKey\":\"TestValue\"},\"locked\":false,\"last_modified\":\"2023-10-01T00:00:00.0000000+00:00\"},{\"etag\":\"TestEtag\",\"key\":\"TestKey2\",\"label\":null,\"content_type\":null,\"value\":null,\"tags\":{\"TestKey\":\"TestValue\"},\"locked\":false,\"last_modified\":\"2023-10-01T00:00:00.0000000+00:00\"}]}"
+            "{\"items\":[{\"etag\":\"TestEtag\",\"key\":\"TestKey1\",\"label\":null,\"content_type\":null,\"value\":null,\"tags\":{\"TestKey\":\"TestValue\"},\"locked\":false,\"last_modified\":\"2023-10-01T00:00:00.0000000\\u002B00:00\"},{\"etag\":\"TestEtag\",\"key\":\"TestKey2\",\"label\":null,\"content_type\":null,\"value\":null,\"tags\":{\"TestKey\":\"TestValue\"},\"locked\":false,\"last_modified\":\"2023-10-01T00:00:00.0000000\\u002B00:00\"}]}"
         },
         new object?[]
         {
@@ -260,7 +260,7 @@ public class ConfigurationSettingsResultTests
                     "TestValue",
                     new Dictionary<string, string> { { "TestKey", "TestValue" } })
             },
-            "{\"items\":[{\"etag\":\"TestEtag\",\"key\":\"TestKey1\",\"label\":\"TestLabel\",\"content_type\":\"TestContentType\",\"value\":\"TestValue\",\"tags\":{\"TestKey\":\"TestValue\"},\"locked\":false,\"last_modified\":\"2023-10-01T00:00:00.0000000+00:00\"},{\"etag\":\"TestEtag\",\"key\":\"TestKey2\",\"label\":\"TestLabel\",\"content_type\":\"TestContentType\",\"value\":\"TestValue\",\"tags\":{\"TestKey\":\"TestValue\"},\"locked\":false,\"last_modified\":\"2023-10-01T00:00:00.0000000+00:00\"}]}"
+            "{\"items\":[{\"etag\":\"TestEtag\",\"key\":\"TestKey1\",\"label\":\"TestLabel\",\"content_type\":\"TestContentType\",\"value\":\"TestValue\",\"tags\":{\"TestKey\":\"TestValue\"},\"locked\":false,\"last_modified\":\"2023-10-01T00:00:00.0000000\\u002B00:00\"},{\"etag\":\"TestEtag\",\"key\":\"TestKey2\",\"label\":\"TestLabel\",\"content_type\":\"TestContentType\",\"value\":\"TestValue\",\"tags\":{\"TestKey\":\"TestValue\"},\"locked\":false,\"last_modified\":\"2023-10-01T00:00:00.0000000\\u002B00:00\"}]}"
         }
     ];
 

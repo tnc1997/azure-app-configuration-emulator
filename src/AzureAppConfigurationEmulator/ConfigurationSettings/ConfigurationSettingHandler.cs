@@ -68,6 +68,7 @@ public class ConfigurationSettingHandler
         [FromServices] IConfigurationSettingRepository repository,
         [FromRoute] string key,
         [FromQuery] string label = LabelFilter.Null,
+        [FromQuery(Name = "$select")] string? select = default,
         [FromHeader(Name = "Accept-Datetime")] DateTimeOffset? acceptDatetime = default,
         [FromHeader(Name = "If-Match")] string? ifMatch = default,
         [FromHeader(Name = "If-None-Match")] string? ifNoneMatch = default,
@@ -75,6 +76,7 @@ public class ConfigurationSettingHandler
     {
         using var activity = Telemetry.ActivitySource.StartActivity($"{nameof(ConfigurationSettingHandler)}.{nameof(Get)}");
         activity?.SetTag(Telemetry.QueryLabel, label);
+        activity?.SetTag(Telemetry.QuerySelect, select);
         activity?.SetTag(Telemetry.HeaderAcceptDatetime, acceptDatetime);
 
         ifMatch = ifMatch?.TrimStart('"').TrimEnd('"');
@@ -101,19 +103,21 @@ public class ConfigurationSettingHandler
             return new NotModifiedResult();
         }
 
-        return new ConfigurationSettingResult(setting, acceptDatetime);
+        return new ConfigurationSettingResult(setting, acceptDatetime, select);
     }
 
     public static async Task<Results<ConfigurationSettingsResult, InvalidCharacterResult, TooManyValuesResult>> List(
         [FromServices] IConfigurationSettingRepository repository,
         [FromQuery] string key = KeyFilter.Any,
         [FromQuery] string label = LabelFilter.Any,
+        [FromQuery(Name = "$select")] string? select = default,
         [FromHeader(Name = "Accept-Datetime")] DateTimeOffset? acceptDatetime = default,
         CancellationToken cancellationToken = default)
     {
         using var activity = Telemetry.ActivitySource.StartActivity($"{nameof(ConfigurationSettingHandler)}.{nameof(List)}");
         activity?.SetTag(Telemetry.QueryKey, key);
         activity?.SetTag(Telemetry.QueryLabel, label);
+        activity?.SetTag(Telemetry.QuerySelect, select);
         activity?.SetTag(Telemetry.HeaderAcceptDatetime, acceptDatetime);
 
         if (key != KeyFilter.Any)
@@ -144,7 +148,7 @@ public class ConfigurationSettingHandler
 
         var settings = await repository.Get(key, label, acceptDatetime, cancellationToken).ToListAsync(cancellationToken);
 
-        return new ConfigurationSettingsResult(settings, acceptDatetime);
+        return new ConfigurationSettingsResult(settings, acceptDatetime, select);
     }
 
     public static async Task<Results<ConfigurationSettingResult, PreconditionFailedResult, ReadOnlyResult>> Set(

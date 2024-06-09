@@ -11,11 +11,13 @@ public class KeyHandler
     public static async Task<Results<KeysResult, InvalidCharacterResult, TooManyValuesResult>> List(
         [FromServices] IConfigurationSettingRepository repository,
         [FromQuery] string name = KeyFilter.Any,
+        [FromQuery(Name = "$select")] string? select = default,
         [FromHeader(Name = "Accept-Datetime")] DateTimeOffset? acceptDatetime = default,
         CancellationToken cancellationToken = default)
     {
         using var activity = Telemetry.ActivitySource.StartActivity($"{nameof(KeyHandler)}.{nameof(List)}");
         activity?.SetTag(Telemetry.QueryName, name);
+        activity?.SetTag(Telemetry.QuerySelect, select);
         activity?.SetTag(Telemetry.HeaderAcceptDatetime, acceptDatetime);
 
         if (name != KeyFilter.Any)
@@ -36,6 +38,6 @@ public class KeyHandler
             .Distinct()
             .ToListAsync(cancellationToken);
 
-        return new KeysResult(keys, acceptDatetime);
+        return new KeysResult(keys, acceptDatetime, select);
     }
 }

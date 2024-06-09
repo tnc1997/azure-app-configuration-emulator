@@ -1,10 +1,13 @@
+using System.Text.Json;
+using System.Text.Json.Serialization.Metadata;
 using AzureAppConfigurationEmulator.Common;
 
 namespace AzureAppConfigurationEmulator.ConfigurationSettings;
 
 public class ConfigurationSettingResult(
     ConfigurationSetting setting,
-    DateTimeOffset? mementoDatetime = default) :
+    DateTimeOffset? mementoDatetime = default,
+    string? select = default) :
     IResult,
     IContentTypeHttpResult,
     IStatusCodeHttpResult,
@@ -25,7 +28,19 @@ public class ConfigurationSettingResult(
             httpContext.Response.StatusCode = StatusCode.Value;
         }
 
-        await httpContext.Response.WriteAsJsonAsync(Value, options: default, ContentType);
+        await httpContext.Response.WriteAsJsonAsync(
+            Value,
+            new JsonSerializerOptions(JsonSerializerDefaults.Web)
+            {
+                TypeInfoResolver = new DefaultJsonTypeInfoResolver
+                {
+                    Modifiers =
+                    {
+                        new SelectJsonTypeInfoModifier(select?.Split(',')).Modify
+                    }
+                }
+            },
+            ContentType);
     }
 
     public string? ContentType => MediaType.ConfigurationSetting;
