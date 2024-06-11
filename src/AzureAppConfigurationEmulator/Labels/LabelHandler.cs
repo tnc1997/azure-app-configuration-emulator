@@ -11,6 +11,7 @@ public class LabelHandler
     public static async Task<Results<LabelsResult, InvalidCharacterResult, TooManyValuesResult>> List(
         [FromServices] IConfigurationSettingRepository repository,
         [FromQuery] string name = LabelFilter.Any,
+        [FromQuery(Name = "$select")] string? select = default,
         [FromHeader(Name = "Accept-Datetime")] DateTimeOffset? acceptDatetime = default,
         CancellationToken cancellationToken = default)
     {
@@ -36,6 +37,6 @@ public class LabelHandler
             .Distinct()
             .ToListAsync(cancellationToken);
 
-        return new LabelsResult(labels);
+        return new LabelsResult(labels, acceptDatetime, select);
     }
 }

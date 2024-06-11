@@ -58,10 +58,12 @@ The emulator is compatible with the following operations:
 |--------------------------|-----|
 | Get                      | ✔️  |
 | Get (Conditionally)      | ✔️  |
+| Get (Select Fields)      | ✔️  |
+| Get (Time-Based Access)  | ✔️  |
 | List                     | ✔️  |
 | List (Pagination)        | ❌   |
 | List (Filtering)         | ✔️  |
-| List (Select Fields)     | ❌   |
+| List (Select Fields)     | ✔️  |
 | List (Time-Based Access) | ✔️  |
 | Set                      | ✔️  |
 | Set (Conditionally)      | ✔️  |
@@ -75,7 +77,7 @@ The emulator is compatible with the following operations:
 | List                     | ✔️ |
 | List (Pagination)        | ❌  |
 | List (Filtering)         | ✔️ |
-| List (Select Fields)     | ❌  |
+| List (Select Fields)     | ✔️ |
 | List (Time-Based Access) | ✔️ |
 
 ### Labels
@@ -85,7 +87,7 @@ The emulator is compatible with the following operations:
 | List                     | ✔️ |
 | List (Pagination)        | ❌  |
 | List (Filtering)         | ✔️ |
-| List (Select Fields)     | ❌  |
+| List (Select Fields)     | ✔️ |
 | List (Time-Based Access) | ✔️ |
 
 ### Locks

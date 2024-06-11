@@ -27,6 +27,7 @@ public static class Telemetry
     public const string QueryKey = $"{Namespace}.query.key";
     public const string QueryLabel = $"{Namespace}.query.label";
     public const string QueryName = $"{Namespace}.query.name";
+    public const string QuerySelect = $"{Namespace}.query.select";
     public const string RouteKey = $"{Namespace}.route.key";
 
     private const string Namespace = "azure_app_configuration_emulator";
