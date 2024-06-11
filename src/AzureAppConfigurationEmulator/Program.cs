@@ -1,18 +1,14 @@
 using Azure.Messaging.EventGrid;
+using AzureAppConfigurationEmulator;
 using AzureAppConfigurationEmulator.Authentication.Hmac;
-using AzureAppConfigurationEmulator.Common.Abstractions;
+using AzureAppConfigurationEmulator.Common;
 using AzureAppConfigurationEmulator.Components;
 using AzureAppConfigurationEmulator.ConfigurationSettings;
-using AzureAppConfigurationEmulator.ConfigurationSettings.Messaging.EventGrid;
-using AzureAppConfigurationEmulator.Data.Abstractions;
-using AzureAppConfigurationEmulator.Data.Sqlite;
-using AzureAppConfigurationEmulator.Extensions;
+using AzureAppConfigurationEmulator.Data;
 using AzureAppConfigurationEmulator.Keys;
 using AzureAppConfigurationEmulator.Labels;
 using AzureAppConfigurationEmulator.Locks;
-using AzureAppConfigurationEmulator.Messaging.EventGrid.Abstractions;
-using AzureAppConfigurationEmulator.Messaging.EventGrid.HttpContext;
-using AzureAppConfigurationEmulator.Services;
+using AzureAppConfigurationEmulator.Messaging.EventGrid;
 using Microsoft.Extensions.Azure;
 using OpenTelemetry.Logs;
 using OpenTelemetry.Metrics;
@@ -53,8 +49,7 @@ builder.Services.AddOpenTelemetry()
     .WithTracing(tracing =>
     {
         tracing.AddAspNetCoreInstrumentation();
-        tracing.AddSource(AzureAppConfigurationEmulator.Authentication.Hmac.Telemetry.ActivitySource.Name);
-        tracing.AddSource(AzureAppConfigurationEmulator.Common.Telemetry.ActivitySource.Name);
+        tracing.AddSource(Telemetry.ActivitySource.Name);
         tracing.AddOtlpExporter();
     });
 
