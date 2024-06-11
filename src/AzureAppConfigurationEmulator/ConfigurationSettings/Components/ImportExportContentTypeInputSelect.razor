@@ -1,6 +1,5 @@
 @using System.Linq.Expressions
 @using AzureAppConfigurationEmulator.Common
-@using AzureAppConfigurationEmulator.Common.Components
 
 <AzureInputSelect AdditionalAttributes="@AdditionalAttributes" TValue="@string" Value="@Value" ValueChanged="@HandleValueChanged" ValueExpression="@ValueExpression">
     <option checked="@(Value is null)" value="">(No content type)</option>
