@@ -1,5 +1,4 @@
 @using System.Linq.Expressions
-@using AzureAppConfigurationEmulator.Common.Components
 
 <AzureInputSelect AdditionalAttributes="@AdditionalAttributes" TValue="@string?[]" Value="@Value" ValueChanged="@HandleValueChanged" ValueExpression="@ValueExpression">
     @if (Labels is not null)

@@ -1,7 +1,4 @@
-﻿@using AzureAppConfigurationEmulator.Common.Components
-@using Microsoft.AspNetCore.Components.Web
-
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 
 <head>
@@ -11,11 +8,11 @@
     <link rel="stylesheet" href="app.css"/>
     @* <link rel="stylesheet" href="AzureAppConfigurationEmulator.styles.css"/> *@
     <link rel="icon" type="image/png" href="favicon.png"/>
-    <HeadOutlet @rendermode="@RenderMode.InteractiveServer"/>
+    <HeadOutlet @rendermode="@InteractiveServer"/>
 </head>
 
 <body class="text-base bg-white text-mine-shaft dark:bg-cod-grey dark:text-desert-storm">
-<Routes @rendermode="@RenderMode.InteractiveServer"/>
+<Routes @rendermode="@InteractiveServer"/>
 <script src="_framework/blazor.web.js"></script>
 </body>
 
