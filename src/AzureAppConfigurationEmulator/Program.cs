@@ -1,3 +1,4 @@
+using System.Net.Http.Headers;
 using Azure.Messaging.EventGrid;
 using AzureAppConfigurationEmulator;
 using AzureAppConfigurationEmulator.Authentication.Hmac;
@@ -22,7 +23,29 @@ builder.Logging.AddOpenTelemetry(options =>
     options.AddOtlpExporter();
 });
 
-builder.Services.AddAuthentication().AddHmac();
+builder.Services.AddAuthentication(options =>
+    {
+        options.DefaultScheme = "MicrosoftEntraId";
+    })
+    .AddHmac()
+    .AddJwtBearer("MicrosoftEntraId", options =>
+    {
+        options.TokenValidationParameters.ValidateAudience = true;
+        options.TokenValidationParameters.ValidateIssuer = true;
+
+        options.ForwardDefaultSelector = context =>
+        {
+            if (AuthenticationHeaderValue.TryParse(context.Request.Headers.Authorization, out var value))
+            {
+                if (value.Scheme.Equals("HMAC-SHA256", StringComparison.OrdinalIgnoreCase))
+                {
+                    return HmacDefaults.AuthenticationScheme;
+                }
+            }
+
+            return null;
+        };
+    });
 
 builder.Services.AddAuthorization();
 
