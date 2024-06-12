@@ -1,0 +1,84 @@
+@inject IConfigurationSettingFactory ConfigurationSettingFactory
+@inject IDialogService DialogService
+@using AzureAppConfigurationEmulator.Common
+@using AzureAppConfigurationEmulator.ConfigurationSettings
+
+<AzureDialog>
+    <HeaderContent>
+        <AzureDialogHeader Subtitle="Create a new feature flag." Title="Create"/>
+    </HeaderContent>
+
+    <ChildContent>
+        <div class="flex flex-col gap-4 pb-4">
+            <label class="flex flex-col gap-1">
+                <div>Key <span class="text-alizarin-crimson">*</span></div>
+                <div class="flex flex-row gap-1">
+                    <div class="italic">.appconfig.featureflag/</div>
+                    <AzureInputText @bind-Value="Input.Key" name="@nameof(Input.Key)" required/>
+                </div>
+            </label>
+
+            <label class="flex flex-col gap-1">
+                <div>Value <span class="text-alizarin-crimson">*</span></div>
+                <div class="font-mono">
+                    <AzureInputTextArea @bind-Value="Input.Value" name="@nameof(Input.Value)" placeholder="@Placeholder" required rows="20"/>
+                </div>
+            </label>
+
+            <label class="flex flex-col gap-1">
+                <div>Label</div>
+                <AzureInputText @bind-Value="Input.Label" name="@nameof(Input.Label)" placeholder="(No label)"/>
+            </label>
+        </div>
+    </ChildContent>
+
+    <FooterContent>
+        <AzureDialogFooter>
+            <AzureButton Appearance="AzureButton.AzureAppearance.Primary" disabled="@(string.IsNullOrEmpty(Input.Key) || string.IsNullOrEmpty(Input.Value))" @onclick="@HandleCreateClick">Create</AzureButton>
+        </AzureDialogFooter>
+    </FooterContent>
+</AzureDialog>
+
+@code {
+    private const string Placeholder = @"{
+    ""id"": """",
+    ""description"": """",
+    ""enabled"": true,
+    ""conditions"": {
+        ""client_filters"": [
+            {
+                ""name"": ""Microsoft.Targeting"",
+                ""parameters"": {
+                    ""Audience"": {
+                        ""DefaultRolloutPercentage"": 50
+                    }
+                }
+            }
+        ]
+    }
+}";
+
+    [CascadingParameter] public IDialogReference DialogReference { get; set; } = null!;
+
+    private InputModel Input { get; } = new();
+
+    private async Task HandleCreateClick(MouseEventArgs args)
+    {
+        if (!string.IsNullOrEmpty(Input.Key))
+        {
+            var setting = ConfigurationSettingFactory.Create($".appconfig.featureflag/{Input.Key}", Input.Label, $"{MediaType.FeatureFlag};charset=utf-8", Input.Value);
+
+            await DialogService.Close(DialogReference, new DialogResult(setting));
+        }
+    }
+
+    private class InputModel
+    {
+        public string? Key { get; set; }
+
+        public string? Value { get; set; }
+
+        public string? Label { get; set; }
+    }
+
+}

@@ -1,43 +1,11 @@
 ﻿Microsoft Visual Studio Solution File, Format Version 12.00
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AzureAppConfigurationEmulator", "src\AzureAppConfigurationEmulator\AzureAppConfigurationEmulator.csproj", "{AA269720-3A03-4E1D-B0AD-CF94EA82DDD6}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{71AF9625-E82F-4219-9E10-30B0F437298E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AzureAppConfigurationEmulator", "src\AzureAppConfigurationEmulator\AzureAppConfigurationEmulator.csproj", "{AA269720-3A03-4E1D-B0AD-CF94EA82DDD6}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{718C10CB-FCE6-4F27-8B11-B2DE9F155112}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AzureAppConfigurationEmulator.Locks.Tests", "tests\AzureAppConfigurationEmulator.Locks.Tests\AzureAppConfigurationEmulator.Locks.Tests.csproj", "{8F0B0780-F336-4F12-89E4-7C7B3ED95563}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AzureAppConfigurationEmulator.ConfigurationSettings", "src\AzureAppConfigurationEmulator.ConfigurationSettings\AzureAppConfigurationEmulator.ConfigurationSettings.csproj", "{9DE7A5DD-1775-4DBE-826C-E0D9FD48413A}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AzureAppConfigurationEmulator.Data.Abstractions", "src\AzureAppConfigurationEmulator.Data.Abstractions\AzureAppConfigurationEmulator.Data.Abstractions.csproj", "{80FAC543-A1C1-4C31-B70A-F7BDEFA430D5}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AzureAppConfigurationEmulator.Common", "src\AzureAppConfigurationEmulator.Common\AzureAppConfigurationEmulator.Common.csproj", "{D47DF49D-7E7E-4BC9-8D34-7C794F0B3E0F}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AzureAppConfigurationEmulator.Data.Sqlite", "src\AzureAppConfigurationEmulator.Data.Sqlite\AzureAppConfigurationEmulator.Data.Sqlite.csproj", "{BE282A30-8281-4EAC-983E-2A4065770972}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AzureAppConfigurationEmulator.Authentication.Hmac", "src\AzureAppConfigurationEmulator.Authentication.Hmac\AzureAppConfigurationEmulator.Authentication.Hmac.csproj", "{B110160E-3C15-4A90-9D22-915E6FA2F5F0}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AzureAppConfigurationEmulator.Keys", "src\AzureAppConfigurationEmulator.Keys\AzureAppConfigurationEmulator.Keys.csproj", "{05D39887-7EA3-442F-9703-47FE37182FA5}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AzureAppConfigurationEmulator.Labels", "src\AzureAppConfigurationEmulator.Labels\AzureAppConfigurationEmulator.Labels.csproj", "{002C7693-0F8C-4041-9890-EC1B483E98C8}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AzureAppConfigurationEmulator.Locks", "src\AzureAppConfigurationEmulator.Locks\AzureAppConfigurationEmulator.Locks.csproj", "{E489B255-4867-4C20-BD8C-905C17906E75}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AzureAppConfigurationEmulator.Data.Sqlite.Tests", "tests\AzureAppConfigurationEmulator.Data.Sqlite.Tests\AzureAppConfigurationEmulator.Data.Sqlite.Tests.csproj", "{490910F4-80AB-4F08-A7B3-B9BA109647A4}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AzureAppConfigurationEmulator.ConfigurationSettings.Tests", "tests\AzureAppConfigurationEmulator.ConfigurationSettings.Tests\AzureAppConfigurationEmulator.ConfigurationSettings.Tests.csproj", "{49E59AC0-95D7-4447-B44D-08D4C9B44324}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AzureAppConfigurationEmulator.ConfigurationSettings.Messaging.EventGrid", "src\AzureAppConfigurationEmulator.ConfigurationSettings.Messaging.EventGrid\AzureAppConfigurationEmulator.ConfigurationSettings.Messaging.EventGrid.csproj", "{A7321499-E777-489C-B0C2-8D980F91B297}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AzureAppConfigurationEmulator.ConfigurationSettings.Messaging.EventGrid.Tests", "tests\AzureAppConfigurationEmulator.ConfigurationSettings.Messaging.EventGrid.Tests\AzureAppConfigurationEmulator.ConfigurationSettings.Messaging.EventGrid.Tests.csproj", "{B60CC5E7-AD5A-43D8-A444-C97B2260C57E}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AzureAppConfigurationEmulator.Messaging.EventGrid.Abstractions", "src\AzureAppConfigurationEmulator.Messaging.EventGrid.Abstractions\AzureAppConfigurationEmulator.Messaging.EventGrid.Abstractions.csproj", "{9C97FFE4-3FE2-41AB-9478-F6B91D12DD68}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AzureAppConfigurationEmulator.Messaging.EventGrid.HttpContext", "src\AzureAppConfigurationEmulator.Messaging.EventGrid.HttpContext\AzureAppConfigurationEmulator.Messaging.EventGrid.HttpContext.csproj", "{48F4B253-F37F-4875-8565-257A3135C176}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AzureAppConfigurationEmulator.Messaging.EventGrid.HttpContext.Tests", "tests\AzureAppConfigurationEmulator.Messaging.EventGrid.HttpContext.Tests\AzureAppConfigurationEmulator.Messaging.EventGrid.HttpContext.Tests.csproj", "{D785575A-8368-419F-9CF8-B7287D68596B}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AzureAppConfigurationEmulator.Common.Tests", "tests\AzureAppConfigurationEmulator.Common.Tests\AzureAppConfigurationEmulator.Common.Tests.csproj", "{A2387A05-12B5-4684-B21A-F568620A94B7}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AzureAppConfigurationEmulator.Tests", "tests\AzureAppConfigurationEmulator.Tests\AzureAppConfigurationEmulator.Tests.csproj", "{A2387A05-12B5-4684-B21A-F568620A94B7}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -49,70 +17,6 @@ Global
 		{AA269720-3A03-4E1D-B0AD-CF94EA82DDD6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{AA269720-3A03-4E1D-B0AD-CF94EA82DDD6}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{AA269720-3A03-4E1D-B0AD-CF94EA82DDD6}.Release|Any CPU.Build.0 = Release|Any CPU
-		{8F0B0780-F336-4F12-89E4-7C7B3ED95563}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{8F0B0780-F336-4F12-89E4-7C7B3ED95563}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{8F0B0780-F336-4F12-89E4-7C7B3ED95563}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{8F0B0780-F336-4F12-89E4-7C7B3ED95563}.Release|Any CPU.Build.0 = Release|Any CPU
-		{9DE7A5DD-1775-4DBE-826C-E0D9FD48413A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{9DE7A5DD-1775-4DBE-826C-E0D9FD48413A}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{9DE7A5DD-1775-4DBE-826C-E0D9FD48413A}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{9DE7A5DD-1775-4DBE-826C-E0D9FD48413A}.Release|Any CPU.Build.0 = Release|Any CPU
-		{80FAC543-A1C1-4C31-B70A-F7BDEFA430D5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{80FAC543-A1C1-4C31-B70A-F7BDEFA430D5}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{80FAC543-A1C1-4C31-B70A-F7BDEFA430D5}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{80FAC543-A1C1-4C31-B70A-F7BDEFA430D5}.Release|Any CPU.Build.0 = Release|Any CPU
-		{D47DF49D-7E7E-4BC9-8D34-7C794F0B3E0F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{D47DF49D-7E7E-4BC9-8D34-7C794F0B3E0F}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{D47DF49D-7E7E-4BC9-8D34-7C794F0B3E0F}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{D47DF49D-7E7E-4BC9-8D34-7C794F0B3E0F}.Release|Any CPU.Build.0 = Release|Any CPU
-		{BE282A30-8281-4EAC-983E-2A4065770972}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{BE282A30-8281-4EAC-983E-2A4065770972}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{BE282A30-8281-4EAC-983E-2A4065770972}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{BE282A30-8281-4EAC-983E-2A4065770972}.Release|Any CPU.Build.0 = Release|Any CPU
-		{B110160E-3C15-4A90-9D22-915E6FA2F5F0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{B110160E-3C15-4A90-9D22-915E6FA2F5F0}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{B110160E-3C15-4A90-9D22-915E6FA2F5F0}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{B110160E-3C15-4A90-9D22-915E6FA2F5F0}.Release|Any CPU.Build.0 = Release|Any CPU
-		{05D39887-7EA3-442F-9703-47FE37182FA5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{05D39887-7EA3-442F-9703-47FE37182FA5}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{05D39887-7EA3-442F-9703-47FE37182FA5}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{05D39887-7EA3-442F-9703-47FE37182FA5}.Release|Any CPU.Build.0 = Release|Any CPU
-		{002C7693-0F8C-4041-9890-EC1B483E98C8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{002C7693-0F8C-4041-9890-EC1B483E98C8}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{002C7693-0F8C-4041-9890-EC1B483E98C8}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{002C7693-0F8C-4041-9890-EC1B483E98C8}.Release|Any CPU.Build.0 = Release|Any CPU
-		{E489B255-4867-4C20-BD8C-905C17906E75}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{E489B255-4867-4C20-BD8C-905C17906E75}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{E489B255-4867-4C20-BD8C-905C17906E75}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{E489B255-4867-4C20-BD8C-905C17906E75}.Release|Any CPU.Build.0 = Release|Any CPU
-		{490910F4-80AB-4F08-A7B3-B9BA109647A4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{490910F4-80AB-4F08-A7B3-B9BA109647A4}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{490910F4-80AB-4F08-A7B3-B9BA109647A4}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{490910F4-80AB-4F08-A7B3-B9BA109647A4}.Release|Any CPU.Build.0 = Release|Any CPU
-		{49E59AC0-95D7-4447-B44D-08D4C9B44324}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{49E59AC0-95D7-4447-B44D-08D4C9B44324}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{49E59AC0-95D7-4447-B44D-08D4C9B44324}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{49E59AC0-95D7-4447-B44D-08D4C9B44324}.Release|Any CPU.Build.0 = Release|Any CPU
-		{A7321499-E777-489C-B0C2-8D980F91B297}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{A7321499-E777-489C-B0C2-8D980F91B297}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{A7321499-E777-489C-B0C2-8D980F91B297}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{A7321499-E777-489C-B0C2-8D980F91B297}.Release|Any CPU.Build.0 = Release|Any CPU
-		{9C97FFE4-3FE2-41AB-9478-F6B91D12DD68}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{9C97FFE4-3FE2-41AB-9478-F6B91D12DD68}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{9C97FFE4-3FE2-41AB-9478-F6B91D12DD68}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{9C97FFE4-3FE2-41AB-9478-F6B91D12DD68}.Release|Any CPU.Build.0 = Release|Any CPU
-		{48F4B253-F37F-4875-8565-257A3135C176}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{48F4B253-F37F-4875-8565-257A3135C176}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{48F4B253-F37F-4875-8565-257A3135C176}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{48F4B253-F37F-4875-8565-257A3135C176}.Release|Any CPU.Build.0 = Release|Any CPU
-		{D785575A-8368-419F-9CF8-B7287D68596B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{D785575A-8368-419F-9CF8-B7287D68596B}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{D785575A-8368-419F-9CF8-B7287D68596B}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{D785575A-8368-419F-9CF8-B7287D68596B}.Release|Any CPU.Build.0 = Release|Any CPU
-		{B60CC5E7-AD5A-43D8-A444-C97B2260C57E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{B60CC5E7-AD5A-43D8-A444-C97B2260C57E}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{B60CC5E7-AD5A-43D8-A444-C97B2260C57E}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{B60CC5E7-AD5A-43D8-A444-C97B2260C57E}.Release|Any CPU.Build.0 = Release|Any CPU
 		{A2387A05-12B5-4684-B21A-F568620A94B7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{A2387A05-12B5-4684-B21A-F568620A94B7}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A2387A05-12B5-4684-B21A-F568620A94B7}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -120,22 +24,6 @@ Global
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{AA269720-3A03-4E1D-B0AD-CF94EA82DDD6} = {71AF9625-E82F-4219-9E10-30B0F437298E}
-		{8F0B0780-F336-4F12-89E4-7C7B3ED95563} = {718C10CB-FCE6-4F27-8B11-B2DE9F155112}
-		{9DE7A5DD-1775-4DBE-826C-E0D9FD48413A} = {71AF9625-E82F-4219-9E10-30B0F437298E}
-		{80FAC543-A1C1-4C31-B70A-F7BDEFA430D5} = {71AF9625-E82F-4219-9E10-30B0F437298E}
-		{D47DF49D-7E7E-4BC9-8D34-7C794F0B3E0F} = {71AF9625-E82F-4219-9E10-30B0F437298E}
-		{BE282A30-8281-4EAC-983E-2A4065770972} = {71AF9625-E82F-4219-9E10-30B0F437298E}
-		{B110160E-3C15-4A90-9D22-915E6FA2F5F0} = {71AF9625-E82F-4219-9E10-30B0F437298E}
-		{05D39887-7EA3-442F-9703-47FE37182FA5} = {71AF9625-E82F-4219-9E10-30B0F437298E}
-		{002C7693-0F8C-4041-9890-EC1B483E98C8} = {71AF9625-E82F-4219-9E10-30B0F437298E}
-		{E489B255-4867-4C20-BD8C-905C17906E75} = {71AF9625-E82F-4219-9E10-30B0F437298E}
-		{490910F4-80AB-4F08-A7B3-B9BA109647A4} = {718C10CB-FCE6-4F27-8B11-B2DE9F155112}
-		{49E59AC0-95D7-4447-B44D-08D4C9B44324} = {718C10CB-FCE6-4F27-8B11-B2DE9F155112}
-		{A7321499-E777-489C-B0C2-8D980F91B297} = {71AF9625-E82F-4219-9E10-30B0F437298E}
-		{9C97FFE4-3FE2-41AB-9478-F6B91D12DD68} = {71AF9625-E82F-4219-9E10-30B0F437298E}
-		{48F4B253-F37F-4875-8565-257A3135C176} = {71AF9625-E82F-4219-9E10-30B0F437298E}
-		{D785575A-8368-419F-9CF8-B7287D68596B} = {718C10CB-FCE6-4F27-8B11-B2DE9F155112}
-		{B60CC5E7-AD5A-43D8-A444-C97B2260C57E} = {718C10CB-FCE6-4F27-8B11-B2DE9F155112}
 		{A2387A05-12B5-4684-B21A-F568620A94B7} = {718C10CB-FCE6-4F27-8B11-B2DE9F155112}
 	EndGlobalSection
 EndGlobal

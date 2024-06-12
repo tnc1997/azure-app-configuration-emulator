@@ -5,9 +5,8 @@
 @using System.Text
 @using System.Text.Json
 @using AzureAppConfigurationEmulator.Authentication.Hmac
-@using AzureAppConfigurationEmulator.Common.Abstractions
-@using AzureAppConfigurationEmulator.Common.Clients
-@using AzureAppConfigurationEmulator.Common.Constants
+@using AzureAppConfigurationEmulator.Common
+@using AzureAppConfigurationEmulator.ConfigurationSettings
 @using OpenTelemetry.Trace
 
 <PageTitle>Import/export</PageTitle>
@@ -190,7 +189,7 @@
 
     private async Task HandleSourceConnectionStringChange(string? connectionString)
     {
-        using var activity = Common.Telemetry.ActivitySource.StartActivity($"{nameof(ImportExport)}.{nameof(HandleSourceConnectionStringChange)}");
+        using var activity = Telemetry.ActivitySource.StartActivity($"{nameof(ImportExport)}.{nameof(HandleSourceConnectionStringChange)}");
 
         if (Model is not null)
         {
@@ -231,7 +230,7 @@
 
     private async Task HandleSubmit()
     {
-        using var activity = Common.Telemetry.ActivitySource.StartActivity($"{nameof(ImportExport)}.{nameof(HandleSubmit)}");
+        using var activity = Telemetry.ActivitySource.StartActivity($"{nameof(ImportExport)}.{nameof(HandleSubmit)}");
 
         switch (Model?.Operation)
         {

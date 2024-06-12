@@ -1,14 +1,15 @@
 @attribute [StreamRendering]
 @inject IConfigurationSettingRepository ConfigurationSettingRepository
+@inject IDialogService DialogService
 @page "/ff"
-@using AzureAppConfigurationEmulator.Common.Abstractions
-@using AzureAppConfigurationEmulator.Common.Models
+@using AzureAppConfigurationEmulator.Common
+@using AzureAppConfigurationEmulator.ConfigurationSettings
 
 <PageTitle>Feature manager</PageTitle>
 
 <div class="flex flex-col">
     <AzureToolbar>
-        <AzureToolbarButton IsDisabled="true" Label="Create"/>
+        <AzureToolbarButton Label="Create" OnClick="@HandleCreateClick"/>
         <AzureToolbarButton Label="Refresh" OnClick="@HandleRefreshClick"/>
 
         <AzureToolbarDivider/>
@@ -65,6 +66,19 @@
     private async Task HandleConfigurationSettingChange(FeatureFlagConfigurationSetting setting)
     {
         await ConfigurationSettingRepository.Update(setting);
+    }
+
+    private async Task HandleCreateClick(MouseEventArgs args)
+    {
+        var reference = await DialogService.Show<FeatureFlagConfigurationSettingCreateDialog>();
+        var result = await reference.Result;
+        if (result is { Data: FeatureFlagConfigurationSetting setting })
+        {
+            await ConfigurationSettingRepository.Add(setting);
+
+            ConfigurationSettings.Add(setting);
+            StateHasChanged();
+        }
     }
 
     private async Task HandleDeleteClick(MouseEventArgs args)

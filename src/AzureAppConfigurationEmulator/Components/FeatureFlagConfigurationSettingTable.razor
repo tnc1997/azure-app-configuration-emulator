@@ -1,6 +1,6 @@
 @using System.Security.Cryptography
 @using System.Text
-@using AzureAppConfigurationEmulator.Common.Models
+@using AzureAppConfigurationEmulator.ConfigurationSettings
 
 <AzureTable Items="@ConfigurationSettings" SelectedItems="@SelectedConfigurationSettings" SelectedItemsChanged="@SelectedConfigurationSettingsChanged" TItem="@FeatureFlagConfigurationSetting">
     <HeaderContent>
