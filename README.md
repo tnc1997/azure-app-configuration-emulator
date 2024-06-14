@@ -349,3 +349,37 @@ services:
       - ./emulator.crt:/usr/local/share/azureappconfigurationemulator/emulator.crt:ro
       - ./emulator.key:/usr/local/share/azureappconfigurationemulator/emulator.key:ro
 ```
+
+## Testcontainers
+
+The emulator integrates with [Testcontainers](https://testcontainers.org) to ease the integration testing of applications that use Azure App Configuration.
+
+```csharp
+var container = new ContainerBuilder()
+    .WithImage("tnc1997/azure-app-configuration-emulator:1.0")
+    .WithPortBinding(8080, true)
+    .WithWaitStrategy(Wait.ForUnixContainer().UntilMessageIsLogged("Now listening on"))
+    .Build();
+
+await container.StartAsync();
+
+var client = new ConfigurationClient($"Endpoint={new UriBuilder(Uri.UriSchemeHttp, container.Hostname, container.GetMappedPublicPort(8080))};Id=abcd;Secret=c2VjcmV0");
+
+await client.SetConfigurationSettingAsync(nameof(ConfigurationSetting.Key), nameof(ConfigurationSetting.Value));
+
+var response = await client.GetConfigurationSettingAsync(nameof(ConfigurationSetting.Key));
+```
+
+**Coming Soon** [testcontainers/testcontainers-dotnet#1198](https://github.com/testcontainers/testcontainers-dotnet/issues/1198)
+
+```csharp
+var container = new AzureAppConfigurationBuilder().Build();
+
+await container.StartAsync();
+
+var client = new ConfigurationClient(container.GetConnectionString());
+
+await client.SetConfigurationSettingAsync(nameof(ConfigurationSetting.Key), nameof(ConfigurationSetting.Value));
+
+var response = await client.GetConfigurationSettingAsync(nameof(ConfigurationSetting.Key));
+```
