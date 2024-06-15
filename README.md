@@ -338,12 +338,18 @@ openssl req -x509 -out ./emulator.crt -keyout ./emulator.key -newkey rsa:2048 -n
 
 The port for HTTPS must be set using the environment variable [`ASPNETCORE_HTTPS_PORTS`](https://learn.microsoft.com/aspnet/core/security/enforcing-ssl#port-configuration).
 
+The paths for the certificate and key must be set using the environment variables `Kestrel__Certificates__Default__Path` and `Kestrel__Certificates__Default__KeyPath` respectively.
+
+The certificate and key must be [mounted](https://docs.docker.com/storage/bind-mounts) into the container at the paths that are set above.
+
 ```yaml
 services:
   azure-app-configuration-emulator:
     environment:
       - ASPNETCORE_HTTP_PORTS=8080
       - ASPNETCORE_HTTPS_PORTS=8081
+      - Kestrel__Certificates__Default__Path=/usr/local/share/azureappconfigurationemulator/emulator.crt
+      - Kestrel__Certificates__Default__KeyPath=/usr/local/share/azureappconfigurationemulator/emulator.key
     image: tnc1997/azure-app-configuration-emulator
     volumes:
       - ./emulator.crt:/usr/local/share/azureappconfigurationemulator/emulator.crt:ro

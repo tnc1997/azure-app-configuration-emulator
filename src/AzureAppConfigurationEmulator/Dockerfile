@@ -9,6 +9,7 @@ FROM build AS publish
 RUN dotnet publish "./src/AzureAppConfigurationEmulator/AzureAppConfigurationEmulator.csproj" --configuration Release --output /app/publish
 
 FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS final
+ENV ConnectionStrings__DefaultConnection="Data Source=/var/lib/azureappconfigurationemulator/emulator.db"
 WORKDIR /app
 COPY --from=publish /app/publish .
 ENTRYPOINT ["dotnet", "AzureAppConfigurationEmulator.dll"]

@@ -6,6 +6,8 @@ on:
 jobs:
   create_release:
     name: Create release
+    outputs:
+      upload_url: ${{ steps.create_release.outputs.upload_url }}
     runs-on: ubuntu-latest
     steps:
       - name: Create release
@@ -16,6 +18,30 @@ jobs:
         with:
           release_name: ${{ github.ref }}
           tag_name: ${{ github.ref }}
+  publish_windows:
+    name: Publish Windows
+    needs:
+      - create_release
+    runs-on: windows-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      - name: Publish Windows
+        run: dotnet publish --configuration "Release" --runtime "win-${{ matrix.architecture }}" --self-contained "false" ".\src\AzureAppConfigurationEmulator\AzureAppConfigurationEmulator.csproj"
+      - name: Create installer
+        run: . "${env:ProgramFiles(x86)}\Inno Setup 6\iscc.exe" "/DArchitecture=${{ matrix.architecture }}" ".\setup.iss"
+      - name: Upload release asset
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        uses: actions/upload-release-asset@v1
+        with:
+          asset_content_type: application/vnd.microsoft.portable-executable
+          asset_name: azure-app-configuration-emulator-windows-${{ matrix.architecture }}.exe
+          asset_path: .\Output\mysetup.exe
+          upload_url: ${{ needs.create_release.outputs.upload_url }}
+    strategy:
+      matrix:
+        architecture: [arm64, x64]
   push_to_registry:
     name: Push to registry
     needs:

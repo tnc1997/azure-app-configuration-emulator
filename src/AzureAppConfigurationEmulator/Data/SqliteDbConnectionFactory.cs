@@ -9,12 +9,12 @@ public class SqliteDbConnectionFactory(IConfiguration? configuration = null) : I
 
     private static string DatabasePath { get; } = Environment.OSVersion.Platform switch
     {
-        PlatformID.Win32S => @"C:\ProgramData\Azure App Configuration Emulator\emulator.db",
-        PlatformID.Win32Windows => @"C:\ProgramData\Azure App Configuration Emulator\emulator.db",
-        PlatformID.Win32NT => @"C:\ProgramData\Azure App Configuration Emulator\emulator.db",
-        PlatformID.WinCE => @"C:\ProgramData\Azure App Configuration Emulator\emulator.db",
-        PlatformID.Unix => "/var/lib/azureappconfigurationemulator/emulator.db",
-        PlatformID.MacOSX => "/var/lib/azureappconfigurationemulator/emulator.db",
+        PlatformID.Win32S => Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "Thomas Clark", "Emulator for Azure App Configuration", "emulator.db"),
+        PlatformID.Win32Windows => Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "Thomas Clark", "Emulator for Azure App Configuration", "emulator.db"),
+        PlatformID.Win32NT => Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "Thomas Clark", "Emulator for Azure App Configuration", "emulator.db"),
+        PlatformID.WinCE => Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "Thomas Clark", "Emulator for Azure App Configuration", "emulator.db"),
+        PlatformID.Unix => Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "azureappconfigurationemulator", "emulator.db"),
+        PlatformID.MacOSX => Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "azureappconfigurationemulator", "emulator.db"),
         _ => throw new ArgumentOutOfRangeException()
     };
 
