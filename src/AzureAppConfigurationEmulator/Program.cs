@@ -87,8 +87,6 @@ builder.Services.AddSingleton<IDbConnectionFactory, SqliteDbConnectionFactory>()
 builder.Services.AddSingleton<IDbParameterFactory, SqliteDbParameterFactory>();
 builder.Services.AddSingleton<IEventGridEventFactory, HttpContextEventGridEventFactory>();
 
-builder.WebHost.ConfigureKestrel();
-
 var app = builder.Build();
 
 app.Map("/_explorer", app =>
