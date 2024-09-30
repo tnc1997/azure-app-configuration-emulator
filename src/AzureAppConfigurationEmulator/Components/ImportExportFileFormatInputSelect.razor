@@ -2,9 +2,9 @@
 
 <AzureInputSelect AdditionalAttributes="@AdditionalAttributes" TValue="@string" Value="@Value" ValueChanged="@HandleValueChanged" ValueExpression="@ValueExpression">
     <option checked="@(Value is null)" hidden value="">Please select a file type</option>
-    <option checked="@(Value is FileType.Json)" value="@FileType.Json">Json</option>
-    <option checked="@(Value is FileType.Yaml)" disabled value="@FileType.Yaml">Yaml</option>
-    <option checked="@(Value is FileType.Properties)" disabled value="@FileType.Properties">Properties</option>
+    <option checked="@(Value is FileFormat.Json)" value="@FileFormat.Json">Json</option>
+    <option checked="@(Value is FileFormat.Yaml)" disabled value="@FileFormat.Yaml">Yaml</option>
+    <option checked="@(Value is FileFormat.Properties)" disabled value="@FileFormat.Properties">Properties</option>
 </AzureInputSelect>
 
 @code {
@@ -21,7 +21,7 @@
         await ValueChanged.InvokeAsync(!string.IsNullOrEmpty(value) ? value : null);
     }
 
-    public static class FileType
+    public static class FileFormat
     {
         public const string Json = ".json";
 

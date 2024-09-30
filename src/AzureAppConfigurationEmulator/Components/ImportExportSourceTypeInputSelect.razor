@@ -2,9 +2,9 @@
 
 <AzureInputSelect AdditionalAttributes="@AdditionalAttributes" TValue="@string" Value="@Value" ValueChanged="@HandleValueChanged" ValueExpression="@ValueExpression">
     <option checked="@(Value is null)" hidden value="">Please select a source service</option>
-    <option checked="@(Value is SourceService.AzureAppConfiguration)" value="@SourceService.AzureAppConfiguration">App Configuration</option>
-    <option checked="@(Value is SourceService.AzureAppService)" disabled value="@SourceService.AzureAppService">App Service</option>
-    <option checked="@(Value is SourceService.ConfigurationFile)" value="@SourceService.ConfigurationFile">Configuration file</option>
+    <option checked="@(Value is SourceType.AzureAppConfiguration)" value="@SourceType.AzureAppConfiguration">App Configuration</option>
+    <option checked="@(Value is SourceType.AzureAppService)" disabled value="@SourceType.AzureAppService">App Service</option>
+    <option checked="@(Value is SourceType.ConfigurationFile)" value="@SourceType.ConfigurationFile">Configuration file</option>
 </AzureInputSelect>
 
 @code {
@@ -21,7 +21,7 @@
         await ValueChanged.InvokeAsync(!string.IsNullOrEmpty(value) ? value : null);
     }
 
-    public static class SourceService
+    public static class SourceType
     {
         public const string AzureAppConfiguration = nameof(AzureAppConfiguration);
 
