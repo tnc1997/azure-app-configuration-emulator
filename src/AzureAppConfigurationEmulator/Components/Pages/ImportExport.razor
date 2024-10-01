@@ -17,46 +17,72 @@
     </AzureToolbar>
 
     <div class="p-5">
-        <EditForm class="flex flex-col gap-4 items-stretch pb-4" Model="@Model" OnSubmit="@HandleSubmit">
-            <ImportExportOperationInputRadioGroup @bind-Value="@Model!.Operation" name="@nameof(Model.Operation)"/>
-
-            @switch (Model.Operation)
+        <EditForm class="flex flex-col gap-10" Model="@Model" OnSubmit="@HandleSubmit">
+            @switch (Model?.Operation)
             {
                 case ImportExportOperationInputRadioGroup.Operation.Import:
-                    <label class="flex flex-col gap-1">
-                        <div>Source service</div>
-                        <ImportExportSourceServiceInputSelect @bind-Value="@Model.SourceService" name="@nameof(Model.SourceService)"/>
-                    </label>
+                    <div class="flex flex-col gap-3">
+                        <ImportExportOperationInputRadioGroup @bind-Value="@Model.Operation" name="@nameof(Model.Operation)"/>
 
-                    switch (Model.SourceService)
+                        <label class="flex flex-row items-center">
+                            <div class="w-[200px]">Source type</div>
+                            <div class="flex-1 max-w-[600px]">
+                                <ImportExportSourceTypeInputSelect @bind-Value="@Model.SourceType" name="@nameof(Model.SourceType)"/>
+                            </div>
+                        </label>
+                    </div>
+
+                    switch (Model.SourceType)
                     {
-                        case ImportExportSourceServiceInputSelect.SourceService.AzureAppConfiguration:
-                            <label class="flex flex-col gap-1">
-                                <div>Source connection string</div>
-                                <AzureInputText name="@nameof(Model.SourceConnectionString)" Value="@Model.SourceConnectionString" ValueChanged="@HandleSourceConnectionStringChange" ValueExpression="@(() => Model.SourceConnectionString)"/>
-                            </label>
+                        case ImportExportSourceTypeInputSelect.SourceType.AzureAppConfiguration:
+                            <div class="flex flex-col gap-3">
+                                <div class="font-bold text-lg">Select source</div>
+
+                                <label class="flex flex-row items-center">
+                                    <div class="w-[200px]">Connection string</div>
+                                    <div class="flex-1 max-w-[600px]">
+                                        <AzureInputText name="@nameof(Model.SourceConnectionString)" Value="@Model.SourceConnectionString" ValueChanged="@HandleSourceConnectionStringChange" ValueExpression="@(() => Model.SourceConnectionString)"/>
+                                    </div>
+                                </label>
+                            </div>
 
                             if (!string.IsNullOrEmpty(Model.SourceConnectionString) && Labels is { Count: > 0 })
                             {
-                                <label class="flex flex-col gap-1">
-                                    <div>Key filter</div>
-                                    <AzureInputText @bind-Value="@Model.KeyFilter" name="@nameof(Model.KeyFilter)" placeholder="abc | abc,xyz,..."/>
-                                </label>
+                                <div class="flex flex-col gap-3">
+                                    <div class="font-bold text-lg">Select key-values</div>
 
-                                <label class="flex flex-col gap-1">
-                                    <div>Prefix</div>
-                                    <AzureInputText @bind-Value="@Model.Prefix" name="@nameof(Model.Prefix)"/>
-                                </label>
+                                    <label class="flex flex-row items-center">
+                                        <div class="w-[200px]">Key filter</div>
+                                        <div class="flex-1 max-w-[600px]">
+                                            <AzureInputText @bind-Value="@Model.KeyFilter" name="@nameof(Model.KeyFilter)" placeholder="abc | abc,xyz,..."/>
+                                        </div>
+                                    </label>
 
-                                <label class="flex flex-col gap-1">
-                                    <div>At a specific time</div>
-                                    <AzureInputDate @bind-Value="@Model.Moment" name="@nameof(Model.Moment)" Type="@InputDateType.DateTimeLocal"/>
-                                </label>
+                                    <label class="flex flex-row items-center">
+                                        <div class="w-[200px]">At a specific time</div>
+                                        <div class="flex-1 max-w-[600px]">
+                                            <AzureInputDate @bind-Value="@Model.Moment" name="@nameof(Model.Moment)" Type="@InputDateType.DateTimeLocal"/>
+                                        </div>
+                                    </label>
 
-                                <label class="flex flex-col gap-1">
-                                    <div>From label</div>
-                                    <ImportExportLabelFilterInputSelect @bind-Value="@Model.LabelFilter" Labels="@Labels" name="@nameof(Model.LabelFilter)"/>
-                                </label>
+                                    <label class="flex flex-row items-center">
+                                        <div class="w-[200px]">From label</div>
+                                        <div class="flex-1 max-w-[600px]">
+                                            <ImportExportLabelFilterInputSelect @bind-Value="@Model.LabelFilter" Labels="@Labels" name="@nameof(Model.LabelFilter)"/>
+                                        </div>
+                                    </label>
+                                </div>
+
+                                <div class="flex flex-col gap-3">
+                                    <div class="font-bold text-lg">Apply changes to key-values</div>
+
+                                    <label class="flex flex-row items-center">
+                                        <div class="w-[200px]">Add prefix</div>
+                                        <div class="flex-1 max-w-[600px]">
+                                            <AzureInputText @bind-Value="@Model.Prefix" name="@nameof(Model.Prefix)"/>
+                                        </div>
+                                    </label>
+                                </div>
 
                                 <div>
                                     <AzureButton Appearance="AzureButton.AzureAppearance.Primary" type="submit">@(Model.Operation switch { ImportExportOperationInputRadioGroup.Operation.Export => "Export", ImportExportOperationInputRadioGroup.Operation.Import => "Import", _ => throw new ArgumentOutOfRangeException() })</AzureButton>
@@ -64,41 +90,61 @@
                             }
 
                             break;
-                        case ImportExportSourceServiceInputSelect.SourceService.ConfigurationFile:
-                            <label class="flex flex-col gap-1">
-                                <div>File type</div>
-                                <ImportExportFileTypeInputSelect @bind-Value="@Model.FileType" name="@nameof(Model.FileType)"/>
-                            </label>
+                        case ImportExportSourceTypeInputSelect.SourceType.ConfigurationFile:
+                            <div class="flex flex-col gap-3">
+                                <div class="font-bold text-lg">Select source</div>
 
-                            if (Model.FileType is not null)
-                            {
-                                <label class="flex flex-col gap-1">
-                                    <div>Source file</div>
-                                    <AzureInputFile accept="@Model.FileType" name="@nameof(Model.SourceFile)" OnChange="args => Model.SourceFile = args.File"/>
+                                <label class="flex flex-row items-center">
+                                    <div class="w-[200px]">File format</div>
+                                    <div class="flex-1 max-w-[600px]">
+                                        <ImportExportFileFormatInputSelect @bind-Value="@Model.FileFormat" name="@nameof(Model.FileFormat)"/>
+                                    </div>
                                 </label>
-                            }
+
+                                @if (Model.FileFormat is not null)
+                                {
+                                    <label class="flex flex-row items-center">
+                                        <div class="w-[200px]">Source file</div>
+                                        <div class="flex-1 max-w-[600px]">
+                                            <AzureInputFile accept="@Model.FileFormat" name="@nameof(Model.SourceFile)" OnChange="args => Model.SourceFile = args.File"/>
+                                        </div>
+                                    </label>
+                                }
+                            </div>
 
                             if (Model.SourceFile is not null)
                             {
-                                <label class="flex flex-col gap-1">
-                                    <div>Separator</div>
-                                    <ImportExportSeparatorInputSelect @bind-Value="@Model.Separator" name="@nameof(Model.Separator)"/>
-                                </label>
+                                <div class="flex flex-col gap-3">
+                                    <div class="font-bold text-lg">Apply changes to key-values</div>
 
-                                <label class="flex flex-col gap-1">
-                                    <div>Prefix</div>
-                                    <AzureInputText @bind-Value="@Model.Prefix" name="@nameof(Model.Prefix)"/>
-                                </label>
+                                    <label class="flex flex-row items-center">
+                                        <div class="w-[200px]">Separator</div>
+                                        <div class="flex-1 max-w-[600px]">
+                                            <ImportExportSeparatorInputSelect @bind-Value="@Model.Separator" name="@nameof(Model.Separator)"/>
+                                        </div>
+                                    </label>
 
-                                <label class="flex flex-col gap-1">
-                                    <div>Label</div>
-                                    <AzureInputText @bind-Value="@Model.Label" name="@nameof(Model.Label)"/>
-                                </label>
+                                    <label class="flex flex-row items-center">
+                                        <div class="w-[200px]">Add prefix</div>
+                                        <div class="flex-1 max-w-[600px]">
+                                            <AzureInputText @bind-Value="@Model.Prefix" name="@nameof(Model.Prefix)"/>
+                                        </div>
+                                    </label>
 
-                                <label class="flex flex-col gap-1">
-                                    <div>Content type</div>
-                                    <ImportExportContentTypeInputSelect @bind-Value="@Model.ContentType" name="@nameof(Model.ContentType)"/>
-                                </label>
+                                    <label class="flex flex-row items-center">
+                                        <div class="w-[200px]">Add label</div>
+                                        <div class="flex-1 max-w-[600px]">
+                                            <AzureInputText @bind-Value="@Model.Label" name="@nameof(Model.Label)"/>
+                                        </div>
+                                    </label>
+
+                                    <label class="flex flex-row items-center">
+                                        <div class="w-[200px]">Add content type</div>
+                                        <div class="flex-1 max-w-[600px]">
+                                            <ImportExportContentTypeInputSelect @bind-Value="@Model.ContentType" name="@nameof(Model.ContentType)"/>
+                                        </div>
+                                    </label>
+                                </div>
 
                                 <div>
                                     <AzureButton Appearance="AzureButton.AzureAppearance.Primary" type="submit">@(Model.Operation switch { ImportExportOperationInputRadioGroup.Operation.Export => "Export", ImportExportOperationInputRadioGroup.Operation.Import => "Import", _ => throw new ArgumentOutOfRangeException() })</AzureButton>
@@ -236,9 +282,9 @@
         {
             case ImportExportOperationInputRadioGroup.Operation.Import:
             {
-                switch (Model?.SourceService)
+                switch (Model?.SourceType)
                 {
-                    case ImportExportSourceServiceInputSelect.SourceService.AzureAppConfiguration:
+                    case ImportExportSourceTypeInputSelect.SourceType.AzureAppConfiguration:
                     {
                         var dictionary = Model.SourceConnectionString!.Split(';').Select(s => s.Split('=', 2)).ToDictionary(s => s[0], s => s[1]);
                         var endpoint = dictionary["Endpoint"];
@@ -282,7 +328,7 @@
 
                         break;
                     }
-                    case ImportExportSourceServiceInputSelect.SourceService.ConfigurationFile:
+                    case ImportExportSourceTypeInputSelect.SourceType.ConfigurationFile:
                     {
                         await using var stream = Model.SourceFile!.OpenReadStream();
 
@@ -324,7 +370,7 @@
     {
         public string? ContentType { get; set; }
 
-        public string? FileType { get; set; }
+        public string? FileFormat { get; set; }
 
         public string? KeyFilter { get; set; }
 
@@ -344,7 +390,7 @@
 
         public IBrowserFile? SourceFile { get; set; }
 
-        public string? SourceService { get; set; }
+        public string? SourceType { get; set; }
     }
 
 }
