@@ -47,9 +47,9 @@
 </div>
 
 @code {
-    private ICollection<ConfigurationSetting> ConfigurationSettings { get; } = [];
+    private List<ConfigurationSetting> ConfigurationSettings { get; } = [];
 
-    private IEnumerable<ConfigurationSetting> FilteredConfigurationSettings => ConfigurationSettings.Where(setting => string.IsNullOrEmpty(SearchQuery) || setting.Key.Contains(SearchQuery) || setting.Label?.Contains(SearchQuery) == true || setting.Value?.Contains(SearchQuery) == true).ToList();
+    private List<ConfigurationSetting> FilteredConfigurationSettings => ConfigurationSettings.Where(setting => string.IsNullOrEmpty(SearchQuery) || setting.Key.Contains(SearchQuery) || setting.Label?.Contains(SearchQuery) == true || setting.Value?.Contains(SearchQuery) == true).ToList();
 
     private bool IsValuesHidden { get; set; } = true;
 
@@ -98,9 +98,12 @@
         {
             await ConfigurationSettingRepository.Update(setting);
 
-            ConfigurationSettings.Remove(SelectedConfigurationSettings.Single());
-            ConfigurationSettings.Add(setting);
-            StateHasChanged();
+            if (ConfigurationSettings.IndexOf(SelectedConfigurationSettings.Single()) is var index and not -1)
+            {
+                ConfigurationSettings.RemoveAt(index);
+                ConfigurationSettings.Insert(index, setting);
+                StateHasChanged();
+            }
 
             SelectedConfigurationSettings.Clear();
             StateHasChanged();
