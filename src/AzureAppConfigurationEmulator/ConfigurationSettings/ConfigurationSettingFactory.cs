@@ -2,6 +2,7 @@ using System.Net.Mime;
 using System.Security.Cryptography;
 using System.Text;
 using AzureAppConfigurationEmulator.Common;
+using OpenTelemetry.Trace;
 
 namespace AzureAppConfigurationEmulator.ConfigurationSettings;
 
@@ -41,11 +42,21 @@ public class ConfigurationSettingFactory : IConfigurationSettingFactory
         string? value = null,
         IDictionary<string, string>? tags = null)
     {
+        using var activity = Telemetry.ActivitySource.StartActivity($"{nameof(ConfigurationSettingFactory)}.{nameof(Create)}");
+        activity?.SetTag(Telemetry.ConfigurationSettingEtag, etag);
+        activity?.SetTag(Telemetry.ConfigurationSettingKey, key);
+        activity?.SetTag(Telemetry.ConfigurationSettingLabel, label);
+        activity?.SetTag(Telemetry.ConfigurationSettingContentType, contentType);
+        activity?.SetTag(Telemetry.ConfigurationSettingValue, value);
+        activity?.SetTag(Telemetry.ConfigurationSettingLastModified, lastModified);
+        activity?.SetTag(Telemetry.ConfigurationSettingLocked, locked);
+
         if (!string.IsNullOrEmpty(contentType) && !string.IsNullOrEmpty(value))
         {
-            switch (new ContentType(contentType).MediaType)
+            try
             {
-                case MediaType.FeatureFlag:
+                if (new ContentType(contentType).MediaType is MediaType.FeatureFlag)
+                {
                     return new FeatureFlagConfigurationSetting(
                         etag,
                         key,
@@ -55,6 +66,11 @@ public class ConfigurationSettingFactory : IConfigurationSettingFactory
                         label,
                         contentType,
                         tags);
+                }
+            }
+            catch (Exception e)
+            {
+                activity?.RecordException(e);
             }
         }
 
