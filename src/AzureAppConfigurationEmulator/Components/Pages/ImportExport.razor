@@ -1,5 +1,6 @@
 @inject IConfigurationSettingFactory ConfigurationSettingFactory
 @inject IConfigurationSettingRepository ConfigurationSettingRepository
+@inject IKeyValuePairJsonDecoder KeyValuePairJsonDecoder
 @page "/kvdata"
 @using System.Security.Cryptography
 @using System.Text
@@ -170,69 +171,6 @@
         Model ??= new InputModel();
     }
 
-    private static IEnumerable<KeyValuePair<string, object?>> FlattenJsonElement(JsonElement element, string? prefix = null, string? separator = null)
-    {
-        switch (element.ValueKind)
-        {
-            case JsonValueKind.Object:
-                foreach (var property in element.EnumerateObject())
-                {
-                    foreach (var pair in FlattenJsonElement(property.Value, !string.IsNullOrEmpty(prefix) ? $"{prefix}{separator}{property.Name}" : property.Name, separator))
-                    {
-                        yield return pair;
-                    }
-                }
-
-                break;
-            case JsonValueKind.Array:
-                var index = 0;
-
-                foreach (var inner in element.EnumerateArray())
-                {
-                    foreach (var pair in FlattenJsonElement(inner, !string.IsNullOrEmpty(prefix) ? $"{prefix}{separator}{index}" : index.ToString(), separator))
-                    {
-                        yield return pair;
-                    }
-
-                    index += 1;
-                }
-
-                break;
-            case JsonValueKind.String:
-                if (!string.IsNullOrEmpty(prefix))
-                {
-                    yield return new KeyValuePair<string, object?>(prefix, element.GetString());
-                }
-
-                break;
-            case JsonValueKind.Number:
-                if (!string.IsNullOrEmpty(prefix))
-                {
-                    yield return new KeyValuePair<string, object?>(prefix, element.GetDouble());
-                }
-
-                break;
-            case JsonValueKind.True:
-            case JsonValueKind.False:
-                if (!string.IsNullOrEmpty(prefix))
-                {
-                    yield return new KeyValuePair<string, object?>(prefix, element.GetBoolean());
-                }
-
-                break;
-            case JsonValueKind.Undefined:
-            case JsonValueKind.Null:
-                if (!string.IsNullOrEmpty(prefix))
-                {
-                    yield return new KeyValuePair<string, object?>(prefix, null);
-                }
-
-                break;
-            default:
-                throw new ArgumentOutOfRangeException();
-        }
-    }
-
     private async Task HandleSourceConnectionStringChange(string? connectionString)
     {
         using var activity = Telemetry.ActivitySource.StartActivity($"{nameof(ImportExport)}.{nameof(HandleSourceConnectionStringChange)}");
@@ -312,13 +250,16 @@
                                 destinationSetting.LastModified = date;
                                 destinationSetting.ContentType = sourceSetting.ContentType;
                                 destinationSetting.Value = sourceSetting.Value;
+                                destinationSetting.Locked = sourceSetting.Locked;
                                 destinationSetting.Tags = sourceSetting.Tags;
 
                                 await ConfigurationSettingRepository.Update(destinationSetting);
                             }
                             else
                             {
-                                destinationSetting = ConfigurationSettingFactory.Create(sourceSetting.Key, sourceSetting.Label, sourceSetting.ContentType, sourceSetting.Value, sourceSetting.Tags);
+                                var date = DateTimeOffset.UtcNow;
+
+                                destinationSetting = ConfigurationSettingFactory.Create(Convert.ToBase64String(SHA256.HashData(Encoding.UTF8.GetBytes(date.UtcDateTime.ToString("yyyy-MM-dd HH:mm:ss")))), sourceSetting.Key, date, sourceSetting.Locked, sourceSetting.Label, sourceSetting.ContentType, sourceSetting.Value, sourceSetting.Tags);
 
                                 await ConfigurationSettingRepository.Add(destinationSetting);
                             }
@@ -334,7 +275,7 @@
 
                         using var document = await JsonDocument.ParseAsync(stream);
 
-                        foreach (var (sourceKey, sourceValue) in FlattenJsonElement(document.RootElement, Model.Prefix, Model.Separator))
+                        foreach (var (sourceKey, sourceValue) in KeyValuePairJsonDecoder.Decode(document, Model.Prefix, Model.Separator))
                         {
                             if (await ConfigurationSettingRepository.Get(sourceKey, Model.Label ?? LabelFilter.Null).SingleOrDefaultAsync() is { } destinationSetting)
                             {
@@ -349,7 +290,9 @@
                             }
                             else
                             {
-                                destinationSetting = ConfigurationSettingFactory.Create(sourceKey, Model.Label, Model.ContentType, sourceValue?.ToString());
+                                var date = DateTimeOffset.UtcNow;
+
+                                destinationSetting = ConfigurationSettingFactory.Create(Convert.ToBase64String(SHA256.HashData(Encoding.UTF8.GetBytes(date.UtcDateTime.ToString("yyyy-MM-dd HH:mm:ss")))), sourceKey, date, false, Model.Label, Model.ContentType, sourceValue, null);
 
                                 await ConfigurationSettingRepository.Add(destinationSetting);
                             }
