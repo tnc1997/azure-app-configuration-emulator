@@ -22,12 +22,13 @@ public class ConfigurationSettingFactoryTests
     public void Create_ConfigurationSetting_ContentType(string? contentType, Type expected)
     {
         // Arrange
+        const string etag = "TestEtag";
         const string key = "TestKey";
-        const string label = "TestLabel";
+        var date = DateTimeOffset.UtcNow;
         const string value = "{\"id\":\"TestId\",\"enabled\":true}";
 
         // Act
-        var setting = Factory.Create(key, label, contentType, value);
+        var setting = Factory.Create(etag, key, date, false, null, contentType, value);
 
         // Assert
         Assert.That(setting, Is.TypeOf(expected));
