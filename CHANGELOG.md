@@ -1,6 +1,28 @@
 # Changelog
 
-All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
+All notable changes to this project will be documented in this file. See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
+
+## 1.0.1 (2024-11-16)
+
+### Bug Fixes
+
+* edited configuration settings move to the bottom ([#94](https://github.com/tnc1997/azure-app-configuration-emulator/issues/94)) ([97e803f](https://github.com/tnc1997/azure-app-configuration-emulator/commit/97e803fa1d1ef7c6f20e1ddd4078ea769ece07ce))
+* invalid content type format exception ([#102](https://github.com/tnc1997/azure-app-configuration-emulator/issues/102)) ([95d1f97](https://github.com/tnc1997/azure-app-configuration-emulator/commit/95d1f97f11f256ade6fd90eb47cf07310872f5eb))
+
+### Documentation
+
+* add testcontainers ([7235caf](https://github.com/tnc1997/azure-app-configuration-emulator/commit/7235cafece1f5e99693dd322df50baca75791a9c))
+* update readme ([b129b3d](https://github.com/tnc1997/azure-app-configuration-emulator/commit/b129b3d2a7a011d25008a92e0b7a2872cdd0f42e))
+
+### Code Refactoring
+
+* order configuration settings by key ([#97](https://github.com/tnc1997/azure-app-configuration-emulator/issues/97)) ([40cfa53](https://github.com/tnc1997/azure-app-configuration-emulator/commit/40cfa537306c8a7d92f3cd9c1fb9cbea6fc4c17d))
+* order feature flags by name ([#98](https://github.com/tnc1997/azure-app-configuration-emulator/issues/98)) ([86bc28a](https://github.com/tnc1997/azure-app-configuration-emulator/commit/86bc28a33fea5a172d37d0f09452a484ff7659b6))
+* restyle the import/export page ([#92](https://github.com/tnc1997/azure-app-configuration-emulator/issues/92)) ([59a17ad](https://github.com/tnc1997/azure-app-configuration-emulator/commit/59a17adc308fdd11ab082c3fc7ff1452b860ecb9))
+
+### Build System
+
+* distribute windows installer ([#90](https://github.com/tnc1997/azure-app-configuration-emulator/issues/90)) ([c6e1861](https://github.com/tnc1997/azure-app-configuration-emulator/commit/c6e1861c8524518d3527679391bccb256a0ce161))
 
 ## 1.0.0 (2024-06-12)
 
