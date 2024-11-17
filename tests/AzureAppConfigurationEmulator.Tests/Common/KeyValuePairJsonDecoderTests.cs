@@ -15,7 +15,7 @@ public class KeyValuePairJsonDecoderTests
     }
 
     [TestCaseSource(nameof(Decode_KeyValuePairs_DocumentAndPrefixAndSeparator_TestCases))]
-    public void Decode_KeyValuePairs_DocumentAndPrefixAndSeparator(string json, string? prefix, string? separator, IDictionary<string, string?> expected)
+    public void Decode_KeyValuePairs_DocumentAndPrefixAndSeparator(string json, string? prefix, string? separator, IEnumerable<KeyValuePair<string, string?>> expected)
     {
         // Arrange
         using var document = JsonDocument.Parse(json);
@@ -24,7 +24,7 @@ public class KeyValuePairJsonDecoderTests
         var settings = Decoder.Decode(document, prefix, separator);
 
         // Assert
-        Assert.That(settings.ToDictionary(), Is.EqualTo(expected));
+        Assert.That(settings, Is.EqualTo(expected));
     }
 
     // ReSharper disable once InconsistentNaming

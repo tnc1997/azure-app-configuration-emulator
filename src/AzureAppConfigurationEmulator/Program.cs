@@ -87,6 +87,7 @@ builder.Services.AddSingleton<IDbConnectionFactory, SqliteDbConnectionFactory>()
 builder.Services.AddSingleton<IDbParameterFactory, SqliteDbParameterFactory>();
 builder.Services.AddSingleton<IEventGridEventFactory, HttpContextEventGridEventFactory>();
 builder.Services.AddSingleton<IKeyValuePairJsonDecoder, KeyValuePairJsonDecoder>();
+builder.Services.AddSingleton<IKeyValuePairJsonEncoder, KeyValuePairJsonEncoder>();
 
 var app = builder.Build();
 
