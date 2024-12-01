@@ -1,7 +1,11 @@
+@implements IAsyncDisposable
 @inject IConfigurationSettingFactory ConfigurationSettingFactory
 @inject IConfigurationSettingRepository ConfigurationSettingRepository
+@inject IJSRuntime JS
 @inject IKeyValuePairJsonDecoder KeyValuePairJsonDecoder
+@inject IKeyValuePairJsonEncoder KeyValuePairJsonEncoder
 @page "/kvdata"
+@using System.Net
 @using System.Security.Cryptography
 @using System.Text
 @using System.Text.Json
@@ -21,6 +25,61 @@
         <EditForm class="flex flex-col gap-10" Model="@Model" OnSubmit="@HandleSubmit">
             @switch (Model?.Operation)
             {
+                case ImportExportOperationInputRadioGroup.Operation.Export:
+                    <div class="flex flex-col gap-3">
+                        <ImportExportOperationInputRadioGroup @bind-Value="@Model.Operation" name="@nameof(Model.Operation)"/>
+
+                        <label class="flex flex-row items-center">
+                            <div class="w-[200px]">Target type</div>
+                            <div class="flex-1 max-w-[600px]">
+                                <ImportExportTargetTypeInputSelect @bind-Value="@Model.TargetType" name="@nameof(Model.TargetType)"/>
+                            </div>
+                        </label>
+                    </div>
+
+                    switch (Model.TargetType)
+                    {
+                        case ImportExportTargetTypeInputSelect.TargetType.ConfigurationFile:
+                            <div class="flex flex-col gap-3">
+                                <div class="font-bold text-lg">Export options</div>
+
+                                <label class="flex flex-row items-center">
+                                    <div class="w-[200px]">File format</div>
+                                    <div class="flex-1 max-w-[600px]">
+                                        <ImportExportFileFormatInputSelect @bind-Value="@Model.FileFormat" name="@nameof(Model.FileFormat)"/>
+                                    </div>
+                                </label>
+                            </div>
+
+                            if (Model.FileFormat is not null)
+                            {
+                                <div class="flex flex-col gap-3">
+                                    <div class="font-bold text-lg">Apply changes to key-values</div>
+
+                                    <label class="flex flex-row items-center">
+                                        <div class="w-[200px]">Separator</div>
+                                        <div class="flex-1 max-w-[600px]">
+                                            <ImportExportSeparatorInputSelect @bind-Value="@Model.Separator" name="@nameof(Model.Separator)"/>
+                                        </div>
+                                    </label>
+
+                                    <label class="flex flex-row items-center">
+                                        <div class="w-[200px]">Remove prefix</div>
+                                        <div class="flex-1 max-w-[600px]">
+                                            <AzureInputText @bind-Value="@Model.Prefix" name="@nameof(Model.Prefix)"/>
+                                        </div>
+                                    </label>
+                                </div>
+
+                                <div>
+                                    <AzureButton Appearance="AzureButton.AzureAppearance.Primary" type="submit">Export</AzureButton>
+                                </div>
+                            }
+
+                            break;
+                    }
+
+                    break;
                 case ImportExportOperationInputRadioGroup.Operation.Import:
                     <div class="flex flex-col gap-3">
                         <ImportExportOperationInputRadioGroup @bind-Value="@Model.Operation" name="@nameof(Model.Operation)"/>
@@ -86,7 +145,7 @@
                                 </div>
 
                                 <div>
-                                    <AzureButton Appearance="AzureButton.AzureAppearance.Primary" type="submit">@(Model.Operation switch { ImportExportOperationInputRadioGroup.Operation.Export => "Export", ImportExportOperationInputRadioGroup.Operation.Import => "Import", _ => throw new ArgumentOutOfRangeException() })</AzureButton>
+                                    <AzureButton Appearance="AzureButton.AzureAppearance.Primary" type="submit">Import</AzureButton>
                                 </div>
                             }
 
@@ -148,7 +207,7 @@
                                 </div>
 
                                 <div>
-                                    <AzureButton Appearance="AzureButton.AzureAppearance.Primary" type="submit">@(Model.Operation switch { ImportExportOperationInputRadioGroup.Operation.Export => "Export", ImportExportOperationInputRadioGroup.Operation.Import => "Import", _ => throw new ArgumentOutOfRangeException() })</AzureButton>
+                                    <AzureButton Appearance="AzureButton.AzureAppearance.Primary" type="submit">Import</AzureButton>
                                 </div>
                             }
 
@@ -165,6 +224,24 @@
     [SupplyParameterFromForm] public InputModel? Model { get; set; }
 
     private ICollection<string?> Labels { get; } = [];
+
+    private IJSObjectReference? Module { get; set; }
+
+    public async ValueTask DisposeAsync()
+    {
+        if (Module is not null)
+        {
+            await Module.DisposeAsync();
+        }
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            Module = await JS.InvokeAsync<IJSObjectReference>("import", "./Components/Pages/ImportExport.razor.js");
+        }
+    }
 
     protected override void OnInitialized()
     {
@@ -218,6 +295,27 @@
 
         switch (Model?.Operation)
         {
+            case ImportExportOperationInputRadioGroup.Operation.Export:
+            {
+                switch (Model?.TargetType)
+                {
+                    case ImportExportTargetTypeInputSelect.TargetType.ConfigurationFile:
+                    {
+                        using var document = KeyValuePairJsonEncoder.Encode(await ConfigurationSettingRepository.Get().Where(setting => setting is not FeatureFlagConfigurationSetting).ToDictionaryAsync(setting => setting.Key, setting => setting.Value), Model.Prefix, Model.Separator);
+
+                        if (Module is not null)
+                        {
+                            await Module.InvokeVoidAsync("download", $"{Dns.GetHostName()}-{DateTimeOffset.UtcNow:yyyy-MM-dd}.json", Convert.ToBase64String(JsonSerializer.SerializeToUtf8Bytes(document)));
+                        }
+
+                        Model = new InputModel();
+
+                        break;
+                    }
+                }
+
+                break;
+            }
             case ImportExportOperationInputRadioGroup.Operation.Import:
             {
                 switch (Model?.SourceType)
@@ -284,7 +382,7 @@
                                 destinationSetting.Etag = Convert.ToBase64String(SHA256.HashData(Encoding.UTF8.GetBytes(date.UtcDateTime.ToString("yyyy-MM-dd HH:mm:ss"))));
                                 destinationSetting.LastModified = date;
                                 destinationSetting.ContentType = Model.ContentType;
-                                destinationSetting.Value = sourceValue?.ToString();
+                                destinationSetting.Value = sourceValue;
 
                                 await ConfigurationSettingRepository.Update(destinationSetting);
                             }
@@ -334,6 +432,8 @@
         public IBrowserFile? SourceFile { get; set; }
 
         public string? SourceType { get; set; }
+
+        public string? TargetType { get; set; }
     }
 
 }

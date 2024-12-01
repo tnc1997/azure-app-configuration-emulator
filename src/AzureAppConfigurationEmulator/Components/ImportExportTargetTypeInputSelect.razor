@@ -1,0 +1,33 @@
+@using System.Linq.Expressions
+
+<AzureInputSelect AdditionalAttributes="@AdditionalAttributes" TValue="@string" Value="@Value" ValueChanged="@HandleValueChanged" ValueExpression="@ValueExpression">
+    <option checked="@(Value is null)" hidden value="">Please select a target service</option>
+    <option checked="@(Value is TargetType.AzureAppConfiguration)" disabled value="@TargetType.AzureAppConfiguration">App Configuration</option>
+    <option checked="@(Value is TargetType.AzureAppService)" disabled value="@TargetType.AzureAppService">App Service</option>
+    <option checked="@(Value is TargetType.ConfigurationFile)" value="@TargetType.ConfigurationFile">Configuration file</option>
+</AzureInputSelect>
+
+@code {
+    [Parameter(CaptureUnmatchedValues = true)] public IDictionary<string, object>? AdditionalAttributes { get; set; }
+
+    [Parameter] public string? Value { get; set; }
+
+    [Parameter] public EventCallback<string?> ValueChanged { get; set; }
+
+    [Parameter] public Expression<Func<string?>>? ValueExpression { get; set; }
+
+    private async Task HandleValueChanged(string? value)
+    {
+        await ValueChanged.InvokeAsync(!string.IsNullOrEmpty(value) ? value : null);
+    }
+
+    public static class TargetType
+    {
+        public const string AzureAppConfiguration = nameof(AzureAppConfiguration);
+
+        public const string AzureAppService = nameof(AzureAppService);
+
+        public const string ConfigurationFile = nameof(ConfigurationFile);
+    }
+
+}
