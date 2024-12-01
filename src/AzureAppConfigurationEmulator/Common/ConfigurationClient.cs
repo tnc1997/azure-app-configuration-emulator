@@ -127,4 +127,24 @@ public class ConfigurationClient(
             }
         } while (link is { Next: not null });
     }
+
+    public async Task SetConfigurationSetting(
+        ConfigurationSetting setting,
+        CancellationToken cancellationToken = default)
+    {
+        using var activity = Telemetry.ActivitySource.StartActivity($"{nameof(ConfigurationClient)}.{nameof(SetConfigurationSetting)}");
+
+        var uri = new Uri($"/kv/{Uri.EscapeDataString(setting.Key)}?label={Uri.EscapeDataString(setting.Label ?? LabelFilter.Null)}&api-version=1.0", UriKind.Relative);
+
+        using var request = new HttpRequestMessage(HttpMethod.Put, uri);
+        request.Content = JsonContent.Create(new
+        {
+            value = setting.Value,
+            content_type = setting.ContentType,
+            tags = setting.Tags
+        });
+
+        using var response = await httpClient.SendAsync(request, cancellationToken);
+        response.EnsureSuccessStatusCode();
+    }
 }

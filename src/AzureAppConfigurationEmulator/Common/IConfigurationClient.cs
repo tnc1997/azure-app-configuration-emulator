@@ -15,4 +15,8 @@ public interface IConfigurationClient
 
     public IAsyncEnumerable<string?> GetLabels(
         CancellationToken cancellationToken = default);
+
+    public Task SetConfigurationSetting(
+        ConfigurationSetting setting,
+        CancellationToken cancellationToken = default);
 }

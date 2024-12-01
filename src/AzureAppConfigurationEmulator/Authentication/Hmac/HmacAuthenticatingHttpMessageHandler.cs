@@ -36,6 +36,8 @@ public class HmacAuthenticatingHttpMessageHandler(string credential, string secr
         if (request.Content is not null)
         {
             await request.Content.CopyToAsync(stream, cancellationToken);
+
+            stream.Position = 0;
         }
 
         using var sha256 = SHA256.Create();
