@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## 1.1.0 (2024-12-03)
+
+### Features
+
+* add export to azure app configuration ([#106](https://github.com/tnc1997/azure-app-configuration-emulator/issues/106)) ([e146e2b](https://github.com/tnc1997/azure-app-configuration-emulator/commit/e146e2b2ec34c0086ba116a0c341263660a6c208))
+* add export to json file ([#105](https://github.com/tnc1997/azure-app-configuration-emulator/issues/105)) ([62ede9b](https://github.com/tnc1997/azure-app-configuration-emulator/commit/62ede9badb9397e7a2ed3afc89b85bc080fce288))
+
+### Code Refactoring
+
+* add key value pair json decoder ([#103](https://github.com/tnc1997/azure-app-configuration-emulator/issues/103)) ([bd804b6](https://github.com/tnc1997/azure-app-configuration-emulator/commit/bd804b61db75e3342f9508ed8b75d19212f4df4b))
+* add key value pair json encoder ([#104](https://github.com/tnc1997/azure-app-configuration-emulator/issues/104)) ([a59356b](https://github.com/tnc1997/azure-app-configuration-emulator/commit/a59356b0464aa3253a57b38d925f1d025661e831))
+
 ## 1.0.1 (2024-11-16)
 
 ### Bug Fixes
