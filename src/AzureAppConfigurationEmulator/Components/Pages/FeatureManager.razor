@@ -45,7 +45,7 @@
 @code {
     private List<FeatureFlagConfigurationSetting> ConfigurationSettings { get; } = [];
 
-    private List<FeatureFlagConfigurationSetting> FilteredConfigurationSettings => ConfigurationSettings.Where(setting => string.IsNullOrEmpty(SearchQuery) || setting.Key.Contains(SearchQuery) || setting.Description?.Contains(SearchQuery) == true || setting.Label?.Contains(SearchQuery) == true).OrderBy(setting => setting.Id).ToList();
+    private List<FeatureFlagConfigurationSetting> FilteredConfigurationSettings => ConfigurationSettings.Where(setting => string.IsNullOrEmpty(SearchQuery) || setting.Key.Contains(SearchQuery, StringComparison.OrdinalIgnoreCase) || setting.Description?.Contains(SearchQuery, StringComparison.OrdinalIgnoreCase) == true || setting.Label?.Contains(SearchQuery, StringComparison.OrdinalIgnoreCase) == true).OrderBy(setting => setting.Id).ToList();
 
     private string? SearchQuery { get; set; }
 
