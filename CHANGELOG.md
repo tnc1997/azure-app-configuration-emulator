@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file. See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## 1.1.1 (2025-01-22)
+
+### Bug Fixes
+
+* search query case sensitivity ([#108](https://github.com/tnc1997/azure-app-configuration-emulator/issues/108)) ([3d946db](https://github.com/tnc1997/azure-app-configuration-emulator/commit/3d946db8f4ad771d82d152f96036eeb0c01083b7))
+
 ## 1.1.0 (2024-12-03)
 
 ### Features
