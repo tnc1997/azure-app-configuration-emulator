@@ -1,6 +1,6 @@
 ﻿<nav class="flex flex-col">
     <div class="my-2 mr-9 ml-5">
-        <AzureTextField IsDisabled="true" Placeholder="Search"/>
+        <AzureInputText @bind-Value="@SearchQuery" disabled placeholder="Search"/>
     </div>
 
     <NavGroup Header="Quick Access">
@@ -32,3 +32,7 @@
         @* <NavItem Href="locks" Label="Locks"/> *@
     </NavGroup>
 </nav>
+
+@code {
+    private string? SearchQuery { get; set; }
+}
