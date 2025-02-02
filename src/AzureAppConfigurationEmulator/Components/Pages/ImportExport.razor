@@ -41,7 +41,7 @@
                     {
                         case ImportExportTargetTypeInputSelect.TargetType.AzureAppConfiguration:
                             <div class="flex flex-col gap-3">
-                                <div class="font-bold text-lg">Select key-values</div>
+                                <div class="text-lg font-bold">Select key-values</div>
 
                                 <label class="flex flex-row items-center">
                                     <div class="w-[200px]">Key filter</div>
@@ -66,7 +66,7 @@
                             </div>
 
                             <div class="flex flex-col gap-3">
-                                <div class="font-bold text-lg">Select target</div>
+                                <div class="text-lg font-bold">Select target</div>
 
                                 <label class="flex flex-row items-center">
                                     <div class="w-[200px]">Connection string <span class="text-alizarin-crimson">*</span></div>
@@ -77,7 +77,7 @@
                             </div>
 
                             <div class="flex flex-col gap-3">
-                                <div class="font-bold text-lg">Apply changes to key-values</div>
+                                <div class="text-lg font-bold">Apply changes to key-values</div>
 
                                 <label class="flex flex-row items-center">
                                     <div class="w-[200px]">Remove prefix</div>
@@ -97,7 +97,7 @@
                             break;
                         case ImportExportTargetTypeInputSelect.TargetType.ConfigurationFile:
                             <div class="flex flex-col gap-3">
-                                <div class="font-bold text-lg">Export options</div>
+                                <div class="text-lg font-bold">Export options</div>
 
                                 <label class="flex flex-row items-center">
                                     <div class="w-[200px]">File format</div>
@@ -110,7 +110,7 @@
                             if (Model.FileFormat is not null)
                             {
                                 <div class="flex flex-col gap-3">
-                                    <div class="font-bold text-lg">Apply changes to key-values</div>
+                                    <div class="text-lg font-bold">Apply changes to key-values</div>
 
                                     <label class="flex flex-row items-center">
                                         <div class="w-[200px]">Separator</div>
@@ -152,7 +152,7 @@
                     {
                         case ImportExportSourceTypeInputSelect.SourceType.AzureAppConfiguration:
                             <div class="flex flex-col gap-3">
-                                <div class="font-bold text-lg">Select source</div>
+                                <div class="text-lg font-bold">Select source</div>
 
                                 <label class="flex flex-row items-center">
                                     <div class="w-[200px]">Connection string <span class="text-alizarin-crimson">*</span></div>
@@ -165,7 +165,7 @@
                             if (!string.IsNullOrEmpty(Model.SourceConnectionString) && Labels is { Count: > 0 })
                             {
                                 <div class="flex flex-col gap-3">
-                                    <div class="font-bold text-lg">Select key-values</div>
+                                    <div class="text-lg font-bold">Select key-values</div>
 
                                     <label class="flex flex-row items-center">
                                         <div class="w-[200px]">Key filter</div>
@@ -190,7 +190,7 @@
                                 </div>
 
                                 <div class="flex flex-col gap-3">
-                                    <div class="font-bold text-lg">Apply changes to key-values</div>
+                                    <div class="text-lg font-bold">Apply changes to key-values</div>
 
                                     <label class="flex flex-row items-center">
                                         <div class="w-[200px]">Add prefix</div>
@@ -208,7 +208,7 @@
                             break;
                         case ImportExportSourceTypeInputSelect.SourceType.ConfigurationFile:
                             <div class="flex flex-col gap-3">
-                                <div class="font-bold text-lg">Select source</div>
+                                <div class="text-lg font-bold">Select source</div>
 
                                 <label class="flex flex-row items-center">
                                     <div class="w-[200px]">File format</div>
@@ -231,7 +231,7 @@
                             if (Model.SourceFile is not null)
                             {
                                 <div class="flex flex-col gap-3">
-                                    <div class="font-bold text-lg">Apply changes to key-values</div>
+                                    <div class="text-lg font-bold">Apply changes to key-values</div>
 
                                     <label class="flex flex-row items-center">
                                         <div class="w-[200px]">Separator</div>

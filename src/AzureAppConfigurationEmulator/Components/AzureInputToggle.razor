@@ -2,8 +2,8 @@
 
 <InputCheckbox @attributes="@AdditionalAttributes" class="hidden" Value="@Value" ValueChanged="@ValueChanged" ValueExpression="@ValueExpression"/>
 
-<div aria-checked="@Value.ToString().ToLower()" class="border border-storm-dust dark:border-star-dust aria-checked:border-lochmara aria-checked:bg-lochmara group cursor-pointer disabled:cursor-default relative p-1 rounded-full w-[44px] h-[20px] transition-all" @onclick="@HandleClick" role="checkbox">
-    <div class="bg-storm-dust dark:bg-star-dust group-aria-checked:bg-white group-aria-checked:dark:bg-cod-grey absolute rounded-full w-[10px] h-[10px] left-1 group-aria-checked:left-7 transition-all"></div>
+<div aria-checked="@Value.ToString().ToLower()" class="relative p-1 rounded-full border transition-all cursor-pointer disabled:cursor-default border-storm-dust aria-checked:border-lochmara aria-checked:bg-lochmara group w-[44px] h-[20px] dark:border-star-dust" @onclick="@HandleClick" role="checkbox">
+    <div class="absolute left-1 rounded-full transition-all bg-storm-dust group-aria-checked:bg-white w-[10px] h-[10px] group-aria-checked:left-7 dark:bg-star-dust dark:group-aria-checked:bg-cod-grey"></div>
 </div>
 
 @code {

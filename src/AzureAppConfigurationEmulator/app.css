@@ -1,62 +1,47 @@
-/*@import "tailwindcss";*/
+@import "tailwindcss";
 
-/*@theme {
+@theme {
     --color-*: initial;
-    --color-alizarin-crimson: "#e81123";
-    --color-alto: "#e1dfdd";
-    --color-black: "#000000";
-    --color-cod-grey: "#1b1a19";
-    --color-concrete: "#f3f2f1";
-    --color-desert-storm: "#faf9f8";
-    --color-dodger-blue: "#2899f5";
-    --color-gallery: "#edebe9";
-    --color-iron: "#cccccc";
-    --color-jordy-blue: "#6cb8f6";
-    --color-lochmara: "#0078d4";
-    --color-masala: "#414141";
-    --color-merlin: "#484644";
-    --color-mine-shaft: "#292827";
-    --color-natural-grey: "#8a8886";
-    --color-science-blue: "#106ebe";
-    --color-shark: "#252423";
-    --color-solitude: "#e6f2fb";
-    --color-star-dust: "#a19f9d";
-    --color-storm-dust: "#646464";
-    --color-transparent: "transparent";
-    --color-tropical-blue: "#cce4f6";
-    --color-tuatara: "#3b3a39";
-    --color-venice-blue: "#005a93";
-    --color-white: "#ffffff";
-    
-    --font-family-*: initial;
-    --font-family-sans: "Segoe UI", -apple-system, BlinkMacSystemFont, Roboto, "Helvetica Neue", sans-serif;
-    --font-family-mono: Consolas, "Courier New", Courier, monospace;
-    
-    --font-size-*: initial;
-    --font-size-2xs: 0.625rem;
-    --font-size-2xs--line-height: normal;
-    --font-size-xs: 0.6875rem;
-    --font-size-xs--line-height: normal;
-    --font-size-sm: 0.75rem;
-    --font-size-sm--line-height: normal;
-    --font-size-base: 0.8125rem;
-    --font-size-base--line-height: normal;
-    --font-size-lg: 0.875rem;
-    --font-size-lg--line-height: normal;
-    --font-size-xl: 0.9375rem;
-    --font-size-xl--line-height: normal;
-    --font-size-2xl: 1rem;
-    --font-size-2xl--line-height: normal;
-    --font-size-3xl: 1.0625rem;
-    --font-size-3xl--line-height: normal;
-    --font-size-4xl: 1.125rem;
-    --font-size-4xl--line-height: normal;
-    --font-size-5xl: 1.1875rem;
-    --font-size-5xl--line-height: normal;
-    --font-size-6xl: 1.25rem;
-    --font-size-6xl--line-height: normal;
-}*/
+    --color-alizarin-crimson: #e81123;
+    --color-alto: #e1dfdd;
+    --color-black: #000000;
+    --color-cod-grey: #1b1a19;
+    --color-concrete: #f3f2f1;
+    --color-desert-storm: #faf9f8;
+    --color-dodger-blue: #2899f5;
+    --color-gallery: #edebe9;
+    --color-iron: #cccccc;
+    --color-jordy-blue: #6cb8f6;
+    --color-lochmara: #0078d4;
+    --color-masala: #414141;
+    --color-merlin: #484644;
+    --color-mine-shaft: #292827;
+    --color-natural-grey: #8a8886;
+    --color-science-blue: #106ebe;
+    --color-shark: #252423;
+    --color-solitude: #e6f2fb;
+    --color-star-dust: #a19f9d;
+    --color-storm-dust: #646464;
+    --color-transparent: transparent;
+    --color-tropical-blue: #cce4f6;
+    --color-tuatara: #3b3a39;
+    --color-venice-blue: #005a93;
+    --color-white: #ffffff;
 
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+    --font-*: initial;
+    --font-mono: Consolas, "Courier New", Courier, monospace;
+    --font-sans: "Segoe UI", -apple-system, BlinkMacSystemFont, Roboto, "Helvetica Neue", sans-serif;
+
+    --text-*: initial;
+    --text-2xs: 0.625rem;
+    --text-xs: 0.6875rem;
+    --text-sm: 0.75rem;
+    --text-base: 0.8125rem;
+    --text-lg: 0.875rem;
+    --text-xl: 0.9375rem;
+    --text-2xl: 1rem;
+    --text-3xl: 1.0625rem;
+    --text-4xl: 1.125rem;
+    --text-5xl: 1.1875rem;
+    --text-6xl: 1.25rem;
+}

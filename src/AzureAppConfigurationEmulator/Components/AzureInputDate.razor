@@ -1,7 +1,7 @@
 @typeparam TValue
 @using System.Linq.Expressions
 
-<InputDate @attributes="@AdditionalAttributes" class="px-2 pt-1 pb-1.5 w-full bg-white rounded-sm border border-storm-dust h-[24px] placeholder:text-storm-dust invalid:border-alizarin-crimson dark:bg-cod-grey dark:border-star-dust dark:placeholder:text-star-dust dark:disabled:bg-shark dark:disabled:border-natural-grey dark:disabled:text-natural-grey disabled:bg-concrete disabled:border-star-dust disabled:text-star-dust" Value="@Value" ValueChanged="@ValueChanged" ValueExpression="@ValueExpression"/>
+<InputDate @attributes="@AdditionalAttributes" class="px-2 pt-1 pb-1.5 w-full bg-white border rounded-xs border-storm-dust h-[24px] placeholder:text-storm-dust invalid:border-alizarin-crimson dark:bg-cod-grey dark:border-star-dust dark:placeholder:text-star-dust dark:disabled:bg-shark dark:disabled:border-natural-grey dark:disabled:text-natural-grey disabled:bg-concrete disabled:border-star-dust disabled:text-star-dust" Value="@Value" ValueChanged="@ValueChanged" ValueExpression="@ValueExpression"/>
 
 @code {
     [Parameter(CaptureUnmatchedValues = true)] public IDictionary<string, object>? AdditionalAttributes { get; set; }
