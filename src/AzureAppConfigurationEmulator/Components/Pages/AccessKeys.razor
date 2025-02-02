@@ -26,7 +26,10 @@
             <div class="px-2">
                 <div class="pb-6">
                     <div class="flex flex-col gap-4 pb-4">
-                        <AzureTextField IsReadOnly="true" Label="Endpoint" Value="@Endpoint"/>
+                        <label class="flex flex-col gap-1">
+                            <div>Endpoint</div>
+                            <AzureInputText name="@nameof(Endpoint)" readonly Value="@Endpoint" ValueExpression="@(() => Endpoint)"/>
+                        </label>
                     </div>
                 </div>
 
@@ -34,9 +37,20 @@
                     <div class="mb-1 text-lg">Primary key</div>
 
                     <div class="flex flex-col gap-4 pb-4">
-                        <AzureTextField IsReadOnly="true" Label="Id (credential)" Value="@(IsHidden ? new string('•', 99) : HmacOptions.Credential)"/>
-                        <AzureTextField IsReadOnly="true" Label="Secret" Value="@(IsHidden ? new string('•', 99) : HmacOptions.Secret)"/>
-                        <AzureTextField IsReadOnly="true" Label="Connection string" Value="@(IsHidden ? new string('•', 99) : ConnectionString)"/>
+                        <label class="flex flex-col gap-1">
+                            <div>Id (credential)</div>
+                            <AzureInputText name="@nameof(Credential)" readonly Value="@(Credential)" ValueExpression="@(() => Credential)"/>
+                        </label>
+
+                        <label class="flex flex-col gap-1">
+                            <div>Secret</div>
+                            <AzureInputText name="@nameof(Secret)" readonly Value="@(Secret)" ValueExpression="@(() => Secret)"/>
+                        </label>
+
+                        <label class="flex flex-col gap-1">
+                            <div>Connection string</div>
+                            <AzureInputText name="@nameof(ConnectionString)" readonly Value="@(ConnectionString)" ValueExpression="@(() => ConnectionString)"/>
+                        </label>
                     </div>
                 </div>
             </div>
@@ -45,11 +59,13 @@
 </div>
 
 @code {
-    private string ConnectionString => $"Endpoint={Endpoint};Id={HmacOptions.Credential};Secret={HmacOptions.Secret}";
+    private string ConnectionString => IsHidden ? new string('•', 99) : $"Endpoint={Endpoint};Id={Credential};Secret={Secret}";
+
+    private string Credential => IsHidden ? new string('•', 99) : HmacOptionsMonitor.Get(HmacDefaults.AuthenticationScheme).Credential;
 
     private string? Endpoint => Server.Features.Get<IServerAddressesFeature>()?.Addresses.FirstOrDefault();
 
-    private HmacOptions HmacOptions => HmacOptionsMonitor.Get(HmacDefaults.AuthenticationScheme);
+    private string Secret => IsHidden ? new string('•', 99) : HmacOptionsMonitor.Get(HmacDefaults.AuthenticationScheme).Secret;
 
     private bool IsHidden { get; set; } = true;
 
