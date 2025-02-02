@@ -35,7 +35,7 @@
         </div>
 
         <div class="mb-6 max-w-[300px]">
-            <AzureTextField @bind-Value="@SearchQuery" Placeholder="Search displayed key-values"/>
+            <AzureInputText @bind-Value="@SearchQuery" placeholder="Search displayed key-values"/>
         </div>
 
         <div>Loaded @FilteredConfigurationSettings.Count() key-values with @FilteredConfigurationSettings.Select(setting => setting.Key).Distinct().Count() unique keys.</div>
