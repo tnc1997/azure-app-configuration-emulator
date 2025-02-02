@@ -11,10 +11,27 @@
 
     <ChildContent>
         <div class="flex flex-col gap-4 pb-4">
-            <AzureTextField IsDisabled="true" Label="Key" Value="@ConfigurationSetting.Key"/>
-            <AzureTextField @bind-Value="Input.Value" Label="Value"/>
-            <AzureTextField IsDisabled="true" Label="Label" Placeholder="(No label)" Value="@ConfigurationSetting.Label"/>
-            <AzureTextField @bind-Value="Input.ContentType" Label="Content type"/>
+            <label class="flex flex-col gap-1">
+                <div>Key</div>
+                <AzureInputText disabled name="@nameof(ConfigurationSetting.Key)" Value="@ConfigurationSetting.Key" ValueExpression="@(() => ConfigurationSetting.Key)"/>
+            </label>
+
+            <label class="flex flex-col gap-1">
+                <div>Value</div>
+                <div class="font-mono">
+                    <AzureInputTextArea @bind-Value="Input.Value" name="@nameof(Input.Value)" rows="10"/>
+                </div>
+            </label>
+
+            <label class="flex flex-col gap-1">
+                <div>Label</div>
+                <AzureInputText disabled name="@nameof(ConfigurationSetting.Label)" placeholder="(No label)" Value="@ConfigurationSetting.Label" ValueExpression="@(() => ConfigurationSetting.Label)"/>
+            </label>
+
+            <label class="flex flex-col gap-1">
+                <div>Content type</div>
+                <AzureInputText @bind-Value="Input.ContentType" name="@nameof(Input.ContentType)"/>
+            </label>
         </div>
     </ChildContent>
 

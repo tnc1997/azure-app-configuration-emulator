@@ -10,10 +10,27 @@
 
     <ChildContent>
         <div class="flex flex-col gap-4 pb-4">
-            <AzureTextField @bind-Value="Input.Key" IsRequired="true" Label="Key"/>
-            <AzureTextField @bind-Value="Input.Value" Label="Value"/>
-            <AzureTextField @bind-Value="Input.Label" Label="Label" Placeholder="(No label)"/>
-            <AzureTextField @bind-Value="Input.ContentType" Label="Content type"/>
+            <label class="flex flex-col gap-1">
+                <div>Key <span class="text-alizarin-crimson">*</span></div>
+                <AzureInputText @bind-Value="Input.Key" name="@nameof(Input.Key)" required/>
+            </label>
+
+            <label class="flex flex-col gap-1">
+                <div>Value</div>
+                <div class="font-mono">
+                    <AzureInputTextArea @bind-Value="Input.Value" name="@nameof(Input.Value)" rows="10"/>
+                </div>
+            </label>
+
+            <label class="flex flex-col gap-1">
+                <div>Label</div>
+                <AzureInputText @bind-Value="Input.Label" name="@nameof(Input.Label)" placeholder="(No label)"/>
+            </label>
+
+            <label class="flex flex-col gap-1">
+                <div>Content type</div>
+                <AzureInputText @bind-Value="Input.ContentType" name="@nameof(Input.ContentType)"/>
+            </label>
         </div>
     </ChildContent>
 
