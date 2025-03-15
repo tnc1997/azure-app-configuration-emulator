@@ -1,0 +1,125 @@
+@implements IAsyncDisposable
+@inject IJSRuntime JS
+
+<div class="absolute z-9999" @ref="@AnchoredRegion">
+    @ChildContent
+</div>
+
+@code {
+
+    [EditorRequired, Parameter] public string Anchor { get; set; } = null!;
+
+    [Parameter] public RenderFragment? ChildContent { get; set; }
+
+    [Parameter] public HorizontalPosition HorizontalDefaultPosition { get; set; } = HorizontalPosition.Unset;
+
+    [Parameter] public bool HorizontalInset { get; set; }
+
+    [Parameter] public AxisPositioningMode HorizontalPositioningMode { get; set; } = AxisPositioningMode.Uncontrolled;
+
+    [Parameter] public int HorizontalThreshold { get; set; }
+
+    [Parameter] public VerticalPosition VerticalDefaultPosition { get; set; } = VerticalPosition.Unset;
+
+    [Parameter] public bool VerticalInset { get; set; }
+
+    [Parameter] public AxisPositioningMode VerticalPositioningMode { get; set; } = AxisPositioningMode.Uncontrolled;
+
+    [Parameter] public int VerticalThreshold { get; set; }
+
+    private ElementReference AnchoredRegion { get; set; }
+
+    private IJSObjectReference? Module { get; set; }
+
+    public async ValueTask DisposeAsync()
+    {
+        if (Module is not null)
+        {
+            await Module.DisposeAsync();
+        }
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            Module = await JS.InvokeAsync<IJSObjectReference>("import", "./Components/AzureAnchoredRegion.razor.js");
+
+            await Module.InvokeVoidAsync("anchor", AnchoredRegion, Anchor, HorizontalDefaultPosition, HorizontalInset, HorizontalPositioningMode, HorizontalThreshold, VerticalDefaultPosition, VerticalInset, VerticalPositioningMode, VerticalThreshold);
+        }
+    }
+
+    /// <summary>
+    /// Describes the positioning behavior of an <see cref="AzureAnchoredRegion"/> on a particular axis.
+    /// </summary>
+    public enum AxisPositioningMode
+    {
+        /// <summary>
+        /// The axis positioning is not controlled.
+        /// </summary>
+        Uncontrolled,
+
+        /// <summary>
+        /// The axis positioning is locked to the default.
+        /// </summary>
+        LockToDefault,
+
+        /// <summary>
+        /// The axis positioning is based on the available space.
+        /// </summary>
+        Dynamic
+    }
+
+    /// <summary>
+    /// Describes the horizontal positioning of an <see cref="AzureAnchoredRegion"/>.
+    /// </summary>
+    public enum HorizontalPosition
+    {
+        /// <summary>
+        /// No position set.
+        /// </summary>
+        Unset,
+
+        /// <summary>
+        /// Position on the left of the <see cref="AzureAnchoredRegion.Anchor"/>.
+        /// </summary>
+        Left,
+
+        /// <summary>
+        /// Position on the right of the <see cref="AzureAnchoredRegion.Anchor"/>.
+        /// </summary>
+        Right,
+
+        /// <summary>
+        /// Position at the center of the <see cref="AzureAnchoredRegion.Anchor"/>.
+        /// </summary>
+        Center
+    }
+
+    /// <summary>
+    /// Describes the vertical positioning of an <see cref="AzureAnchoredRegion"/>.
+    /// </summary>
+    public enum VerticalPosition
+    {
+        /// <summary>
+        /// No position set.
+        /// </summary>
+        Unset,
+
+        /// <summary>
+        /// Position on the top of the <see cref="AzureAnchoredRegion.Anchor"/>.
+        /// </summary>
+        Top,
+
+        /// <summary>
+        /// Position on the bottom of the <see cref="AzureAnchoredRegion.Anchor"/>.
+        /// </summary>
+        Bottom,
+
+        /// <summary>
+        /// Position at the center of the <see cref="AzureAnchoredRegion.Anchor"/>.
+        /// </summary>
+        Center
+    }
+
+}
