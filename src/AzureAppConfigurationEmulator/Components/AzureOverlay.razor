@@ -1,0 +1,52 @@
+@if (Visible)
+{
+    <div class="fixed inset-0 w-full h-full cursor-auto z-9900" @onclick="@HandleClick" @oncontextmenu="@HandleClick" @oncontextmenu:preventDefault="true">
+        @ChildContent
+    </div>
+}
+
+@code {
+
+    /// <summary>
+    /// The content to be rendered inside the component.
+    /// </summary>
+    [Parameter]
+    public RenderFragment? ChildContent { get; set; }
+
+    /// <summary>
+    /// Boolean that indicates whether the overlay can be dismissed by clicking on it. Default is "true".
+    /// </summary>
+    [Parameter]
+    public bool Dismissible { get; set; } = true;
+
+    /// <summary>
+    /// Raised when the overlay is closed.
+    /// </summary>
+    [Parameter]
+    public EventCallback<MouseEventArgs> OnClose { get; set; }
+
+    /// <summary>
+    /// Boolean that indicates whether the overlay is visible. Default is "false".
+    /// </summary>
+    [Parameter]
+    public bool Visible { get; set; } = false;
+
+    /// <summary>
+    /// Raised when the <see cref="Visible"/> property changed.
+    /// </summary>
+    [Parameter]
+    public EventCallback<bool> VisibleChanged { get; set; }
+
+    private async Task HandleClick(MouseEventArgs args)
+    {
+        if (Dismissible && Visible)
+        {
+            Visible = false;
+
+            await VisibleChanged.InvokeAsync(Visible);
+
+            await OnClose.InvokeAsync(args);
+        }
+    }
+
+}
