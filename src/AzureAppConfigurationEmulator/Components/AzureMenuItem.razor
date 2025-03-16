@@ -1,0 +1,48 @@
+<div aria-disabled="@(Disabled ? "true" : "false")" class="p-2 cursor-pointer aria-disabled:cursor-default not-[:aria-disabled]:dark:hover:bg-shark not-[:aria-disabled]:dark:active:bg-tuatara not-[:aria-disabled]:hover:bg-concrete not-[:aria-disabled]:active:bg-gallery aria-disabled:dark:text-storm-dust aria-disabled:text-star-dust" @onclick="@HandleClick" role="@(Role switch { MenuItemRole.MenuItem => "menuitem", MenuItemRole.MenuItemCheckbox => "menuitemcheckbox", MenuItemRole.MenuItemRadio => "menuitemradio", _ => throw new ArgumentOutOfRangeException() })">
+    @ChildContent
+</div>
+
+@code {
+
+    [Parameter] public RenderFragment? ChildContent { get; set; }
+
+    [Parameter] public bool Disabled { get; set; }
+
+    [Parameter] public EventCallback<MouseEventArgs> OnClick { get; set; }
+
+    [CascadingParameter] public AzureMenu Owner { get; set; } = null!;
+
+    [Parameter] public MenuItemRole Role { get; set; } = MenuItemRole.MenuItem;
+
+    private async Task HandleClick(MouseEventArgs args)
+    {
+        if (!Disabled)
+        {
+            await Owner.CloseAsync();
+
+            await OnClick.InvokeAsync(args);
+        }
+    }
+
+    /// <summary>
+    /// Describes the role of an <see cref="AzureMenuItem"/>.
+    /// </summary>
+    public enum MenuItemRole
+    {
+        /// <summary>
+        /// The menu item has a "menuitem" role.
+        /// </summary>
+        MenuItem,
+
+        /// <summary>
+        /// The menu item has a "menuitemcheckbox" role.
+        /// </summary>
+        MenuItemCheckbox,
+
+        /// <summary>
+        /// The menu item has a "menuitemradio" role.
+        /// </summary>
+        MenuItemRadio
+    }
+
+}
