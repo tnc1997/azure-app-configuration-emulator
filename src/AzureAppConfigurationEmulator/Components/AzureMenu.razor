@@ -1,0 +1,181 @@
+@implements IAsyncDisposable
+@implements IDisposable
+@inject IJSRuntime JS
+@using System.Drawing
+
+<CascadingValue Value="@this">
+    @if (Open)
+    {
+        @if (Anchored)
+        {
+            <AzureOverlay @bind-Visible="@Open" OnClose="@CloseAsync"/>
+
+            <AzureAnchoredRegion Anchor="@Anchor" HorizontalDefaultPosition="@HorizontalPosition" HorizontalInset="@HorizontalInset" HorizontalPositioningMode="AzureAnchoredRegion.AxisPositioningMode.Dynamic" HorizontalThreshold="@HorizontalThreshold" VerticalDefaultPosition="@VerticalPosition" VerticalInset="@VerticalInset" VerticalPositioningMode="AzureAnchoredRegion.AxisPositioningMode.Dynamic" VerticalThreshold="@VerticalThreshold">
+                <div class="flex flex-col bg-white border shadow-md border-alto dark:bg-cod-grey dark:border-masala" role="menu" style="@Style">
+                    @ChildContent
+                </div>
+            </AzureAnchoredRegion>
+        }
+        else
+        {
+            if (Trigger is MouseButton.Right)
+            {
+                <AzureOverlay @bind-Visible="@Open" OnClose="@CloseAsync"/>
+            }
+
+            <div class="flex flex-col bg-white border shadow-md border-alto z-9999 w-[unset] h-[unset] dark:bg-cod-grey dark:border-masala" role="menu" style="@Style">
+                @ChildContent
+            </div>
+        }
+    }
+</CascadingValue>
+
+@code {
+
+    [Parameter] public string? Anchor { get; set; }
+
+    [Parameter] public bool Anchored { get; set; } = true;
+
+    [Parameter] public RenderFragment? ChildContent { get; set; }
+
+    [Parameter] public bool HorizontalInset { get; set; } = true;
+
+    [Parameter] public AzureAnchoredRegion.HorizontalPosition HorizontalPosition { get; set; } = AzureAnchoredRegion.HorizontalPosition.Unset;
+
+    [Parameter] public int HorizontalThreshold { get; set; }
+
+    [Parameter] public bool Open { get; set; }
+
+    [Parameter] public EventCallback<bool> OpenChanged { get; set; }
+
+    [Parameter] public MouseButton Trigger { get; set; } = MouseButton.None;
+
+    [Parameter] public bool VerticalInset { get; set; }
+
+    [Parameter] public AzureAnchoredRegion.VerticalPosition VerticalPosition { get; set; } = AzureAnchoredRegion.VerticalPosition.Bottom;
+
+    [Parameter] public int VerticalThreshold { get; set; }
+
+    private Point ClickedPoint { get; set; }
+
+    private DotNetObjectReference<AzureMenu>? DotNetHelper { get; set; }
+
+    private IJSObjectReference? Module { get; set; }
+
+    private string Style
+    {
+        get
+        {
+            var style = "";
+
+            if (!Anchored && !string.IsNullOrEmpty(Anchor))
+            {
+                style += "position: fixed;";
+            }
+
+            if (!Anchored && ClickedPoint.X is not 0)
+            {
+                style += $"left: {ClickedPoint.X}px;";
+            }
+
+            if (!Anchored && ClickedPoint.Y is not 0)
+            {
+                style += $"top: {ClickedPoint.Y}px;";
+            }
+
+            return style;
+        }
+    }
+
+    public async Task CloseAsync()
+    {
+        Open = false;
+
+        await OpenChanged.InvokeAsync(Open);
+
+        StateHasChanged();
+    }
+
+    public void Dispose()
+    {
+        DotNetHelper?.Dispose();
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        if (Module is not null)
+        {
+            await Module.DisposeAsync();
+        }
+    }
+
+    [JSInvokable]
+    public async Task OpenAsync(int x, int y)
+    {
+        ClickedPoint = new Point(x, y);
+
+        Open = true;
+
+        await OpenChanged.InvokeAsync(Open);
+
+        StateHasChanged();
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            if (Trigger is not MouseButton.None)
+            {
+                Module = await JS.InvokeAsync<IJSObjectReference>("import", "./Components/AzureMenu.razor.js");
+
+                DotNetHelper = DotNetObjectReference.Create(this);
+
+                if (!string.IsNullOrEmpty(Anchor))
+                {
+                    switch (Trigger)
+                    {
+                        case MouseButton.Left:
+                            await Module.InvokeVoidAsync("addEventLeftClick", Anchor, DotNetHelper);
+
+                            break;
+                        case MouseButton.Right:
+                            await Module.InvokeVoidAsync("addEventRightClick", Anchor, DotNetHelper);
+
+                            break;
+                    }
+                }
+            }
+        }
+    }
+
+    protected override void OnInitialized()
+    {
+        if (Anchored && string.IsNullOrEmpty(Anchor))
+        {
+            Anchored = false;
+        }
+    }
+
+    /// <summary>
+    /// Describes the mouse button trigger of an <see cref="AzureMenu"/>.
+    /// </summary>
+    public enum MouseButton
+    {
+        /// <summary>
+        /// The menu cannot be opened by clicking on the <see cref="AzureMenu.Anchor"/>.
+        /// </summary>
+        None,
+
+        /// <summary>
+        /// The menu can be opened by left clicking on the <see cref="AzureMenu.Anchor"/>.
+        /// </summary>
+        Left,
+
+        /// <summary>
+        /// The menu can be opened by right clicking on the <see cref="AzureMenu.Anchor"/>.
+        /// </summary>
+        Right
+    }
+
+}
