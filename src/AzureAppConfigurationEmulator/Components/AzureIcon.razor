@@ -1,0 +1,79 @@
+<svg @attributes="@AdditionalAttributes" class="fill-lochmara dark:fill-lochmara" viewBox="@($"0 0 {(int) Value.Size} {(int) Value.Size}")" width="@((int) Value.Size)">
+    @((MarkupString) Value.Content)
+</svg>
+
+@code {
+
+    [Parameter(CaptureUnmatchedValues = true)] public IDictionary<string, object>? AdditionalAttributes { get; set; }
+
+    [EditorRequired, Parameter] public Icon Value { get; set; } = null!;
+
+    public class Icon(string name, string content, IconVariant variant, IconSize size)
+    {
+        public string Name { get; set; } = name;
+
+        public string Content { get; set; } = content;
+
+        public IconVariant Variant { get; set; } = variant;
+
+        public IconSize Size { get; set; } = size;
+    }
+
+    /// <summary>
+    /// Describes the variant of an <see cref="AzureIcon"/>.
+    /// </summary>
+    public enum IconVariant
+    {
+        /// <summary>
+        /// The regular variant.
+        /// </summary>
+        Regular
+    }
+
+    /// <summary>
+    /// Describes the size of an <see cref="AzureIcon"/>.
+    /// </summary>
+    public enum IconSize
+    {
+        /// <summary>
+        /// The size 10x10.
+        /// </summary>
+        Size10 = 10,
+
+        /// <summary>
+        /// The size 12x12.
+        /// </summary>
+        Size12 = 12,
+
+        /// <summary>
+        /// The size 16x16.
+        /// </summary>
+        Size16 = 16,
+
+        /// <summary>
+        /// The size 20x20.
+        /// </summary>
+        Size20 = 20,
+
+        /// <summary>
+        /// The size 24x24.
+        /// </summary>
+        Size24 = 24,
+
+        /// <summary>
+        /// The size 28x28.
+        /// </summary>
+        Size28 = 28,
+
+        /// <summary>
+        /// The size 32x32.
+        /// </summary>
+        Size32 = 32,
+
+        /// <summary>
+        /// The size 48x48.
+        /// </summary>
+        Size48 = 48
+    }
+
+}
