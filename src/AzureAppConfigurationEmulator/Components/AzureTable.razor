@@ -1,6 +1,6 @@
 @typeparam TItem
 
-<table class="w-full border-collapse table-fixed">
+<table @attributes="@AdditionalAttributes" class="w-full border-collapse table-fixed @(AdditionalAttributes?.TryGetValue("class", out var @class) is true ? @class : null)">
     <thead>
     <tr class="border-b border-b-alto h-[32px] dark:border-b-masala">
         <th class="text-center w-[24px]" scope="col">
@@ -33,6 +33,9 @@
 </table>
 
 @code {
+
+    [Parameter(CaptureUnmatchedValues = true)] public IDictionary<string, object>? AdditionalAttributes { get; set; }
+
     [EditorRequired, Parameter] public RenderFragment HeaderContent { get; set; } = null!;
 
     [Parameter] public IEnumerable<TItem> Items { get; set; } = [];

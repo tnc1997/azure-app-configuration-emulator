@@ -1,7 +1,9 @@
-<td class="px-1 text-left truncate">
+<td @attributes="@AdditionalAttributes" class="px-1 text-left truncate @(AdditionalAttributes?.TryGetValue("class", out var @class) is true ? @class : null)">
     @ChildContent
 </td>
 
 @code {
+    [Parameter(CaptureUnmatchedValues = true)] public IDictionary<string, object>? AdditionalAttributes { get; set; }
+
     [Parameter] public RenderFragment? ChildContent { get; set; }
 }
