@@ -7,6 +7,7 @@
         <AzureTableHeaderCell>Label</AzureTableHeaderCell>
         <AzureTableHeaderCell>Last modified</AzureTableHeaderCell>
         <AzureTableHeaderCell>Content type</AzureTableHeaderCell>
+        <AzureTableHeaderCell class="w-[24px]"></AzureTableHeaderCell>
     </HeaderContent>
 
     <RowTemplate>
@@ -15,15 +16,41 @@
         <AzureTableDataCell>@(!string.IsNullOrEmpty(context.Label) ? context.Label : "(No label)")</AzureTableDataCell>
         <AzureTableDataCell>@context.LastModified.ToString("G")</AzureTableDataCell>
         <AzureTableDataCell>@context.ContentType</AzureTableDataCell>
+        <AzureTableDataCell>
+            @{ var id = Guid.NewGuid().ToString(); }
+
+            <AzureIcon id="@id" Value="@(new AzureIcon.Icons.Regular.Size16.EllipsisHorizontal())"/>
+
+            <AzureMenu Anchor="@id" Anchored="@false" Trigger="AzureMenu.MouseButton.Left">
+                <AzureMenuItem OnClick="@(() => HandleEditClick(context))">Edit</AzureMenuItem>
+                <AzureMenuItem OnClick="@(() => HandleDeleteClick(context))">Delete</AzureMenuItem>
+            </AzureMenu>
+        </AzureTableDataCell>
     </RowTemplate>
 </AzureTable>
 
 @code {
+
     [Parameter] public IEnumerable<ConfigurationSetting> ConfigurationSettings { get; set; } = [];
 
     [Parameter] public bool IsValuesHidden { get; set; }
 
+    [Parameter] public EventCallback<ConfigurationSetting> OnDeleteClick { get; set; }
+
+    [Parameter] public EventCallback<ConfigurationSetting> OnEditClick { get; set; }
+
     [Parameter] public ICollection<ConfigurationSetting> SelectedConfigurationSettings { get; set; } = [];
 
     [Parameter] public EventCallback<ICollection<ConfigurationSetting>> SelectedConfigurationSettingsChanged { get; set; }
+
+    private async Task HandleDeleteClick(ConfigurationSetting setting)
+    {
+        await OnDeleteClick.InvokeAsync(setting);
+    }
+
+    private async Task HandleEditClick(ConfigurationSetting setting)
+    {
+        await OnEditClick.InvokeAsync(setting);
+    }
+
 }
