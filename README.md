@@ -78,55 +78,27 @@ pm.request.headers.upsert(`Authorization: HMAC-SHA256 Credential=${credential}&S
 
 ### Microsoft Entra ID
 
-HMAC authentication is recommended because it does not require a Microsoft Entra tenant and an Azure App Configuration resource.
+Microsoft Entra ID authentication allows you to simulate an Azure based production environment using a [Managed Identity](https://learn.microsoft.com/en-us/azure/azure-app-configuration/howto-integrate-azure-managed-service-identity).
 
-1. [Register an application](https://learn.microsoft.com/entra/identity-platform/quickstart-register-app) within the Microsoft Entra tenant.
-    1. On the Overview page, in the Essentials accordion, copy the following values:
-        * Application (client) ID
-        * Directory (tenant) ID
-    2. On the Certificates & secrets page, in the Client secrets tab, add a client secret.
-2. [Create an Azure App Configuration resource](https://learn.microsoft.com/azure/azure-app-configuration/quickstart-azure-app-configuration-create) to be emulated.
-    1. On the Overview page, in the Essentials accordion, copy the following values:
-        * Endpoint
-    2. On the Access control (IAM) page, add a role assignment.
-        1. In the Role tab, select the App Configuration Data Owner role.
-        2. In the Members tab, assign access to the registered application.
-3. [Generate a self-signed certificate](#ssl--tls) with the `<endpoint>` as the [Subject Alternative Name](https://wikipedia.org/wiki/Subject_Alternative_Name).
+[Assumed Identity](https://github.com/nagyesta/assumed-identity) is a simple test double simulating how Azure Instance Metadata Service (IMDS) is handling Managed Identity tokens.
 
 The metadata address must be set using the environment variable `Authentication__Schemes__MicrosoftEntraId__MetadataAddress`.
 
 ```yaml
 services:
+  assumed-identity:
+    image: nagyesta/assumed-identity
   azure-app-configuration-emulator:
+    depends_on:
+      - assumed-identity
     environment:
-      - ASPNETCORE_HTTP_PORTS=80
-      - ASPNETCORE_HTTPS_PORTS=443
-      - Authentication__Schemes__MicrosoftEntraId__MetadataAddress=https://login.microsoftonline.com/<tenant-id>/v2.0/.well-known/openid-configuration
+      - ASPNETCORE_HTTP_PORTS=8080
+      - ASPNETCORE_HTTPS_PORTS=8081
+      - Authentication__Schemes__MicrosoftEntraId__MetadataAddress=http://assumed-identity/metadata/identity/.well-known/openid-configuration
+      - Authentication__Schemes__MicrosoftEntraId__RequireHttpsMetadata=false
+      - Kestrel__Certificates__Default__Path=/usr/local/share/azureappconfigurationemulator/emulator.crt
+      - Kestrel__Certificates__Default__KeyPath=/usr/local/share/azureappconfigurationemulator/emulator.key
     image: tnc1997/azure-app-configuration-emulator
-    networks:
-      default:
-        aliases:
-          - <endpoint>
-    volumes:
-      - ./emulator.crt:/usr/local/share/azureappconfigurationemulator/emulator.crt:ro
-      - ./emulator.key:/usr/local/share/azureappconfigurationemulator/emulator.key:ro
-```
-
-The valid audience should be overriden using the environment variable `Authentication__Schemes__MicrosoftEntraId__ValidAudience`.
-
-```yaml
-services:
-  azure-app-configuration-emulator:
-    environment:
-      - ASPNETCORE_HTTP_PORTS=80
-      - ASPNETCORE_HTTPS_PORTS=443
-      - Authentication__Schemes__MicrosoftEntraId__MetadataAddress=https://login.microsoftonline.com/<tenant-id>/.well-known/openid-configuration
-      - Authentication__Schemes__MicrosoftEntraId__ValidAudience=https://<endpoint>
-    image: tnc1997/azure-app-configuration-emulator
-    networks:
-      default:
-        aliases:
-          - <endpoint>
     volumes:
       - ./emulator.crt:/usr/local/share/azureappconfigurationemulator/emulator.crt:ro
       - ./emulator.key:/usr/local/share/azureappconfigurationemulator/emulator.key:ro
@@ -134,18 +106,14 @@ services:
 
 #### .NET
 
-The client may authenticate requests using the Microsoft Entra tenant.
+The client may authenticate requests using the Managed Identity.
 
 ```csharp
 using Azure.Data.AppConfiguration;
 using Azure.Identity;
 
-var tenantId = Environment.GetEnvironmentVariable("Authentication__Schemes__MicrosoftEntraId__TenantId");
-var clientId = Environment.GetEnvironmentVariable("Authentication__Schemes__MicrosoftEntraId__ClientId");
-var clientSecret = Environment.GetEnvironmentVariable("Authentication__Schemes__MicrosoftEntraId__ClientSecret");
-var credential = new ClientSecretCredential(tenantId, clientId, clientSecret);
-
 var endpoint = Environment.GetEnvironmentVariable("Endpoints__AzureAppConfiguration");
+var credential = new ManagedIdentityCredential();
 var client = new ConfigurationClient(new Uri(endpoint), credential);
 
 var setting = new ConfigurationSetting("AzureAppConfigurationEmulator", "Hello World");
@@ -154,17 +122,19 @@ await client.SetConfigurationSettingAsync(setting);
 
 ```yaml
 services:
+  assumed-identity:
+    image: nagyesta/assumed-identity
   azure-app-configuration-emulator:
+    depends_on:
+      - assumed-identity
     environment:
-      - ASPNETCORE_HTTP_PORTS=80
-      - ASPNETCORE_HTTPS_PORTS=443
-      - Authentication__Schemes__MicrosoftEntraId__MetadataAddress=https://login.microsoftonline.com/<tenant-id>/.well-known/openid-configuration
-      - Authentication__Schemes__MicrosoftEntraId__ValidAudience=https://<endpoint>
+      - ASPNETCORE_HTTP_PORTS=8080
+      - ASPNETCORE_HTTPS_PORTS=8081
+      - Authentication__Schemes__MicrosoftEntraId__MetadataAddress=http://assumed-identity/metadata/identity/.well-known/openid-configuration
+      - Authentication__Schemes__MicrosoftEntraId__RequireHttpsMetadata=false
+      - Kestrel__Certificates__Default__Path=/usr/local/share/azureappconfigurationemulator/emulator.crt
+      - Kestrel__Certificates__Default__KeyPath=/usr/local/share/azureappconfigurationemulator/emulator.key
     image: tnc1997/azure-app-configuration-emulator
-    networks:
-      default:
-        aliases:
-          - <endpoint>
     volumes:
       - ./emulator.crt:/usr/local/share/azureappconfigurationemulator/emulator.crt:ro
       - ./emulator.key:/usr/local/share/azureappconfigurationemulator/emulator.key:ro
@@ -173,29 +143,14 @@ services:
       context: .
       dockerfile: ./ConsoleApplication/Dockerfile
     depends_on:
+      - assumed-identity
       - azure-app-configuration-emulator
     entrypoint: /bin/sh -c "update-ca-certificates && dotnet ConsoleApplication.dll"
     environment:
-      - Authentication__Schemes__MicrosoftEntraId__ClientId=<client-id>
-      - Authentication__Schemes__MicrosoftEntraId__ClientSecret=<client-secret>
-      - Authentication__Schemes__MicrosoftEntraId__TenantId=<tenant-id>
-      - Endpoints__AzureAppConfiguration=https://<endpoint>
+      - Endpoints__AzureAppConfiguration=https://azure-app-configuration-emulator:8081
     volumes:
       - ./emulator.crt:/usr/local/share/ca-certificates/emulator.crt:ro
 ```
-
-#### Postman
-
-The access token may be obtained using the following configuration:
-
-| Configuration    |                                                                   |
-|------------------|-------------------------------------------------------------------|
-| Auth Type        | OAuth 2.0                                                         |
-| Grant Type       | Client Credentials                                                |
-| Access Token URL | `https://login.microsoftonline.com/<tenant-id>/oauth2/v2.0/token` |
-| Client ID        | `<client-id>`                                                     |
-| Client Secret    | `<client-secret>`                                                 |
-| Scope            | `https://<endpoint>/.default`                                     |
 
 ## Compatibility
 
