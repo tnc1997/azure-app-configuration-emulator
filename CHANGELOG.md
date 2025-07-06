@@ -2,13 +2,41 @@
 
 All notable changes to this project will be documented in this file. See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
-## 1.1.1 (2025-01-22)
+## [1.2.0](https://github.com/tnc1997/azure-app-configuration-emulator/compare/v1.1.1...v1.2.0) (2025-07-06)
+
+### Features
+
+* add context menu to configuration setting table ([072522b](https://github.com/tnc1997/azure-app-configuration-emulator/commit/072522bc48a28481093a9c81dd039db4fefc66b3))
+
+### Documentation
+
+* remove overlay component ([bf678d6](https://github.com/tnc1997/azure-app-configuration-emulator/commit/bf678d668053ad13a94ab1113d5ac9122a7302c2))
+
+### Code Refactoring
+
+* add additional attributes to table components ([cd3e7b6](https://github.com/tnc1997/azure-app-configuration-emulator/commit/cd3e7b6ac61b35cb938d27cde815cf336088555b))
+* add anchored region component ([7fdff44](https://github.com/tnc1997/azure-app-configuration-emulator/commit/7fdff4478a051976c2c92f8caa8df7b9f4ac0cc7))
+* add delete icon ([df754c5](https://github.com/tnc1997/azure-app-configuration-emulator/commit/df754c5f77741a2e4088191a618c6e5e5b9be329))
+* add ellipsis horizontal icon ([9d9c9c1](https://github.com/tnc1997/azure-app-configuration-emulator/commit/9d9c9c190217b2df01fc2570e7dcb0f2bf1f4bf4))
+* add icon component ([93ea93d](https://github.com/tnc1997/azure-app-configuration-emulator/commit/93ea93dcd25390ea325e41de617ff30d0e620d16))
+* add menu component ([14d5a86](https://github.com/tnc1997/azure-app-configuration-emulator/commit/14d5a866022731cf7ed72f9c343ca944371f8f4d))
+* add menu item component ([e1b9dc0](https://github.com/tnc1997/azure-app-configuration-emulator/commit/e1b9dc055307f56b1eccb4a3c511b9394a57c724))
+* add overlay component ([770452c](https://github.com/tnc1997/azure-app-configuration-emulator/commit/770452c1bce90356013cb5e8c04473adbb8de09a))
+* align microsoft entra id app settings with managed identity ([#110](https://github.com/tnc1997/azure-app-configuration-emulator/issues/110)) ([7cae2d0](https://github.com/tnc1997/azure-app-configuration-emulator/commit/7cae2d0e3d8b1a960a9ef2505d4a0bd1b4ea49ae))
+* remove text field component ([48463ef](https://github.com/tnc1997/azure-app-configuration-emulator/commit/48463ef624157c73763db00496f1ab882d5b50ea))
+* update access keys text fields ([0f72ba3](https://github.com/tnc1997/azure-app-configuration-emulator/commit/0f72ba3f902f30226e1af851fd9dabe0097698ff))
+* update configuration explorer text fields ([c22f768](https://github.com/tnc1997/azure-app-configuration-emulator/commit/c22f768e895fce8fddc9e36d6188051b0752b9e0))
+* update configuration setting dialogs text fields ([876688d](https://github.com/tnc1997/azure-app-configuration-emulator/commit/876688db58b7f662be5ceda60cc3393b5129cd1b))
+* update feature manager text fields ([dd09c23](https://github.com/tnc1997/azure-app-configuration-emulator/commit/dd09c23d7225fc02efa9c1b716b5d78568b7aab4))
+* update nav menu text fields ([320621b](https://github.com/tnc1997/azure-app-configuration-emulator/commit/320621b722dff6e3f7bd0aae7f6a868ef96b32b0))
+
+## [1.1.1](https://github.com/tnc1997/azure-app-configuration-emulator/compare/v1.1.0...v1.1.1) (2025-01-22)
 
 ### Bug Fixes
 
 * search query case sensitivity ([#108](https://github.com/tnc1997/azure-app-configuration-emulator/issues/108)) ([3d946db](https://github.com/tnc1997/azure-app-configuration-emulator/commit/3d946db8f4ad771d82d152f96036eeb0c01083b7))
 
-## 1.1.0 (2024-12-03)
+## [1.1.0](https://github.com/tnc1997/azure-app-configuration-emulator/compare/v1.0.1...v1.1.0) (2024-12-03)
 
 ### Features
 
@@ -20,7 +48,7 @@ All notable changes to this project will be documented in this file. See [Conven
 * add key value pair json decoder ([#103](https://github.com/tnc1997/azure-app-configuration-emulator/issues/103)) ([bd804b6](https://github.com/tnc1997/azure-app-configuration-emulator/commit/bd804b61db75e3342f9508ed8b75d19212f4df4b))
 * add key value pair json encoder ([#104](https://github.com/tnc1997/azure-app-configuration-emulator/issues/104)) ([a59356b](https://github.com/tnc1997/azure-app-configuration-emulator/commit/a59356b0464aa3253a57b38d925f1d025661e831))
 
-## 1.0.1 (2024-11-16)
+## [1.0.1](https://github.com/tnc1997/azure-app-configuration-emulator/compare/v1.0.0...v1.0.1) (2024-11-16)
 
 ### Bug Fixes
 
