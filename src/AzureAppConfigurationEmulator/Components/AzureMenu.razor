@@ -1,7 +1,6 @@
 @implements IAsyncDisposable
 @implements IDisposable
 @inject IJSRuntime JS
-@using System.Drawing
 
 <CascadingValue Value="@this">
     @if (Open)
@@ -42,7 +41,7 @@
 
     [Parameter] public AzureAnchoredRegion.HorizontalPosition HorizontalPosition { get; set; } = AzureAnchoredRegion.HorizontalPosition.Unset;
 
-    [Parameter] public int HorizontalThreshold { get; set; }
+    [Parameter] public int HorizontalThreshold { get; set; } = 200;
 
     [Parameter] public bool Open { get; set; }
 
@@ -54,13 +53,13 @@
 
     [Parameter] public AzureAnchoredRegion.VerticalPosition VerticalPosition { get; set; } = AzureAnchoredRegion.VerticalPosition.Bottom;
 
-    [Parameter] public int VerticalThreshold { get; set; }
-
-    private Point ClickedPoint { get; set; }
+    [Parameter] public int VerticalThreshold { get; set; } = 200;
 
     private DotNetObjectReference<AzureMenu>? DotNetHelper { get; set; }
 
     private IJSObjectReference? Module { get; set; }
+
+    private (int Top, int Right, int Bottom, int Left) StylePositions { get; set; }
 
     private string Style
     {
@@ -73,14 +72,24 @@
                 style += "position: fixed;";
             }
 
-            if (!Anchored && ClickedPoint.X is not 0)
+            if (!Anchored && StylePositions.Top is not 0)
             {
-                style += $"left: {ClickedPoint.X}px;";
+                style += $"top: {StylePositions.Top}px;";
             }
 
-            if (!Anchored && ClickedPoint.Y is not 0)
+            if (!Anchored && StylePositions.Right is not 0)
             {
-                style += $"top: {ClickedPoint.Y}px;";
+                style += $"right: {StylePositions.Right}px;";
+            }
+
+            if (!Anchored && StylePositions.Bottom is not 0)
+            {
+                style += $"bottom: {StylePositions.Bottom}px;";
+            }
+
+            if (!Anchored && StylePositions.Left is not 0)
+            {
+                style += $"left: {StylePositions.Left}px;";
             }
 
             return style;
@@ -110,9 +119,32 @@
     }
 
     [JSInvokable]
-    public async Task OpenAsync(int x, int y)
+    public async Task OpenAsync(int screenWidth, int screenHeight, int x, int y)
     {
-        ClickedPoint = new Point(x, y);
+        var left = 0;
+        var right = 0;
+        var top = 0;
+        var bottom = 0;
+
+        if (x + HorizontalThreshold > screenWidth)
+        {
+            right = screenWidth - x;
+        }
+        else
+        {
+            left = x;
+        }
+
+        if (y + VerticalThreshold > screenHeight)
+        {
+            bottom = screenHeight - y;
+        }
+        else
+        {
+            top = y;
+        }
+
+        StylePositions = (top, right, bottom, left);
 
         Open = true;
 
