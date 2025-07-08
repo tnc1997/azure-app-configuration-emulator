@@ -1,5 +1,5 @@
 #define MyAppName "Emulator for Azure App Configuration"
-#define MyAppVersion "1.2.0"
+#define MyAppVersion "1.2.1"
 #define MyAppPublisher "Thomas Clark"
 #define MyAppURL "https://azureappconfigurationemulator.thomasclark.app"
 #define MyAppExeName "AzureAppConfigurationEmulator.exe"
