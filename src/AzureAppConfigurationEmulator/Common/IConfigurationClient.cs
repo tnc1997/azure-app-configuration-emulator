@@ -7,7 +7,7 @@ public interface IConfigurationClient
     public IAsyncEnumerable<ConfigurationSetting> GetConfigurationSettings(
         string key = KeyFilter.Any,
         string label = LabelFilter.Any,
-        DateTimeOffset? moment = default,
+        DateTimeOffset? moment = null,
         CancellationToken cancellationToken = default);
 
     public IAsyncEnumerable<string> GetKeys(

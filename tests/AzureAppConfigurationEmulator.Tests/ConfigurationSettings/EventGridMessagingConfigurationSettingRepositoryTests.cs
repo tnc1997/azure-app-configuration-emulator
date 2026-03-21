@@ -1,3 +1,4 @@
+using System.Text.Json;
 using Azure.Messaging.EventGrid;
 using AzureAppConfigurationEmulator.Common;
 using AzureAppConfigurationEmulator.ConfigurationSettings;
@@ -55,7 +56,11 @@ public class EventGridMessagingConfigurationSettingRepositoryTests
             .Received()
             .SendEventAsync(
                 Arg.Is<EventGridEvent>(eventGridEvent =>
-                    eventGridEvent.Data.ToString() == new BinaryData(new { key, label, etag }, null, null).ToString()));
+                    eventGridEvent.Data.ToString() ==
+                    new BinaryData(
+                        new { key, label, etag },
+                        JsonSerializerOptions.Default,
+                        null).ToString()));
     }
 
     [Test]
@@ -95,7 +100,11 @@ public class EventGridMessagingConfigurationSettingRepositoryTests
             .Received()
             .SendEventAsync(
                 Arg.Is<EventGridEvent>(eventGridEvent =>
-                    eventGridEvent.Data.ToString() == new BinaryData(new { key, label, etag }, null, null).ToString()));
+                    eventGridEvent.Data.ToString() ==
+                    new BinaryData(
+                        new { key, label, etag },
+                        JsonSerializerOptions.Default,
+                        null).ToString()));
     }
 
     [Test]
@@ -135,7 +144,11 @@ public class EventGridMessagingConfigurationSettingRepositoryTests
             .Received()
             .SendEventAsync(
                 Arg.Is<EventGridEvent>(eventGridEvent =>
-                    eventGridEvent.Data.ToString() == new BinaryData(new { key, label, etag }, null, null).ToString()));
+                    eventGridEvent.Data.ToString() ==
+                    new BinaryData(
+                        new { key, label, etag },
+                        JsonSerializerOptions.Default,
+                        null).ToString()));
     }
 
     [Test]

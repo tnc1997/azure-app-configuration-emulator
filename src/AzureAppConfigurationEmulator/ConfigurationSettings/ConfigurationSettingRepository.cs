@@ -48,7 +48,7 @@ public partial class ConfigurationSettingRepository(
     public async IAsyncEnumerable<ConfigurationSetting> Get(
         string key = KeyFilter.Any,
         string label = LabelFilter.Any,
-        DateTimeOffset? moment = default,
+        DateTimeOffset? moment = null,
         [EnumeratorCancellation] CancellationToken cancellationToken = default)
     {
         using var activity = Telemetry.ActivitySource.StartActivity($"{nameof(ConfigurationSettingRepository)}.{nameof(Get)}");

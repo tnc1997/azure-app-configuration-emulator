@@ -6,8 +6,8 @@ namespace AzureAppConfigurationEmulator.ConfigurationSettings;
 
 public class ConfigurationSettingResult(
     ConfigurationSetting setting,
-    DateTimeOffset? mementoDatetime = default,
-    string? select = default) :
+    DateTimeOffset? mementoDatetime = null,
+    string? select = null) :
     IResult,
     IContentTypeHttpResult,
     IStatusCodeHttpResult,
@@ -18,12 +18,12 @@ public class ConfigurationSettingResult(
         httpContext.Response.Headers.ETag = setting.Etag;
         httpContext.Response.Headers.LastModified = setting.LastModified.ToString("R");
 
-        if (mementoDatetime.HasValue)
+        if (mementoDatetime is not null)
         {
             httpContext.Response.Headers["Memento-Datetime"] = mementoDatetime.Value.ToString("R");
         }
 
-        if (StatusCode.HasValue)
+        if (StatusCode is not null)
         {
             httpContext.Response.StatusCode = StatusCode.Value;
         }

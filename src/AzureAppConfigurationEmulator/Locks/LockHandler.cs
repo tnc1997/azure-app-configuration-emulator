@@ -13,8 +13,8 @@ public class LockHandler
         [FromServices] IConfigurationSettingRepository repository,
         [FromRoute] string key,
         [FromQuery] string label = LabelFilter.Null,
-        [FromHeader(Name = "If-Match")] string? ifMatch = default,
-        [FromHeader(Name = "If-None-Match")] string? ifNoneMatch = default,
+        [FromHeader(Name = "If-Match")] string? ifMatch = null,
+        [FromHeader(Name = "If-None-Match")] string? ifNoneMatch = null,
         CancellationToken cancellationToken = default)
     {
         using var activity = Telemetry.ActivitySource.StartActivity($"{nameof(LockHandler)}.{nameof(Lock)}");
@@ -35,12 +35,12 @@ public class LockHandler
             return TypedResults.NotFound();
         }
 
-        if (ifMatch != null && (ifMatch != setting.Etag && ifMatch != "*"))
+        if (ifMatch is not null && (ifMatch != setting.Etag && ifMatch != "*"))
         {
             return new PreconditionFailedResult();
         }
 
-        if (ifNoneMatch != null && (ifNoneMatch == setting.Etag || ifNoneMatch == "*"))
+        if (ifNoneMatch is not null && (ifNoneMatch == setting.Etag || ifNoneMatch == "*"))
         {
             return new PreconditionFailedResult();
         }
@@ -59,8 +59,8 @@ public class LockHandler
         [FromServices] IConfigurationSettingRepository repository,
         [FromRoute] string key,
         [FromQuery] string label = LabelFilter.Null,
-        [FromHeader(Name = "If-Match")] string? ifMatch = default,
-        [FromHeader(Name = "If-None-Match")] string? ifNoneMatch = default,
+        [FromHeader(Name = "If-Match")] string? ifMatch = null,
+        [FromHeader(Name = "If-None-Match")] string? ifNoneMatch = null,
         CancellationToken cancellationToken = default)
     {
         using var activity = Telemetry.ActivitySource.StartActivity($"{nameof(LockHandler)}.{nameof(Unlock)}");
@@ -81,12 +81,12 @@ public class LockHandler
             return TypedResults.NotFound();
         }
 
-        if (ifMatch != null && (ifMatch != setting.Etag && ifMatch != "*"))
+        if (ifMatch is not null && (ifMatch != setting.Etag && ifMatch != "*"))
         {
             return new PreconditionFailedResult();
         }
 
-        if (ifNoneMatch != null && (ifNoneMatch == setting.Etag || ifNoneMatch == "*"))
+        if (ifNoneMatch is not null && (ifNoneMatch == setting.Etag || ifNoneMatch == "*"))
         {
             return new PreconditionFailedResult();
         }

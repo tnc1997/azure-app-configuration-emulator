@@ -94,11 +94,11 @@ var app = builder.Build();
 app.Map("/_explorer", app =>
 {
     app.UseRouting();
-    app.UseStaticFiles();
     app.UseAntiforgery();
 
     app.UseEndpoints(endpoints =>
     {
+        endpoints.MapStaticAssets();
         endpoints.MapRazorComponents<App>().AddInteractiveServerRenderMode();
     });
 });
