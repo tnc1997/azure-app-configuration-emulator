@@ -11,14 +11,14 @@ public class InvalidCharacterResult(string name) :
 {
     public async Task ExecuteAsync(HttpContext httpContext)
     {
-        if (StatusCode.HasValue)
+        if (StatusCode is not null)
         {
             httpContext.Response.StatusCode = StatusCode.Value;
         }
 
         if (Value is not null)
         {
-            await httpContext.Response.WriteAsJsonAsync(Value, options: default, ContentType);
+            await httpContext.Response.WriteAsJsonAsync(Value, options: null, ContentType);
         }
     }
 

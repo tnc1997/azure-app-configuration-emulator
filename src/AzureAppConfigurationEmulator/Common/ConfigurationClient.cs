@@ -11,7 +11,7 @@ public class ConfigurationClient(
     public async IAsyncEnumerable<ConfigurationSetting> GetConfigurationSettings(
         string key = KeyFilter.Any,
         string label = LabelFilter.Any,
-        DateTimeOffset? moment = default,
+        DateTimeOffset? moment = null,
         [EnumeratorCancellation] CancellationToken cancellationToken = default)
     {
         using var activity = Telemetry.ActivitySource.StartActivity($"{nameof(ConfigurationClient)}.{nameof(GetConfigurationSettings)}");
@@ -25,7 +25,7 @@ public class ConfigurationClient(
 
             using var request = new HttpRequestMessage(HttpMethod.Get, uri);
 
-            if (moment.HasValue)
+            if (moment is not null)
             {
                 request.Headers.Add("Accept-Datetime", moment.Value.ToString("R"));
             }

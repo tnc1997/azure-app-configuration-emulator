@@ -31,7 +31,7 @@ public class EventGridMessagingConfigurationSettingRepository(
     public IAsyncEnumerable<ConfigurationSetting> Get(
         string key = KeyFilter.Any,
         string label = LabelFilter.Any,
-        DateTimeOffset? moment = default,
+        DateTimeOffset? moment = null,
         CancellationToken cancellationToken = default)
     {
         using var activity = Telemetry.ActivitySource.StartActivity($"{nameof(EventGridMessagingConfigurationSettingRepository)}.{nameof(Get)}");

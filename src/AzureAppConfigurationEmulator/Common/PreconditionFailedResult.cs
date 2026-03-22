@@ -10,7 +10,7 @@ public class PreconditionFailedResult :
 {
     public Task ExecuteAsync(HttpContext httpContext)
     {
-        if (StatusCode.HasValue)
+        if (StatusCode is not null)
         {
             httpContext.Response.StatusCode = StatusCode.Value;
         }

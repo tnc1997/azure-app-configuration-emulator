@@ -11,8 +11,8 @@ public class LabelHandler
     public static async Task<Results<LabelsResult, InvalidCharacterResult, TooManyValuesResult>> List(
         [FromServices] IConfigurationSettingRepository repository,
         [FromQuery] string name = LabelFilter.Any,
-        [FromQuery(Name = "$select")] string? select = default,
-        [FromHeader(Name = "Accept-Datetime")] DateTimeOffset? acceptDatetime = default,
+        [FromQuery(Name = "$select")] string? select = null,
+        [FromHeader(Name = "Accept-Datetime")] DateTimeOffset? acceptDatetime = null,
         CancellationToken cancellationToken = default)
     {
         using var activity = Telemetry.ActivitySource.StartActivity($"{nameof(LabelHandler)}.{nameof(List)}");

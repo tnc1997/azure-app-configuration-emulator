@@ -11,8 +11,8 @@ public class KeyHandler
     public static async Task<Results<KeysResult, InvalidCharacterResult, TooManyValuesResult>> List(
         [FromServices] IConfigurationSettingRepository repository,
         [FromQuery] string name = KeyFilter.Any,
-        [FromQuery(Name = "$select")] string? select = default,
-        [FromHeader(Name = "Accept-Datetime")] DateTimeOffset? acceptDatetime = default,
+        [FromQuery(Name = "$select")] string? select = null,
+        [FromHeader(Name = "Accept-Datetime")] DateTimeOffset? acceptDatetime = null,
         CancellationToken cancellationToken = default)
     {
         using var activity = Telemetry.ActivitySource.StartActivity($"{nameof(KeyHandler)}.{nameof(List)}");

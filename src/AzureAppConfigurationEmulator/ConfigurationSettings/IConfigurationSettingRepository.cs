@@ -11,7 +11,7 @@ public interface IConfigurationSettingRepository
     public IAsyncEnumerable<ConfigurationSetting> Get(
         string key = KeyFilter.Any,
         string label = LabelFilter.Any,
-        DateTimeOffset? moment = default,
+        DateTimeOffset? moment = null,
         CancellationToken cancellationToken = default);
 
     public Task Remove(

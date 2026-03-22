@@ -6,8 +6,8 @@ namespace AzureAppConfigurationEmulator.Keys;
 
 public class KeysResult(
     IEnumerable<string> keys,
-    DateTimeOffset? mementoDatetime = default,
-    string? select = default) :
+    DateTimeOffset? mementoDatetime = null,
+    string? select = null) :
     IResult,
     IContentTypeHttpResult,
     IStatusCodeHttpResult,
@@ -15,12 +15,12 @@ public class KeysResult(
 {
     public async Task ExecuteAsync(HttpContext httpContext)
     {
-        if (mementoDatetime.HasValue)
+        if (mementoDatetime is not null)
         {
             httpContext.Response.Headers["Memento-Datetime"] = mementoDatetime.Value.ToString("R");
         }
 
-        if (StatusCode.HasValue)
+        if (StatusCode is not null)
         {
             httpContext.Response.StatusCode = StatusCode.Value;
         }

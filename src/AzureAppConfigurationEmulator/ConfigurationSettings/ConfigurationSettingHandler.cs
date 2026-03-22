@@ -13,8 +13,8 @@ public class ConfigurationSettingHandler
         [FromServices] IConfigurationSettingRepository repository,
         [FromRoute] string key,
         [FromQuery] string label = LabelFilter.Null,
-        [FromHeader(Name = "If-Match")] string? ifMatch = default,
-        [FromHeader(Name = "If-None-Match")] string? ifNoneMatch = default,
+        [FromHeader(Name = "If-Match")] string? ifMatch = null,
+        [FromHeader(Name = "If-None-Match")] string? ifNoneMatch = null,
         CancellationToken cancellationToken = default)
     {
         using var activity = Telemetry.ActivitySource.StartActivity($"{nameof(ConfigurationSettingHandler)}.{nameof(Delete)}");
@@ -31,12 +31,12 @@ public class ConfigurationSettingHandler
 
         if (setting == null)
         {
-            if (ifMatch != null && ifMatch == "*")
+            if (ifMatch is "*")
             {
                 return new PreconditionFailedResult();
             }
 
-            if (ifNoneMatch != null && ifNoneMatch != "*")
+            if (ifNoneMatch is not null && ifNoneMatch != "*")
             {
                 return new PreconditionFailedResult();
             }
@@ -49,12 +49,12 @@ public class ConfigurationSettingHandler
             return new ReadOnlyResult(key);
         }
 
-        if (ifMatch != null && (ifMatch != setting.Etag && ifMatch != "*"))
+        if (ifMatch is not null && (ifMatch != setting.Etag && ifMatch != "*"))
         {
             return new PreconditionFailedResult();
         }
 
-        if (ifNoneMatch != null && (ifNoneMatch == setting.Etag || ifNoneMatch == "*"))
+        if (ifNoneMatch is not null && (ifNoneMatch == setting.Etag || ifNoneMatch == "*"))
         {
             return new PreconditionFailedResult();
         }
@@ -68,10 +68,10 @@ public class ConfigurationSettingHandler
         [FromServices] IConfigurationSettingRepository repository,
         [FromRoute] string key,
         [FromQuery] string label = LabelFilter.Null,
-        [FromQuery(Name = "$select")] string? select = default,
-        [FromHeader(Name = "Accept-Datetime")] DateTimeOffset? acceptDatetime = default,
-        [FromHeader(Name = "If-Match")] string? ifMatch = default,
-        [FromHeader(Name = "If-None-Match")] string? ifNoneMatch = default,
+        [FromQuery(Name = "$select")] string? select = null,
+        [FromHeader(Name = "Accept-Datetime")] DateTimeOffset? acceptDatetime = null,
+        [FromHeader(Name = "If-Match")] string? ifMatch = null,
+        [FromHeader(Name = "If-None-Match")] string? ifNoneMatch = null,
         CancellationToken cancellationToken = default)
     {
         using var activity = Telemetry.ActivitySource.StartActivity($"{nameof(ConfigurationSettingHandler)}.{nameof(Get)}");
@@ -93,12 +93,12 @@ public class ConfigurationSettingHandler
             return TypedResults.NotFound();
         }
 
-        if (ifMatch != null && (ifMatch != setting.Etag && ifMatch != "*"))
+        if (ifMatch is not null && (ifMatch != setting.Etag && ifMatch != "*"))
         {
             return new PreconditionFailedResult();
         }
 
-        if (ifNoneMatch != null && (ifNoneMatch == setting.Etag || ifNoneMatch == "*"))
+        if (ifNoneMatch is not null && (ifNoneMatch == setting.Etag || ifNoneMatch == "*"))
         {
             return new NotModifiedResult();
         }
@@ -110,8 +110,8 @@ public class ConfigurationSettingHandler
         [FromServices] IConfigurationSettingRepository repository,
         [FromQuery] string key = KeyFilter.Any,
         [FromQuery] string label = LabelFilter.Any,
-        [FromQuery(Name = "$select")] string? select = default,
-        [FromHeader(Name = "Accept-Datetime")] DateTimeOffset? acceptDatetime = default,
+        [FromQuery(Name = "$select")] string? select = null,
+        [FromHeader(Name = "Accept-Datetime")] DateTimeOffset? acceptDatetime = null,
         CancellationToken cancellationToken = default)
     {
         using var activity = Telemetry.ActivitySource.StartActivity($"{nameof(ConfigurationSettingHandler)}.{nameof(List)}");
@@ -156,8 +156,8 @@ public class ConfigurationSettingHandler
         [FromBody] SetInput input,
         [FromRoute] string key,
         [FromQuery] string label = LabelFilter.Null,
-        [FromHeader(Name = "If-Match")] string? ifMatch = default,
-        [FromHeader(Name = "If-None-Match")] string? ifNoneMatch = default,
+        [FromHeader(Name = "If-Match")] string? ifMatch = null,
+        [FromHeader(Name = "If-None-Match")] string? ifNoneMatch = null,
         CancellationToken cancellationToken = default)
     {
         using var activity = Telemetry.ActivitySource.StartActivity($"{nameof(ConfigurationSettingHandler)}.{nameof(Set)}");
@@ -176,12 +176,12 @@ public class ConfigurationSettingHandler
 
         if (setting == null)
         {
-            if (ifMatch != null && ifMatch == "*")
+            if (ifMatch is "*")
             {
                 return new PreconditionFailedResult();
             }
 
-            if (ifNoneMatch != null && ifNoneMatch != "*")
+            if (ifNoneMatch is not null && ifNoneMatch != "*")
             {
                 return new PreconditionFailedResult();
             }
@@ -206,12 +206,12 @@ public class ConfigurationSettingHandler
             return new ReadOnlyResult(key);
         }
 
-        if (ifMatch != null && (ifMatch != setting.Etag && ifMatch != "*"))
+        if (ifMatch is not null && (ifMatch != setting.Etag && ifMatch != "*"))
         {
             return new PreconditionFailedResult();
         }
 
-        if (ifNoneMatch != null && (ifNoneMatch == setting.Etag || ifNoneMatch == "*"))
+        if (ifNoneMatch is not null && (ifNoneMatch == setting.Etag || ifNoneMatch == "*"))
         {
             return new PreconditionFailedResult();
         }
