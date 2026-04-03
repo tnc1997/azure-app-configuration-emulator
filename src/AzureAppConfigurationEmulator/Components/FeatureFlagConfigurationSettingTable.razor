@@ -11,6 +11,7 @@
         <AzureTableHeaderCell>Description</AzureTableHeaderCell>
         <AzureTableHeaderCell>Last modified</AzureTableHeaderCell>
         <AzureTableHeaderCell>Key</AzureTableHeaderCell>
+        <AzureTableHeaderCell class="w-[24px]"></AzureTableHeaderCell>
     </HeaderContent>
 
     <RowTemplate>
@@ -21,6 +22,15 @@
         <AzureTableDataCell>@context.Description</AzureTableDataCell>
         <AzureTableDataCell>@context.LastModified.ToString("G")</AzureTableDataCell>
         <AzureTableDataCell>@context.Key</AzureTableDataCell>
+        <AzureTableDataCell>
+            @{ var id = Guid.NewGuid().ToString(); }
+
+            <AzureIcon id="@id" Value="@(new AzureIcon.Icons.Regular.Size16.EllipsisHorizontal())"/>
+
+            <AzureMenu Anchor="@id" Anchored="@false" Trigger="AzureMenu.MouseButton.Left">
+                <AzureMenuItem OnClick="@(() => HandleDeleteClick(context))">Delete</AzureMenuItem>
+            </AzureMenu>
+        </AzureTableDataCell>
     </RowTemplate>
 </AzureTable>
 
@@ -29,9 +39,16 @@
 
     [Parameter] public EventCallback<FeatureFlagConfigurationSetting> OnConfigurationSettingChange { get; set; }
 
+    [Parameter] public EventCallback<FeatureFlagConfigurationSetting> OnDeleteClick { get; set; }
+
     [Parameter] public ICollection<FeatureFlagConfigurationSetting> SelectedConfigurationSettings { get; set; } = [];
 
     [Parameter] public EventCallback<ICollection<FeatureFlagConfigurationSetting>> SelectedConfigurationSettingsChanged { get; set; }
+
+    private async Task HandleDeleteClick(FeatureFlagConfigurationSetting setting)
+    {
+        await OnDeleteClick.InvokeAsync(setting);
+    }
 
     private async Task HandleEnabledChanged(FeatureFlagConfigurationSetting setting, bool enabled)
     {

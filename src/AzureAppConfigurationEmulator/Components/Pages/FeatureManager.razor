@@ -18,7 +18,7 @@
 
         <AzureToolbarDivider/>
 
-        <AzureToolbarButton IsDisabled="@(SelectedConfigurationSettings is { Count: 0 })" Label="Delete" OnClick="@HandleDeleteClick"/>
+        <AzureToolbarButton IsDisabled="@(SelectedConfigurationSettings is { Count: 0 })" Label="Delete" OnClick="@(() => HandleDeleteClick(SelectedConfigurationSettings.ToArray()))"/>
     </AzureToolbar>
 
     <div class="p-5">
@@ -38,7 +38,7 @@
     </div>
 
     <div class="mx-5">
-        <FeatureFlagConfigurationSettingTable @bind-SelectedConfigurationSettings="@SelectedConfigurationSettings" ConfigurationSettings="@FilteredConfigurationSettings" OnConfigurationSettingChange="@HandleConfigurationSettingChange"/>
+        <FeatureFlagConfigurationSettingTable @bind-SelectedConfigurationSettings="@SelectedConfigurationSettings" ConfigurationSettings="@FilteredConfigurationSettings" OnConfigurationSettingChange="@HandleConfigurationSettingChange" OnDeleteClick="@(setting => HandleDeleteClick(setting))"/>
     </div>
 </div>
 
@@ -81,9 +81,9 @@
         }
     }
 
-    private async Task HandleDeleteClick(MouseEventArgs args)
+    private async Task HandleDeleteClick(params FeatureFlagConfigurationSetting[] settings)
     {
-        foreach (var setting in SelectedConfigurationSettings.ToList())
+        foreach (var setting in settings)
         {
             await ConfigurationSettingRepository.Remove(setting);
 
