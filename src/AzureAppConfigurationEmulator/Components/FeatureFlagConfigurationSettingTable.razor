@@ -28,6 +28,7 @@
             <AzureIcon id="@id" Value="@(new AzureIcon.Icons.Regular.Size16.EllipsisHorizontal())"/>
 
             <AzureMenu Anchor="@id" Anchored="@false" Trigger="AzureMenu.MouseButton.Left">
+                <AzureMenuItem OnClick="@(() => HandleAdvancedEditClick(context))">Advanced edit</AzureMenuItem>
                 <AzureMenuItem OnClick="@(() => HandleDeleteClick(context))">Delete</AzureMenuItem>
             </AzureMenu>
         </AzureTableDataCell>
@@ -37,6 +38,8 @@
 @code {
     [Parameter] public IEnumerable<FeatureFlagConfigurationSetting> ConfigurationSettings { get; set; } = [];
 
+    [Parameter] public EventCallback<FeatureFlagConfigurationSetting> OnAdvancedEditClick { get; set; }
+
     [Parameter] public EventCallback<FeatureFlagConfigurationSetting> OnConfigurationSettingChange { get; set; }
 
     [Parameter] public EventCallback<FeatureFlagConfigurationSetting> OnDeleteClick { get; set; }
@@ -44,6 +47,11 @@
     [Parameter] public ICollection<FeatureFlagConfigurationSetting> SelectedConfigurationSettings { get; set; } = [];
 
     [Parameter] public EventCallback<ICollection<FeatureFlagConfigurationSetting>> SelectedConfigurationSettingsChanged { get; set; }
+
+    private async Task HandleAdvancedEditClick(FeatureFlagConfigurationSetting setting)
+    {
+        await OnAdvancedEditClick.InvokeAsync(setting);
+    }
 
     private async Task HandleDeleteClick(FeatureFlagConfigurationSetting setting)
     {
