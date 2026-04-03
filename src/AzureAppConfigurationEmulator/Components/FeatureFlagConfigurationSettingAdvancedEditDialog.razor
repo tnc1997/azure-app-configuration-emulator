@@ -1,0 +1,57 @@
+@inject IDialogService DialogService
+@using System.Security.Cryptography
+@using System.Text
+@using AzureAppConfigurationEmulator.Common
+@using AzureAppConfigurationEmulator.ConfigurationSettings
+
+<AzureDialog>
+    <HeaderContent>
+        <AzureDialogHeader Subtitle="Advanced edit" Title="Advanced edit"/>
+    </HeaderContent>
+
+    <ChildContent>
+        <div class="font-mono">
+            <AzureInputTextArea @bind-Value="Input.Value" name="@nameof(Input.Value)" rows="20"/>
+        </div>
+    </ChildContent>
+
+    <FooterContent>
+        <AzureDialogFooter>
+            <AzureButton Appearance="AzureButton.AzureAppearance.Primary" @onclick="@HandleEditClick">Edit</AzureButton>
+        </AzureDialogFooter>
+    </FooterContent>
+</AzureDialog>
+
+@code {
+    [EditorRequired, Parameter] public FeatureFlagConfigurationSetting ConfigurationSetting { get; set; } = null!;
+
+    [CascadingParameter] public IDialogReference DialogReference { get; set; } = null!;
+
+    private InputModel Input { get; } = new();
+
+    protected override void OnParametersSet()
+    {
+        if (Input.Value != ConfigurationSetting.Value)
+        {
+            Input.Value = ConfigurationSetting.Value;
+            StateHasChanged();
+        }
+    }
+
+    private async Task HandleEditClick(MouseEventArgs args)
+    {
+        var date = DateTimeOffset.UtcNow;
+
+        ConfigurationSetting.Etag = Convert.ToBase64String(SHA256.HashData(Encoding.UTF8.GetBytes(date.UtcDateTime.ToString("yyyy-MM-dd HH:mm:ss"))));
+        ConfigurationSetting.LastModified = date;
+        ConfigurationSetting.Value = Input.Value;
+
+        await DialogService.Close(DialogReference, new DialogResult(ConfigurationSetting));
+    }
+
+    private class InputModel
+    {
+        public string? Value { get; set; }
+    }
+
+}

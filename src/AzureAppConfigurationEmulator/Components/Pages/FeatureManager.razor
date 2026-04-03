@@ -38,7 +38,7 @@
     </div>
 
     <div class="mx-5">
-        <FeatureFlagConfigurationSettingTable @bind-SelectedConfigurationSettings="@SelectedConfigurationSettings" ConfigurationSettings="@FilteredConfigurationSettings" OnConfigurationSettingChange="@HandleConfigurationSettingChange" OnDeleteClick="@(setting => HandleDeleteClick(setting))"/>
+        <FeatureFlagConfigurationSettingTable @bind-SelectedConfigurationSettings="@SelectedConfigurationSettings" ConfigurationSettings="@FilteredConfigurationSettings" OnAdvancedEditClick="@(setting => HandleAdvancedEditClick(setting))" OnConfigurationSettingChange="@HandleConfigurationSettingChange" OnDeleteClick="@(setting => HandleDeleteClick(setting))"/>
     </div>
 </div>
 
@@ -66,6 +66,31 @@
     private async Task HandleConfigurationSettingChange(FeatureFlagConfigurationSetting setting)
     {
         await ConfigurationSettingRepository.Update(setting);
+    }
+
+    private async Task HandleAdvancedEditClick(FeatureFlagConfigurationSetting setting)
+    {
+        var parameters = new Dictionary<string, object?>
+        {
+            {
+                nameof(FeatureFlagConfigurationSettingAdvancedEditDialog.ConfigurationSetting),
+                setting
+            }
+        };
+
+        var reference = await DialogService.Show<FeatureFlagConfigurationSettingAdvancedEditDialog>(parameters);
+        var result = await reference.Result;
+        if (result is { Data: FeatureFlagConfigurationSetting data })
+        {
+            await ConfigurationSettingRepository.Update(data);
+
+            if (ConfigurationSettings.IndexOf(setting) is var index and not -1)
+            {
+                ConfigurationSettings.RemoveAt(index);
+                ConfigurationSettings.Insert(index, data);
+                StateHasChanged();
+            }
+        }
     }
 
     private async Task HandleCreateClick(MouseEventArgs args)
