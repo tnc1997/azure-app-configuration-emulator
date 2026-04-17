@@ -316,8 +316,7 @@ services:
 The emulator integrates with [Testcontainers](https://testcontainers.org) to ease the integration testing of applications that use Azure App Configuration.
 
 ```csharp
-var container = new ContainerBuilder()
-    .WithImage("tnc1997/azure-app-configuration-emulator:1.0")
+var container = new ContainerBuilder("tnc1997/azure-app-configuration-emulator:1.0")
     .WithPortBinding(8080, true)
     .WithWaitStrategy(Wait.ForUnixContainer().UntilMessageIsLogged("Now listening on"))
     .Build();
@@ -343,4 +342,69 @@ var client = new ConfigurationClient(container.GetConnectionString());
 await client.SetConfigurationSettingAsync(nameof(ConfigurationSetting.Key), nameof(ConfigurationSetting.Value));
 
 var response = await client.GetConfigurationSettingAsync(nameof(ConfigurationSetting.Key));
+```
+
+### Authentication
+
+The default authentication scheme is HMAC.
+
+#### HMAC
+
+```csharp
+var client = new ConfigurationClient($"Endpoint={new UriBuilder(Uri.UriSchemeHttp, container.Hostname, container.GetMappedPublicPort(8080))};Id=abcd;Secret=c2VjcmV0");
+```
+
+#### Microsoft Entra ID
+
+The emulator may be configured to authenticate tokens issued by actual Entra ID by setting the metadata address, valid issuer and valid audience using the environment variables `Authentication__Schemes__MicrosoftEntraId__MetadataAddress`, `Authentication__Schemes__MicrosoftEntraId__ValidIssuer` and `Authentication__Schemes__MicrosoftEntraId__ValidAudience` respectively.
+
+```csharp
+var container = new ContainerBuilder("tnc1997/azure-app-configuration-emulator:1.0")
+    .WithPortBinding(8080, true)
+    .WithWaitStrategy(Wait.ForUnixContainer().UntilMessageIsLogged("Now listening on"))
+    .WithEnvironment(
+        "Authentication__Schemes__MicrosoftEntraId__MetadataAddress",
+        $"https://login.microsoftonline.com/{tenantId}/.well-known/openid-configuration")
+    .WithEnvironment(
+        "Authentication__Schemes__MicrosoftEntraId__ValidIssuer",
+        $"https://sts.windows.net/{tenantId}/")
+    .WithEnvironment(
+        "Authentication__Schemes__MicrosoftEntraId__ValidAudience",
+        "https://azconfig.io")
+    .Build();
+
+var credential = new DefaultAzureCredential();
+var client = new ConfigurationClient(endpoint, credential);
+```
+
+Alternatively, [Assumed Identity](https://github.com/nagyesta/assumed-identity) may be used to simulate how Azure Instance Metadata Service (IMDS) handles Managed Identity tokens, enabling real Entra ID integration without an actual Azure environment.
+
+```csharp
+var network = new NetworkBuilder()
+    .Build();
+
+var assumedIdentityContainer = new ContainerBuilder("nagyesta/assumed-identity")
+    .WithNetwork(network)
+    .WithNetworkAliases("assumed-identity")
+    .WithWaitStrategy(Wait.ForUnixContainer().UntilMessageIsLogged("Started AssumedIdentity"))
+    .Build();
+
+var container = new ContainerBuilder("tnc1997/azure-app-configuration-emulator:1.0")
+    .WithPortBinding(8080, true)
+    .WithNetwork(network)
+    .WithWaitStrategy(Wait.ForUnixContainer().UntilMessageIsLogged("Now listening on"))
+    .WithEnvironment(
+        "Authentication__Schemes__MicrosoftEntraId__MetadataAddress",
+        "http://assumed-identity/metadata/identity/.well-known/openid-configuration")
+    .WithEnvironment(
+        "Authentication__Schemes__MicrosoftEntraId__RequireHttpsMetadata",
+        "false")
+    .Build();
+
+await network.CreateAsync();
+await assumedIdentityContainer.StartAsync();
+await container.StartAsync();
+
+var credential = new ManagedIdentityCredential();
+var client = new ConfigurationClient(new Uri($"http://{container.Hostname}:{container.GetMappedPublicPort(8080)}"), credential);
 ```
