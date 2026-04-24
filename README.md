@@ -148,6 +148,8 @@ services:
     entrypoint: /bin/sh -c "update-ca-certificates && dotnet ConsoleApplication.dll"
     environment:
       - Endpoints__AzureAppConfiguration=https://azure-app-configuration-emulator:8081
+      - IDENTITY_ENDPOINT=http://assumed-identity:80/metadata/identity/oauth2/token
+      - IDENTITY_HEADER=dummy
     volumes:
       - ./emulator.crt:/usr/local/share/ca-certificates/emulator.crt:ro
 ```
@@ -316,8 +318,7 @@ services:
 The emulator integrates with [Testcontainers](https://testcontainers.org) to ease the integration testing of applications that use Azure App Configuration.
 
 ```csharp
-var container = new ContainerBuilder()
-    .WithImage("tnc1997/azure-app-configuration-emulator:1.0")
+var container = new ContainerBuilder("tnc1997/azure-app-configuration-emulator")
     .WithPortBinding(8080, true)
     .WithWaitStrategy(Wait.ForUnixContainer().UntilMessageIsLogged("Now listening on"))
     .Build();
@@ -343,4 +344,61 @@ var client = new ConfigurationClient(container.GetConnectionString());
 await client.SetConfigurationSettingAsync(nameof(ConfigurationSetting.Key), nameof(ConfigurationSetting.Value));
 
 var response = await client.GetConfigurationSettingAsync(nameof(ConfigurationSetting.Key));
+```
+
+### Authentication
+
+#### HMAC
+
+```csharp
+var container = new ContainerBuilder("tnc1997/azure-app-configuration-emulator")
+    .WithPortBinding(8080, true)
+    .WithWaitStrategy(Wait.ForUnixContainer().UntilMessageIsLogged("Now listening on"))
+    .Build();
+
+await container.StartAsync();
+
+var client = new ConfigurationClient($"Endpoint={new UriBuilder(Uri.UriSchemeHttp, container.Hostname, container.GetMappedPublicPort(8080))};Id=abcd;Secret=c2VjcmV0");
+```
+
+#### Microsoft Entra ID
+
+```csharp
+var network = new NetworkBuilder()
+    .WithName(Guid.NewGuid().ToString())
+    .Build();
+
+var containers = new List<IContainer>
+{
+    new ContainerBuilder("nagyesta/assumed-identity")
+        .WithNetwork(network)
+        .WithNetworkAliases("assumed-identity")
+        .WithPortBinding(80, true)
+        .WithWaitStrategy(Wait.ForUnixContainer().UntilMessageIsLogged("Running on all addresses"))
+        .Build(),
+    new ContainerBuilder("tnc1997/azure-app-configuration-emulator")
+        .WithEnvironment("ASPNETCORE_HTTP_PORTS", "8080")
+        .WithEnvironment("ASPNETCORE_HTTPS_PORTS", "8081")
+        .WithEnvironment("Authentication__Schemes__MicrosoftEntraId__MetadataAddress", "http://assumed-identity/metadata/identity/.well-known/openid-configuration")
+        .WithEnvironment("Authentication__Schemes__MicrosoftEntraId__RequireHttpsMetadata", "false")
+        .WithEnvironment("Kestrel__Certificates__Default__Path", "/usr/local/share/azureappconfigurationemulator/emulator.crt")
+        .WithEnvironment("Kestrel__Certificates__Default__KeyPath", "/usr/local/share/azureappconfigurationemulator/emulator.key")
+        .WithNetwork(network)
+        .WithPortBinding(8080, true)
+        .WithPortBinding(8081, true)
+        .WithResourceMapping(FilePath.Of("./emulator.crt"), FilePath.Of("/usr/local/share/azureappconfigurationemulator/emulator.crt"))
+        .WithResourceMapping(FilePath.Of("./emulator.key"), FilePath.Of("/usr/local/share/azureappconfigurationemulator/emulator.key"))
+        .WithWaitStrategy(Wait.ForUnixContainer().UntilMessageIsLogged("Now listening on"))
+        .Build()
+};
+
+await network.CreateAsync();
+await Task.WhenAll(containers[0].StartAsync(), containers[1].StartAsync());
+
+Environment.SetEnvironmentVariable("IDENTITY_ENDPOINT", $"http://{containers[0].Hostname}:{containers[0].GetMappedPublicPort(80)}/metadata/identity/oauth2/token");
+Environment.SetEnvironmentVariable("IDENTITY_HEADER", "dummy");
+
+var endpoint = $"https://{containers[1].Hostname}:{containers[1].GetMappedPublicPort(8081)}";
+var credential = new ManagedIdentityCredential();
+var client = new ConfigurationClient(new Uri(endpoint), credential);
 ```
